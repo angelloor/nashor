@@ -1,0 +1,127 @@
+<div class="relative flex flex-col w-full h-full">
+
+    <!-- Header -->
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg">Editar platilla</div>
+        <button mat-icon-button (click)="closeModalTemplate()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+    <!-- Edit template -->
+    <div class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto">
+        <!-- form -->
+        <div class="relative flex flex-col flex-auto items-center">
+            <div class="w-full max-w-3xl">
+                <!-- Actions -->
+                <div
+                    class="flex items-center -mx-6 pr-6 pl-6 bg-gray-100 dark:bg-transparent rounded-t-none rounded-b-2xl">
+                    <!-- Save -->
+                    <button mat-flat-button [color]="'primary'" [disabled]="templateForm.invalid"
+                        [matTooltip]="'Guardar'" (click)="updateTemplate()">
+                        Guardar
+                    </button>
+                    <!-- Delete -->
+                    <button mat-stroked-button class="ml-auto" [color]="'warn'" [matTooltip]="'Eliminar'"
+                        (click)="deleteTemplate()">
+                        Eliminar
+                    </button>
+                </div>
+                <form [formGroup]="templateForm" class="mb-8">
+                    <!-- Alert -->
+                    <angel-alert class="mt-8" *ngIf="templateForm.invalid || showAlert" [appearance]="'outline'"
+                        [showIcon]="false" [type]="alert.type" [@shake]="alert.type === 'error'">
+                        <!-- Message if alert is actived for the component -->
+                        {{alert.message}}
+                        <!-- id_documentation_profile -->
+                        <mat-error *ngIf="templateForm.get('id_documentation_profile')?.hasError('required')">
+                            • Seleccione id_documentation_profile
+                        </mat-error>
+                        <!-- plugin_item_process -->
+                        <mat-error *ngIf="templateForm.get('plugin_item_process')?.hasError('required')">
+                            • Ingrese plugin_item_process
+                        </mat-error>
+                        <!-- plugin_attached_process -->
+                        <mat-error *ngIf="templateForm.get('plugin_attached_process')?.hasError('required')">
+                            • Ingrese plugin_attached_process
+                        </mat-error>
+                        <!-- name_template -->
+                        <mat-error *ngIf="templateForm.get('name_template')?.hasError('required')">
+                            • Ingrese name_template
+                        </mat-error>
+                        <!-- description_template -->
+                        <mat-error *ngIf="templateForm.get('description_template')?.hasError('required')">
+                            • Ingrese description_template
+                        </mat-error>
+                        <!-- status_template -->
+                        <mat-error *ngIf="templateForm.get('status_template')?.hasError('required')">
+                            • Ingrese status_template
+                        </mat-error>
+                    </angel-alert>
+                    <!-- Alert -->
+                    <!-- name_template -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>nameTemplate</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'">
+                            </mat-icon>
+                            <input matInput maxlength="100" [formControlName]="'name_template'"
+                                [placeholder]="'name_template'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div> <!-- description_template -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>descriptionTemplate</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:tag'">
+                            </mat-icon>
+                            <input matInput maxlength="250" [formControlName]="'description_template'"
+                                [placeholder]="'description_template'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div><!-- status_template -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>status_template</mat-label>
+                            <mat-select [formControlName]="'status_template'" [value]="false">
+                                <mat-option [value]="true">Activo</mat-option>
+                                <mat-option [value]="false">Inactivo</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <!-- plugin_item_process -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>plugin_item_process</mat-label>
+                            <mat-select [formControlName]="'plugin_item_process'" [value]="false">
+                                <mat-option [value]="true">Activo</mat-option>
+                                <mat-option [value]="false">Inactivo</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div><!-- plugin_attached_process -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>plugin_attached_process</mat-label>
+                            <mat-select [formControlName]="'plugin_attached_process'" [value]="false">
+                                <mat-option [value]="true">Activo</mat-option>
+                                <mat-option [value]="false">Inactivo</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <!-- id_documentation_profile -->
+                    <div class="mt-8" *ngIf="templateForm.get('plugin_attached_process')!.value">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>DocumentationProfile</mat-label>
+                            <mat-select [formControlName]="'id_documentation_profile'"
+                                [value]="selectedDocumentationProfile.id_documentation_profile">
+                                <ng-container *ngFor="let category of categoriesDocumentationProfile">
+                                    <mat-option [value]="category.id_documentation_profile"
+                                        [matTooltip]="category.description_documentation_profile">
+                                        {{category.name_documentation_profile}}</mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

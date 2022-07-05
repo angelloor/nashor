@@ -1,0 +1,30 @@
+<div class="relative flex flex-col w-full h-full">
+
+    <!-- Header -->
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg">Proceso {{process.number_process}}</div>
+        <button mat-icon-button (click)="closeModalProcess()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+    <div class="flex items-center justify-center py-8 px-8 space-x-3 ng-star-inserted br-10 text-2xl">
+        Fecha: {{process.date_process | date:'medium'}}
+    </div>
+    <!-- Process form -->
+    <form class="flex flex-col flex-auto px-6 pb-6 sm:px-8 sm:pb-8 overflow-y-auto" [formGroup]="processForm">
+
+        <div class="flex items-center justify-center sm:justify-end py-2 space-x-3 ng-star-inserted br-10 pt-6">
+            <!-- Delete -->
+            <button *ngIf="!process.generated_task" mat-flat-button
+                class="mat-focus-indicator mat-flat-button mat-button-base mat-warn ng-star-inserted"
+                (click)="deleteProcess()">
+                Eliminar
+            </button>
+            <!-- Send -->
+            <button *ngIf="!process.generated_task" class="order-first sm:order-last" mat-stroked-button
+                [color]="'primary'" (click)="updateProcess()">
+                Generar tarea
+            </button>
+        </div>
+    </form>
+</div>

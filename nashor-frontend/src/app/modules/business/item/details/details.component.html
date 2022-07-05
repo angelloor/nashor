@@ -1,0 +1,173 @@
+<div class="flex flex-col w-full">
+    <!-- View mode -->
+    <ng-container *ngIf="!editMode">
+        <!-- Header -->
+        <div class="relative w-full h-40 flex items-center bg-accent-100 dark:bg-accent-700 place-content-center">
+            <!-- Background -->
+            <div class="w-full h-40 bg-black z-10 opacity-0">
+            </div>
+            <h1 class="absolute z-20 text-dark text-3xl">{{nameEntity}}
+            </h1>
+            <!-- Light version -->
+            <img class="dark:hidden absolute inset-0 object-cover w-full h-full" src="assets/images/background.svg">
+            <!-- Dark version -->
+            <img class="hidden dark:flex absolute inset-0 object-cover w-full h-full"
+                src="assets/images/background-on-dark.svg">
+        </div>
+        <!-- Entity -->
+        <div class="relative flex flex-col flex-auto items-center p-6 pt-0 sm:p-12 sm:pt-0">
+            <div class="w-full max-w-3xl">
+                <!-- Actions -->
+                <div
+                    class="flex items-center -mx-6 sm:-mx-12 py-4 pr-6 pl-6 sm:pr-12 sm:pl-12 border-t bg-gray-100 dark:bg-transparent rounded-t-none rounded-b-2xl">
+                    <button mat-stroked-button (click)="toggleEditMode(true)">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'"></mat-icon>
+                        <span class="ml-1">Editar</span>
+                    </button>
+                    <button mat-stroked-button class="ml-auto" [matTooltip]="'Cerrar'" [routerLink]="['../']">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                        <span class="ml-1">Cerrar</span>
+                    </button>
+                </div>
+                <div class="flex flex-col mt-4 pt-6 space-y-8">
+                    <!-- id_item_category -->
+                    <ng-container *ngIf="item.item_category.id_item_category">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{selectedItemCategory.name_item_category}}</div>
+                        </div>
+                    </ng-container> <!-- name_item -->
+                    <ng-container *ngIf="item.name_item">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{item.name_item}}</div>
+                        </div>
+                    </ng-container> <!-- description_item -->
+                    <ng-container *ngIf="item.description_item">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{item.description_item}}</div>
+                        </div>
+                    </ng-container> <!-- cpc_item -->
+                    <ng-container *ngIf="item.cpc_item">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{item.cpc_item}}</div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Edit mode -->
+    <ng-container *ngIf="editMode">
+        <!-- Header -->
+        <div class="relative w-full h-40 flex items-center bg-accent-100 dark:bg-accent-700 place-content-center">
+            <!-- Background -->
+            <div class="w-full h-40 bg-black z-10 opacity-25">
+            </div>
+            <h1 class="absolute z-20 text-dark text-3xl">{{nameEntity}}
+            </h1>
+            <!-- Light version -->
+            <img class="dark:hidden absolute inset-0 object-cover w-full h-full" src="assets/images/background.svg">
+            <!-- Dark version -->
+            <img class="hidden dark:flex absolute inset-0 object-cover w-full h-full"
+                src="assets/images/background-on-dark.svg">
+        </div>
+        <!-- form -->
+        <div class="relative flex flex-col flex-auto items-center px-6 sm:px-12">
+            <div class="w-full max-w-3xl">
+                <!-- Actions -->
+                <div
+                    class="flex items-center -mx-6 sm:-mx-12 py-4 pr-6 pl-6 sm:pr-12 sm:pl-12 border-t bg-gray-100 dark:bg-transparent rounded-t-none rounded-b-2xl">
+                    <!-- Save -->
+                    <button mat-flat-button [color]="'primary'" [disabled]="itemForm.invalid" [matTooltip]="'Guardar'"
+                        (click)="updateItem()">
+                        Guardar
+                    </button>
+                    <!-- Delete -->
+                    <button mat-stroked-button class="ml-2" [color]="'warn'" [matTooltip]="'Eliminar'"
+                        (click)="deleteItem()">
+                        Eliminar
+                    </button>
+                    <!-- Cancel -->
+                    <button mat-stroked-button class="ml-2 mr-2" [matTooltip]="'Cancelar'"
+                        (click)="toggleEditMode(false)">
+                        Cancelar
+                    </button>
+
+                    <button mat-stroked-button class="ml-auto" [matTooltip]="'Cerrar'" [routerLink]="['../']">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                        <span class="ml-1">Cerrar</span>
+                    </button>
+                </div>
+                <form [formGroup]="itemForm" class="mb-8">
+                    <!-- Alert -->
+                    <angel-alert class="mt-8" *ngIf="itemForm.invalid || showAlert" [appearance]="'outline'"
+                        [showIcon]="false" [type]="alert.type" [@shake]="alert.type === 'error'">
+                        <!-- MessageAPI if alert is actived for the component -->
+                        {{alert.message}}
+                        <!-- id_item_category -->
+                        <mat-error *ngIf="itemForm.get('id_item_category')?.hasError('required')">
+                            • Seleccione id_item_category
+                        </mat-error>
+                        <!-- name_item -->
+                        <mat-error *ngIf="itemForm.get('name_item')?.hasError('required')">
+                            • Ingrese name_item
+                        </mat-error>
+                        <!-- description_item -->
+                        <mat-error *ngIf="itemForm.get('description_item')?.hasError('required')">
+                            • Ingrese description_item
+                        </mat-error>
+                        <!-- cpc_item -->
+                        <mat-error *ngIf="itemForm.get('cpc_item')?.hasError('required')">
+                            • Ingrese cpc_item
+                        </mat-error>
+                    </angel-alert>
+                    <!-- Alert -->
+                    <!-- id_item_category -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>ItemCategory</mat-label>
+                            <mat-select [formControlName]="'id_item_category'"
+                                [value]="selectedItemCategory.id_item_category">
+                                <ng-container *ngFor="let element of listItemCategory">
+                                    <mat-option [value]="element.id_item_category">
+                                        {{element.name_item_category}}</mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                    </div><!-- name_item -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>nameItem</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput maxlength="100" [formControlName]="'name_item'" [placeholder]="'name_item'"
+                                [spellcheck]="false">
+                        </mat-form-field>
+                    </div> <!-- description_item -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>descriptionItem</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput maxlength="250" [formControlName]="'description_item'"
+                                [placeholder]="'description_item'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div> <!-- cpc_item -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>cpcItem</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput maxlength="100" [formControlName]="'cpc_item'" [placeholder]="'cpc_item'"
+                                [spellcheck]="false">
+                        </mat-form-field>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </ng-container>
+</div>

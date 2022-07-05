@@ -1,0 +1,212 @@
+[
+	{
+		"id": "core",
+		"title": "Core",
+		"subtitle": "Administración core del sistema",
+		"type": "group",
+		"icon": "heroicons_outline:chip",
+		"children": [
+			{
+				"id": "core.company",
+				"title": "Empresa",
+				"type": "basic",
+				"icon": "heroicons_outline:office-building",
+				"link": "/core/company"
+			},
+			{
+				"id": "core.navigation",
+				"title": "Navegación",
+				"type": "basic",
+				"icon": "heroicons_outline:template",
+				"link": "/core/navigation"
+			},
+			{
+				"id": "core.profile",
+				"title": "Perfil",
+				"type": "basic",
+				"icon": "heroicons_outline:user-group",
+				"link": "/core/profile"
+			},
+			{
+				"id": "core.type-user",
+				"title": "Tipo de usuario",
+				"type": "basic",
+				"icon": "mat_outline:category",
+				"link": "/core/type-user"
+			},
+			{
+				"id": "core.user",
+				"title": "Usuario",
+				"type": "basic",
+				"icon": "heroicons_outline:user",
+				"link": "/core/user"
+			},
+			{
+				"id": "core.session",
+				"title": "Sesiones",
+				"type": "basic",
+				"icon": "heroicons_outline:login",
+				"link": "/core/session"
+			},
+			{
+				"id": "core.system-event",
+				"title": "Eventos del sistema",
+				"type": "basic",
+				"icon": "mat_outline:event",
+				"link": "/core/system-event"
+			}
+		]
+	},
+	{
+		"id": "business",
+		"title": "Business",
+		"subtitle": "Administración business del sistema",
+		"type": "group",
+		"icon": "heroicons_outline:cube-transparent",
+		"children": [
+			{
+				"id": "business.area",
+				"title": "Area",
+				"type": "basic",
+				"icon": "heroicons_outline:view-boards",
+				"link": "/business/area"
+			},
+			{
+				"id": "business.position",
+				"title": "Cargo",
+				"type": "basic",
+				"icon": "heroicons_outline:collection",
+				"link": "/business/position"
+			},
+			{
+				"id": "business.official",
+				"title": "Funcionario",
+				"type": "basic",
+				"icon": "heroicons_outline:user-circle",
+				"link": "/business/official"
+			},
+			{
+				"id": "business.plugin-attached",
+				"title": "Plugin anexo",
+				"type": "collapsable",
+				"icon": "mat_outline:ballot",
+				"children": [
+					{
+						"id": "business.attached",
+						"title": "Anexo",
+						"type": "basic",
+						"icon": "heroicons_outline:link",
+						"link": "/business/attached"
+					},
+					{
+						"id": "business.documentation-profile",
+						"title": "Perfil de docuemntación",
+						"type": "basic",
+						"icon": "heroicons_outline:document-text",
+						"link": "/business/documentation-profile"
+					}
+				]
+			},
+			{
+				"id": "business.plugin-item",
+				"title": "Plugin articulo",
+				"type": "collapsable",
+				"icon": "mat_outline:ballot",
+				"children": [
+					{
+						"id": "business.item-category",
+						"title": "Categoría del artículo",
+						"type": "basic",
+						"icon": "mat_outline:category",
+						"link": "/business/item-category"
+					},
+					{
+						"id": "business.item",
+						"title": "Artículo",
+						"type": "basic",
+						"icon": "heroicons_outline:cube",
+						"link": "/business/item"
+					}
+				]
+			},
+			{
+				"id": "business.control",
+				"title": "Control",
+				"type": "basic",
+				"icon": "mat_outline:call_to_action",
+				"link": "/business/control"
+			},
+			{
+				"id": "business.template",
+				"title": "Plantilla",
+				"type": "basic",
+				"icon": "heroicons_outline:template",
+				"link": "/business/template"
+			},
+			{
+				"id": "business.bpm",
+				"title": "BPM",
+				"type": "collapsable",
+				"icon": "heroicons_outline:cube-transparent",
+				"children": [
+					{
+						"id": "business.process-type",
+						"title": "Tipos de proceso",
+						"type": "basic",
+						"icon": "mat_outline:category",
+						"link": "/business/process-type"
+					},
+					{
+						"id": "business.level-status",
+						"title": "Estado del nivel",
+						"type": "basic",
+						"icon": "heroicons_outline:status-online",
+						"link": "/business/level-status"
+					},
+					{
+						"id": "business.level-profile",
+						"title": "Perfil del nivel",
+						"type": "basic",
+						"icon": "heroicons_outline:user-group",
+						"link": "/business/level-profile"
+					},
+					{
+						"id": "business.level",
+						"title": "Nivel",
+						"type": "basic",
+						"icon": "heroicons_outline:menu",
+						"link": "/business/level"
+					},
+					{
+						"id": "business.flow",
+						"title": "Flujo",
+						"type": "basic",
+						"icon": "mat_outline:account_tree",
+						"link": "/business/flow"
+					}
+				]
+			},
+			{
+				"id": "business.process",
+				"title": "Proceso",
+				"type": "basic",
+				"icon": "heroicons_outline:document",
+				"link": "/business/process"
+			},
+			{
+				"id": "business.task",
+				"title": "Tarea",
+				"type": "basic",
+				"icon": "mat_outline:task",
+				"link": "/business/task"
+			}
+		]
+	},
+	{
+		"id": "report",
+		"title": "Reportes",
+		"subtitle": "Reportes del sistema",
+		"type": "basic",
+		"link": "/report"
+	}
+]

@@ -1,0 +1,217 @@
+<div class="flex flex-col w-full">
+    <!-- View mode -->
+    <ng-container *ngIf="!editMode">
+        <!-- Header -->
+        <div class="relative w-full h-40 flex items-center bg-accent-100 dark:bg-accent-700 place-content-center">
+            <!-- Background -->
+            <div class="w-full h-40 bg-black z-10 opacity-0">
+            </div>
+            <h1 class="absolute z-20 text-dark text-3xl">{{nameEntity}}
+            </h1>
+            <!-- Light version -->
+            <img class="dark:hidden absolute inset-0 object-cover w-full h-full" src="assets/images/background.svg">
+            <!-- Dark version -->
+            <img class="hidden dark:flex absolute inset-0 object-cover w-full h-full"
+                src="assets/images/background-on-dark.svg">
+        </div>
+        <!-- Entity -->
+        <div class="relative flex flex-col flex-auto items-center p-6 pt-0 sm:p-12 sm:pt-0">
+            <div class="w-full max-w-3xl">
+                <!-- Actions -->
+                <div
+                    class="flex items-center -mx-6 sm:-mx-12 py-4 pr-6 pl-6 sm:pr-12 sm:pl-12 border-t bg-gray-100 dark:bg-transparent rounded-t-none rounded-b-2xl">
+                    <button mat-stroked-button (click)="toggleEditMode(true)">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'"></mat-icon>
+                        <span class="ml-1">Editar</span>
+                    </button>
+                    <button mat-stroked-button class="ml-auto" [matTooltip]="'Cerrar'" [routerLink]="['../']">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                        <span class="ml-1">Cerrar</span>
+                    </button>
+                </div>
+                <div class="flex flex-col mt-4 pt-6 space-y-8">
+                    <!-- id_process_type -->
+                    <ng-container *ngIf="process.process_type.id_process_type">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{selectedProcessType.name_process_type}}</div>
+                        </div>
+                    </ng-container> <!-- id_official -->
+                    <ng-container *ngIf="process.official.id_official">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{selectedOfficial.user.name_user}}</div>
+                        </div>
+                    </ng-container> <!-- id_flow_version -->
+                    <ng-container *ngIf="process.flow_version.id_flow_version">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{selectedFlowVersion.number_flow_version}}</div>
+                        </div>
+                    </ng-container> <!-- number_process -->
+                    <ng-container *ngIf="process.number_process">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{process.number_process}}</div>
+                        </div>
+                    </ng-container> <!-- date_process -->
+                    <ng-container *ngIf="process.date_process">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{process.date_process}}</div>
+                        </div>
+                    </ng-container> <!-- generated_task -->
+                    <ng-container *ngIf="process.generated_task">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{process.generated_task}}</div>
+                        </div>
+                    </ng-container> <!-- finalized_process -->
+                    <ng-container *ngIf="process.finalized_process">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{process.finalized_process}}</div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Edit mode -->
+    <ng-container *ngIf="editMode">
+        <!-- Header -->
+        <div class="relative w-full h-40 flex items-center bg-accent-100 dark:bg-accent-700 place-content-center">
+            <!-- Background -->
+            <div class="w-full h-40 bg-black z-10 opacity-25">
+            </div>
+            <h1 class="absolute z-20 text-dark text-3xl">{{nameEntity}}
+            </h1>
+            <!-- Light version -->
+            <img class="dark:hidden absolute inset-0 object-cover w-full h-full" src="assets/images/background.svg">
+            <!-- Dark version -->
+            <img class="hidden dark:flex absolute inset-0 object-cover w-full h-full"
+                src="assets/images/background-on-dark.svg">
+        </div>
+        <!-- form -->
+        <div class="relative flex flex-col flex-auto items-center px-6 sm:px-12">
+            <div class="w-full max-w-3xl">
+                <!-- Actions -->
+                <div
+                    class="flex items-center -mx-6 sm:-mx-12 py-4 pr-6 pl-6 sm:pr-12 sm:pl-12 border-t bg-gray-100 dark:bg-transparent rounded-t-none rounded-b-2xl">
+                    <!-- Save -->
+                    <button mat-flat-button [color]="'primary'" [disabled]="processForm.invalid"
+                        [matTooltip]="'Guardar'" (click)="updateProcess()">
+                        Guardar
+                    </button>
+                    <!-- Delete -->
+                    <button mat-stroked-button class="ml-2" [color]="'warn'" [matTooltip]="'Eliminar'"
+                        (click)="deleteProcess()">
+                        Eliminar
+                    </button>
+                    <!-- Cancel -->
+                    <button mat-stroked-button class="ml-2 mr-2" [matTooltip]="'Cancelar'"
+                        (click)="toggleEditMode(false)">
+                        Cancelar
+                    </button>
+
+                    <button mat-stroked-button class="ml-auto" [matTooltip]="'Cerrar'" [routerLink]="['../']">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                        <span class="ml-1">Cerrar</span>
+                    </button>
+                </div>
+                <form [formGroup]="processForm" class="mb-8">
+                    <!-- Alert -->
+                    <angel-alert class="mt-8" *ngIf="processForm.invalid || showAlert" [appearance]="'outline'"
+                        [showIcon]="false" [type]="alert.type" [@shake]="alert.type === 'error'">
+                        <!-- MessageAPI if alert is actived for the component -->
+                        {{alert.message}}
+                        <!-- name_control -->
+                        <mat-error *ngIf="processForm.get('name_control')?.hasError('required')">
+                            • Ingrese name_control
+                        </mat-error>
+                        <mat-error *ngIf="processForm.get('name_control')?.hasError('maxlength')">
+                            • longitud maxima name_control
+                        </mat-error>
+                        <mat-error *ngIf="processForm.get('name_control')?.hasError('minlength')">
+                            • longitud minima name_control
+                        </mat-error>
+                    </angel-alert>
+                    <!-- Alert -->
+                    <!-- id_process_type -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>ProcessType</mat-label>
+                            <mat-select [formControlName]="'id_process_type'"
+                                [value]="selectedProcessType.id_process_type">
+                                <ng-container *ngFor="let element of listProcessType">
+                                    <mat-option [value]="element.id_process_type">
+                                        {{element.name_process_type}}</mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                    </div><!-- id_official -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>Official</mat-label>
+                            <mat-select [formControlName]="'id_official'" [value]="selectedOfficial.id_official">
+                                <ng-container *ngFor="let element of listOfficial">
+                                    <mat-option [value]="element.id_official">
+                                        {{element.user.name_user}}</mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                    </div><!-- id_flow_version -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>FlowVersion</mat-label>
+                            <mat-select [formControlName]="'id_flow_version'"
+                                [value]="selectedFlowVersion.id_flow_version">
+                                <ng-container *ngFor="let element of listFlowVersion">
+                                    <mat-option [value]="element.id_flow_version">
+                                        {{element.number_flow_version}}</mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                    </div><!-- number_process -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>numberProcess</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput maxlength="150" [formControlName]="'number_process'"
+                                [placeholder]="'number_process'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div> <!-- date_process -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>dateProcess</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput [formControlName]="'date_process'" [placeholder]="'date_process'"
+                                [spellcheck]="false">
+                        </mat-form-field>
+                    </div> <!-- generated_task -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>generatedTask</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput [formControlName]="'generated_task'" [placeholder]="'generated_task'"
+                                [spellcheck]="false">
+                        </mat-form-field>
+                    </div> <!-- finalized_process -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>finalizedProcess</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput [formControlName]="'finalized_process'" [placeholder]="'finalized_process'"
+                                [spellcheck]="false">
+                        </mat-form-field>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </ng-container>
+</div>

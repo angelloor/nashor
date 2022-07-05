@@ -1,0 +1,212 @@
+<div class="relative flex flex-col w-full h-full">
+
+    <!-- Header -->
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg">Editar control</div>
+        <button mat-icon-button (click)="closeModalControl()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+    <!-- modal control -->
+    <div class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto">
+        <!-- form -->
+        <div class="relative flex flex-col flex-auto items-center">
+            <div class="w-full max-w-3xl">
+                <!-- Actions -->
+                <div
+                    class="flex items-center -mx-6 pr-6 pl-6 bg-gray-100 dark:bg-transparent rounded-t-none rounded-b-2xl">
+                    <!-- Save -->
+                    <button mat-flat-button [color]="'primary'" [disabled]="templateControlForm.invalid"
+                        [matTooltip]="'Guardar'" (click)="updateControl()">
+                        Guardar
+                    </button>
+                    <!-- Delete -->
+                    <button mat-stroked-button class="ml-auto" [color]="'warn'" [matTooltip]="'Eliminar'"
+                        (click)="deleteControl()">
+                        Eliminar
+                    </button>
+                </div>
+                <form [formGroup]="templateControlForm" class="mb-8">
+                    <!-- Alert -->
+                    <angel-alert class="mt-8" *ngIf="templateControlForm.invalid || showAlert" [appearance]="'outline'"
+                        [showIcon]="false" [type]="alert.type" [@shake]="alert.type === 'error'">
+                        <!-- Message if alert is actived for the component -->
+                        {{alert.message}}
+                        <!-- type_control -->
+                        <mat-error *ngIf="templateControlForm.get('type_control')?.hasError('required')">
+                            • Ingrese type_control
+                        </mat-error>
+                        <!-- title_control -->
+                        <mat-error *ngIf="templateControlForm.get('title_control')?.hasError('required')">
+                            • Ingrese title_control
+                        </mat-error>
+                        <!-- form_name_control -->
+                        <mat-error *ngIf="templateControlForm.get('form_name_control')?.hasError('required')">
+                            • Ingrese form_name_control
+                        </mat-error>
+                        <mat-error *ngIf="templateControlForm.get('form_name_control')?.hasError('cannotContainSpace')">
+                            • No se permiten espacios en blanco
+                        </mat-error>
+                        <!-- initial_value_control -->
+                        <mat-error *ngIf="templateControlForm.get('initial_value_control')?.hasError('required')">
+                            • Ingrese initial_value_control
+                        </mat-error>
+                        <!-- required_control -->
+                        <mat-error *ngIf="templateControlForm.get('required_control')?.hasError('required')">
+                            • Ingrese required_control
+                        </mat-error>
+                        <!-- min_length_control -->
+                        <mat-error *ngIf="templateControlForm.get('min_length_control')?.hasError('required')">
+                            • Ingrese min_length_control
+                        </mat-error>
+                        <mat-error *ngIf="templateControlForm.get('min_length_control')?.hasError('min')">
+                            • Valor mínimo 1 catacter
+                        </mat-error>
+                        <mat-error *ngIf="templateControlForm.get('min_length_control')?.hasError('max')">
+                            • Valor máximo 999 catacteres
+                        </mat-error>
+                        <!-- max_length_control -->
+                        <mat-error *ngIf="templateControlForm.get('max_length_control')?.hasError('required')">
+                            • Ingrese max_length_control
+                        </mat-error>
+                        <mat-error *ngIf="templateControlForm.get('max_length_control')?.hasError('min')">
+                            • Valor mínimo 1 catacter
+                        </mat-error>
+                        <mat-error *ngIf="templateControlForm.get('max_length_control')?.hasError('max')">
+                            • Valor máximo 999 catacteres
+                        </mat-error>
+                        <!-- placeholder_control -->
+                        <mat-error *ngIf="templateControlForm.get('placeholder_control')?.hasError('required')">
+                            • Ingrese placeholder_control
+                        </mat-error>
+                        <!-- spell_check_control -->
+                        <mat-error *ngIf="templateControlForm.get('spell_check_control')?.hasError('required')">
+                            • Ingrese spell_check_control
+                        </mat-error>
+                        <!-- options_control -->
+                        <mat-error *ngIf="templateControlForm.get('options_control')?.hasError('required')">
+                            • Ingrese options_control
+                        </mat-error>
+
+                    </angel-alert>
+                    <!-- Alert -->
+                    <!-- type_control -->
+                    <!-- Type Enum -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>typeControl</mat-label>
+                            <mat-select [formControlName]="'type_control'">
+                                <ng-container *ngFor="let type of typeControl">
+                                    <mat-option [value]="type.value_type">
+                                        {{type.name_type}}</mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                    </div><!-- form_name_control -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>formNameControl</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'">
+                            </mat-icon>
+                            <input matInput maxlength="50" [formControlName]="'form_name_control'"
+                                [placeholder]="'form_name_control'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div><!-- title_control -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>titleControl</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:tag'">
+                            </mat-icon>
+                            <input matInput maxlength="50" [formControlName]="'title_control'"
+                                [placeholder]="'title_control'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div> <!-- initial_value_control -->
+                    <div class="mt-8" *ngIf="templateControlForm.get('type_control')!.value === 'input' 
+						|| templateControlForm.get('type_control')!.value === 'textArea' 
+						|| templateControlForm.get('type_control')!.value === 'radioButton'  
+						|| templateControlForm.get('type_control')!.value === 'select'">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>initialValueControl</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_solid:adjust'">
+                            </mat-icon>
+                            <input matInput maxlength="100" [formControlName]="'initial_value_control'"
+                                [placeholder]="'initial_value_control'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div><!-- required_control -->
+                    <div class="mt-8" *ngIf="templateControlForm.get('type_control')!.value != 'checkBox'">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>required_control</mat-label>
+                            <mat-select [formControlName]="'required_control'">
+                                <mat-option [value]="true">Requerido</mat-option>
+                                <mat-option [value]="false">Opcional</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div><!-- min_length_control -->
+                    <div class="mt-8"
+                        *ngIf="templateControlForm.get('type_control')!.value === 'input' || templateControlForm.get('type_control')!.value === 'textArea'">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>min_length_control</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:minimize'">
+                            </mat-icon>
+                            <span matSuffix>Caracteres</span>
+                            <input matInput [formControlName]="'min_length_control'" type="number" min="1" max="999"
+                                [placeholder]="'min_length_control'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div><!-- max_length_control -->
+                    <div class="mt-8"
+                        *ngIf="templateControlForm.get('type_control')!.value === 'input' || templateControlForm.get('type_control')!.value === 'textArea'">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>max_length_control</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:maximize'">
+                            </mat-icon>
+                            <span matSuffix>Caracteres</span>
+                            <input matInput [formControlName]="'max_length_control'" type="number" min="1" max="999"
+                                [placeholder]="'max_length_control'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div><!-- placeholder_control -->
+                    <div class="mt-8"
+                        *ngIf="templateControlForm.get('type_control')!.value === 'input' || templateControlForm.get('type_control')!.value === 'textArea'">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>placeholderControl</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_solid:fireplace'">
+                            </mat-icon>
+                            <input matInput maxlength="100" [formControlName]="'placeholder_control'"
+                                [placeholder]="'placeholder_control'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div> <!-- spell_check_control -->
+                    <div class="mt-8"
+                        *ngIf="templateControlForm.get('type_control')!.value === 'input' || templateControlForm.get('type_control')!.value === 'textArea'">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>spell_check_control</mat-label>
+                            <mat-select [formControlName]="'spell_check_control'">
+                                <mat-option [value]="true">Activo</mat-option>
+                                <mat-option [value]="false">Inactivo</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div><!-- options_control -->
+                    <div class="relative flex mt-8"
+                        *ngIf="templateControlForm.get('type_control')!.value === 'radioButton' || templateControlForm.get('type_control')!.value === 'checkBox' || templateControlForm.get('type_control')!.value === 'select'">
+                        <mat-form-field class="angel-mat-textarea angel-mat-no-subscript w-full">
+                            <mat-label>options_control</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:menu-alt-2'"></mat-icon>
+                            <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                                cdkAutosizeMinRows="1" cdkAutosizeMaxRows="30" [formControlName]="'options_control'"
+                                [placeholder]="'Estructura de radioButton | checkBox | select'"
+                                [spellcheck]="false"></textarea>
+                        </mat-form-field>
+                        <ng-container>
+                            <div class="flex items-center w-10 pl-2">
+                                <button class="w-8 h-8 min-h-8" mat-icon-button (click)="viewSchema()"
+                                    matTooltip="Ver esquema">
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:information-circle'">
+                                    </mat-icon>
+                                </button>
+                            </div>
+                        </ng-container>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
