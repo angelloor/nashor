@@ -39,7 +39,7 @@ export class TypeUserListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   typeUsers$!: Observable<TypeUser[]>;
-
+  id_company: string = '';
   openMatDrawer: boolean = false;
 
   private data!: AppInitialData;
@@ -107,16 +107,17 @@ export class TypeUserListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the typeUsers
      */
     this.typeUsers$ = this._typeUserService.typeUsers$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._typeUserService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((typeUsers: TypeUser[]) => {
         /**
@@ -153,7 +154,10 @@ export class TypeUserListComponent implements OnInit {
           /**
            * Search
            */
-          return this._typeUserService.queryRead(query.toLowerCase());
+          return this._typeUserService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();

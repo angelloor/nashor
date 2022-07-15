@@ -17,7 +17,10 @@ import { Store } from '@ngrx/store';
 import { AppInitialData, MessageAPI } from 'app/core/app/app.type';
 import { NotificationService } from 'app/shared/notification/notification.service';
 import { cloneDeep } from 'lodash';
+import moment from 'moment';
 import { Subject, takeUntil } from 'rxjs';
+import { ControlService } from '../../control/control.service';
+import { Control } from '../../control/control.types';
 import { LevelService } from '../../level/level.service';
 import { Level } from '../../level/level.types';
 import { FlowVersionLevelService } from '../flow-version/flow-version-level/flow-version-level.service';
@@ -25,6 +28,7 @@ import { FlowVersionLevel } from '../flow-version/flow-version-level/flow-versio
 import { flowVersion } from '../flow-version/flow-version.data';
 import { FlowVersionService } from '../flow-version/flow-version.service';
 import { FlowVersion } from '../flow-version/flow-version.types';
+import { ModalVersionService } from '../modal-version/modal-version.service';
 import { ModalFlowVersionService } from './modal-flow-version.service';
 
 @Component({
@@ -35,6 +39,7 @@ import { ModalFlowVersionService } from './modal-flow-version.service';
 export class ModalFlowVersionComponent implements OnInit {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private data!: AppInitialData;
+  id_company: string = '';
   /**
    * Alert
    */
@@ -57,6 +62,7 @@ export class ModalFlowVersionComponent implements OnInit {
   flowVersion: FlowVersion = flowVersion;
 
   flowVersionLevels: FlowVersionLevel[] = [];
+  listControls: Control[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public _data: any,
@@ -68,10 +74,19 @@ export class ModalFlowVersionComponent implements OnInit {
     private _angelConfirmationService: AngelConfirmationService,
     private _levelService: LevelService,
     private _formBuilder: FormBuilder,
-    private _flowVersionLevelService: FlowVersionLevelService
+    private _flowVersionLevelService: FlowVersionLevelService,
+    private _modalVersionService: ModalVersionService,
+    private _controlService: ControlService
   ) {}
 
   ngOnInit(): void {
+    /**
+     * Subscribe to user changes of state
+     */
+    this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
+      this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
+    });
     this.id_flow = this._data.id_flow;
     /**
      * Subscribe to user changes of state
@@ -87,17 +102,15 @@ export class ModalFlowVersionComponent implements OnInit {
     });
 
     this._levelService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((_level: Level[]) => {
-        console.log(_level);
         this.categoriesLevel = _level;
       });
 
     this._flowVersionService.flowVersions$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((_flowVersion: FlowVersion[]) => {
-        console.log(_flowVersion);
         this.flowVersions = _flowVersion;
         /**
          * Clear the flowVersion form arrays
@@ -139,7 +152,6 @@ export class ModalFlowVersionComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((_flowVersion: FlowVersion) => {
         this.flowVersion = _flowVersion;
-        console.log(_flowVersion);
         /**
          * Clear the flowVersion form arrays
          */
@@ -189,7 +201,7 @@ export class ModalFlowVersionComponent implements OnInit {
                  * All Items
                  */
                 filterLevel.map((itemTwo, index) => {
-                  if (itemTwo.id_level == itemOne.level.id_level) {
+                  if (itemTwo.id_level == itemOne.level?.id_level) {
                     itemTwo = {
                       ...itemTwo,
                       isSelected: true,
@@ -223,7 +235,7 @@ export class ModalFlowVersionComponent implements OnInit {
                       ],
                       name_level: [
                         {
-                          value: _flowVersionLevel.level.name_level,
+                          value: _flowVersionLevel.level?.name_level,
                           disabled:
                             this.flowVersionLevels.length != index + 1 ||
                             this.isSelectedAll,
@@ -232,12 +244,7 @@ export class ModalFlowVersionComponent implements OnInit {
                       flow_version: [_flowVersionLevel.flow_version],
                       level: [_flowVersionLevel.level],
                       position_level: [_flowVersionLevel.position_level],
-                      is_level: [_flowVersionLevel.is_level],
-                      is_go: [_flowVersionLevel.is_go],
-                      is_finish: [_flowVersionLevel.is_finish],
-                      is_conditional: [_flowVersionLevel.is_conditional],
-                      type_conditional: [_flowVersionLevel.type_conditional],
-                      expression: [_flowVersionLevel.expression],
+                      type_element: [_flowVersionLevel.type_element],
                     })
                   );
                 }
@@ -279,6 +286,28 @@ export class ModalFlowVersionComponent implements OnInit {
     this._modalFlowVersionService.closeModalFlowVersion();
   }
   /**
+   * openModalVersion
+   * @param id_flow_version
+   */
+  openModalVersion(id_flow_version: string): void {
+    this._controlService
+      .byCompanyQueryRead(this.id_company, '*')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this._controlService.controls$
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((_controls: Control[]) => {
+            this.listControls = _controls;
+          });
+      });
+
+    this._modalVersionService.openModalVersion(
+      id_flow_version,
+      this.listControls
+    );
+  }
+
+  /**
    * createFlowVersion
    */
   createFlowVersion(): void {
@@ -306,10 +335,6 @@ export class ModalFlowVersionComponent implements OnInit {
                   this._notificationService.success(
                     'Version agregada correctamente'
                   );
-                  /**
-                   * expandLevels firs flowVersion
-                   */
-                  this.expandLevels(0);
                 } else {
                   this._notificationService.error(
                     '¡Error interno!, consulte al administrador.'
@@ -461,169 +486,12 @@ export class ModalFlowVersionComponent implements OnInit {
     }
   }
   /**
-   * expandLevels
-   * @param index
+   * Format the given ISO_8601 date as a relative date
+   *
+   * @param date
    */
-  expandLevels(index: number): void {
-    const versionElementFormArray = this.flowVersionForm.get(
-      'lotFlowVersion'
-    ) as FormArray;
-    let flowVersion = versionElementFormArray.getRawValue()[index];
-    console.log(flowVersion);
-    this._flowVersionService.$flowVersion = flowVersion;
-  }
-  /**
-   * resetLevels
-   * @param last
-   * @param index
-   */
-  resetLevels(last: boolean, index: number): void {
-    if (!(last && index == 0 && this.flowVersions.length == 0)) {
-      const versionElementFormArray = this.flowVersionForm.get(
-        'lotFlowVersion'
-      ) as FormArray;
-      let flowVersion = versionElementFormArray.getRawValue()[index];
-      this._flowVersionService.$flowVersion = flowVersion;
-    }
-  }
-  /**
-   * Add an empty level field
-   */
-  addLevelField(): void {
-    const id_user_ = this.data.user.id_user;
-    const id_flow_version = this.flowVersion.id_flow_version;
-
-    this._flowVersionLevelService
-      .create(id_user_, id_flow_version)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (_flowVersionLevel: FlowVersionLevel) => {
-          if (_flowVersionLevel) {
-            this._notificationService.success('Level agregado correctamente');
-          } else {
-            this._notificationService.error(
-              'Ocurrió un error agregando el level'
-            );
-          }
-          /**
-           * Mark for check
-           */
-          this._changeDetectorRef.markForCheck();
-        },
-        error: (error: { error: MessageAPI }) => {
-          this._notificationService.error(
-            !error.error
-              ? '¡Error interno!, consulte al administrador.'
-              : !error.error.description
-              ? '¡Error interno!, consulte al administrador.'
-              : error.error.description
-          );
-        },
-      });
-  }
-  /**
-   * updateLevelField
-   * @param index
-   */
-  updateLevelField(index: number) {
-    const nivelsFormArray = this.flowVersionForm.get(
-      'lotFlowVersionLevel'
-    ) as FormArray;
-    const id_user_ = this.data.user.id_user;
-    let flowVersionLevel = nivelsFormArray.getRawValue()[index];
-
-    const levelSet: Level = this.categoriesLevel.find(
-      (level) => level.name_level == flowVersionLevel.name_level
-    )!;
-
-    flowVersionLevel = {
-      id_user_: parseInt(id_user_),
-      ...flowVersionLevel,
-      id_flow_version_level: parseInt(flowVersionLevel.id_flow_version_level),
-      flow_version: {
-        id_flow_version: parseInt(
-          flowVersionLevel.flow_version.id_flow_version
-        ),
-      },
-      level: {
-        id_level: parseInt(levelSet.id_level),
-      },
-      position_level: parseInt(flowVersionLevel.position_level),
-    };
-
-    console.log(flowVersionLevel);
-
-    /**
-     * updateFlowVersionLevel
-     */
-    this._flowVersionLevelService
-      .update(flowVersionLevel)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (_flowVersionLevel: FlowVersionLevel) => {
-          if (_flowVersionLevel) {
-            this._notificationService.success(
-              'Level actualizado correctamente'
-            );
-          } else {
-            this._notificationService.error(
-              'Ocurrió un error actualizando el level'
-            );
-          }
-          /**
-           * Mark for check
-           */
-          this._changeDetectorRef.markForCheck();
-        },
-        error: (error: { error: MessageAPI }) => {
-          this._notificationService.error(
-            !error.error
-              ? '¡Error interno!, consulte al administrador.'
-              : !error.error.description
-              ? '¡Error interno!, consulte al administrador.'
-              : error.error.description
-          );
-        },
-      });
-    /**
-     * Mark for check
-     */
-    this._changeDetectorRef.markForCheck();
-  }
-  /**
-   * resetFlowVersionLevel
-   */
-  resetFlowVersionLevel(): void {
-    const id_user_ = this.data.user.id_user;
-    const id_flow_version = this.flowVersion.id_flow_version;
-
-    this._flowVersionLevelService
-      .resetFlowVersionLevel(id_user_, id_flow_version)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (response: boolean) => {
-          if (response) {
-            this._notificationService.success('Niveles restablecidos');
-          } else {
-            this._notificationService.error(
-              'Ocurrió un error al restablecer los niveles'
-            );
-          }
-          /**
-           * Mark for check
-           */
-          this._changeDetectorRef.markForCheck();
-        },
-        error: (error: { error: MessageAPI }) => {
-          this._notificationService.error(
-            !error.error
-              ? '¡Error interno!, consulte al administrador.'
-              : !error.error.description
-              ? '¡Error interno!, consulte al administrador.'
-              : error.error.description
-          );
-        },
-      });
+  formatDateAsRelative(date: string): string {
+    return moment(date, moment.ISO_8601).locale('es').fromNow();
   }
   /**
    * Track by function for ngFor loops

@@ -69,7 +69,6 @@ export class AttachedService {
                * check the response body to match with the type
                */
               const _attached: Attached = response.body;
-              console.log(_attached);
               /**
                * Update the attached in the store
                */
@@ -184,14 +183,12 @@ export class AttachedService {
                * check the response body to match with the type
                */
               const _attached: Attached = response.body;
-              console.log(_attached);
               /**
                * Find the index of the updated attached
                */
               const index = attacheds.findIndex(
                 (item) => item.id_attached == attached.id_attached
               );
-              console.log(index);
               /**
                * Update the attached
                */
@@ -234,7 +231,6 @@ export class AttachedService {
                 const index = attacheds.findIndex(
                   (item) => item.id_attached == id_attached
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

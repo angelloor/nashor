@@ -44,7 +44,7 @@ export class ProfileListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   profiles$!: Observable<Profile[]>;
-
+  id_company: string = '';
   openMatDrawer: boolean = false;
 
   private data!: AppInitialData;
@@ -120,16 +120,17 @@ export class ProfileListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the profiles
      */
     this.profiles$ = this._profileService.profiles$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._profileService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((profiles: Profile[]) => {
         /**
@@ -166,7 +167,10 @@ export class ProfileListComponent implements OnInit {
           /**
            * Search
            */
-          return this._profileService.queryRead(query.toLowerCase());
+          return this._profileService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();

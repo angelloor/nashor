@@ -69,7 +69,6 @@ export class PositionService {
                * check the response body to match with the type
                */
               const _position: Position = response.body;
-              console.log(_position);
               /**
                * Update the position in the store
                */
@@ -184,14 +183,12 @@ export class PositionService {
                * check the response body to match with the type
                */
               const _position: Position = response.body;
-              console.log(_position);
               /**
                * Find the index of the updated position
                */
               const index = positions.findIndex(
                 (item) => item.id_position == position.id_position
               );
-              console.log(index);
               /**
                * Update the position
                */
@@ -234,7 +231,6 @@ export class PositionService {
                 const index = positions.findIndex(
                   (item) => item.id_position == id_position
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

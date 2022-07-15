@@ -39,7 +39,7 @@ export class ProcessTypeListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   processTypes$!: Observable<ProcessType[]>;
-
+  id_company: string = '';
   openMatDrawer: boolean = false;
 
   private data!: AppInitialData;
@@ -107,16 +107,17 @@ export class ProcessTypeListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the processTypes
      */
     this.processTypes$ = this._processTypeService.processTypes$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._processTypeService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((processTypes: ProcessType[]) => {
         /**
@@ -153,7 +154,10 @@ export class ProcessTypeListComponent implements OnInit {
           /**
            * Search
            */
-          return this._processTypeService.queryRead(query.toLowerCase());
+          return this._processTypeService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -363,7 +367,6 @@ export class ProcessTypeListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_processType: ProcessType) => {
-                console.log(_processType);
                 if (_processType) {
                   this._notificationService.success(
                     'Tipo de proceso agregada correctamente'
@@ -379,7 +382,6 @@ export class ProcessTypeListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

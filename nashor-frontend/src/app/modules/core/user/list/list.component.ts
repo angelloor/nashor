@@ -38,6 +38,7 @@ import { User } from '../user.types';
 })
 export class UserListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
+  id_company: string = '';
 
   _urlPathAvatar: string = environment.urlBackend + '/resource/img/avatar/';
 
@@ -111,27 +112,13 @@ export class UserListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the users
      */
     this.users$ = this._userService.users$;
-    /**
-     *  queryRead *
-     */
-    this._userService
-      .queryRead('*')
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((users: User[]) => {
-        /**
-         * Update the counts
-         */
-        this.count = users.length;
-        /**
-         * Mark for check
-         */
-        this._changeDetectorRef.markForCheck();
-      });
+
     /**
      *  Count Subscribe
      */
@@ -147,6 +134,24 @@ export class UserListComponent implements OnInit {
          */
         this._changeDetectorRef.markForCheck();
       });
+
+    /**
+     * byCompanyQueryRead
+     */
+    this._userService
+      .byCompanyQueryRead(this.id_company, '*')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((users: User[]) => {
+        /**
+         * Update the counts
+         */
+        this.count = users.length;
+        /**
+         * Mark for check
+         */
+        this._changeDetectorRef.markForCheck();
+      });
+
     /**
      * Subscribe to search input field value changes
      */
@@ -157,7 +162,10 @@ export class UserListComponent implements OnInit {
           /**
            * Search
            */
-          return this._userService.queryRead(query.toLowerCase());
+          return this._userService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();

@@ -303,7 +303,6 @@ export class LevelProfileDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */
@@ -416,7 +415,6 @@ export class LevelProfileDetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_levelProfile: LevelProfile) => {
-          console.log(_levelProfile);
           if (_levelProfile) {
             this._notificationService.success(
               'Perfil del nivel actualizada correctamente'
@@ -432,7 +430,6 @@ export class LevelProfileDetailsComponent implements OnInit {
           }
         },
         error: (error: { error: MessageAPI }) => {
-          console.log(error);
           this._notificationService.error(
             !error.error
               ? '¡Error interno!, consulte al administrador.'
@@ -485,7 +482,6 @@ export class LevelProfileDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (response: boolean) => {
-                console.log(response);
                 if (response) {
                   /**
                    * Return if the levelProfile wasn't deleted...
@@ -524,7 +520,6 @@ export class LevelProfileDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

@@ -168,7 +168,7 @@ export const validation = (control: Control, url: string, token: string) => {
 						 * Validation company
 						 */
 
-						if (url == '/update') {
+						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_company',
 								control.company.id_company,
@@ -223,6 +223,30 @@ export const validation = (control: Control, url: string, token: string) => {
 									_control.form_name_control = control.form_name_control;
 									await _control
 										.byCompanyQueryRead()
+										.then((_controls: Control[]) => {
+											resolve(_controls);
+										})
+										.catch((error: any) => {
+											reject(error);
+										});
+								} else {
+									reject({
+										..._messages[11],
+										description: _messages[11].description.replace(
+											'name_entity',
+											'company'
+										),
+									});
+								}
+							} else if (url.substring(0, 22) == '/byLevelAndCompanyRead') {
+								const id_company: any = control.company;
+
+								if (id_company >= 1) {
+									/** set required attributes for action */
+									_control.company = control.company;
+									_control.form_name_control = control.form_name_control;
+									await _control
+										.byLevelAndCompanyRead()
 										.then((_controls: Control[]) => {
 											resolve(_controls);
 										})

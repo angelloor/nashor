@@ -39,6 +39,7 @@ export class AttachedListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   attacheds$!: Observable<Attached[]>;
+  id_company: string = '';
 
   openMatDrawer: boolean = false;
 
@@ -107,16 +108,17 @@ export class AttachedListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the attacheds
      */
     this.attacheds$ = this._attachedService.attacheds$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._attachedService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((attacheds: Attached[]) => {
         /**
@@ -153,7 +155,10 @@ export class AttachedListComponent implements OnInit {
           /**
            * Search
            */
-          return this._attachedService.queryRead(query.toLowerCase());
+          return this._attachedService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -362,7 +367,6 @@ export class AttachedListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_attached: Attached) => {
-                console.log(_attached);
                 if (_attached) {
                   this._notificationService.success(
                     'Anexo agregada correctamente'
@@ -378,7 +382,6 @@ export class AttachedListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

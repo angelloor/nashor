@@ -38,6 +38,7 @@ import { DocumentationProfileListComponent } from '../list/list.component';
 export class DocumentationProfileDetailsComponent implements OnInit {
   nameEntity: string = 'Perfil de documentación';
   private data!: AppInitialData;
+  id_company: string = '';
 
   editMode: boolean = false;
   /**
@@ -117,6 +118,7 @@ export class DocumentationProfileDetailsComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Open the drawer
@@ -180,7 +182,7 @@ export class DocumentationProfileDetailsComponent implements OnInit {
          * get selected attached
          */
         this._attachedService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((attached: Attached[]) => {
             this.listAttached = attached;
@@ -326,7 +328,6 @@ export class DocumentationProfileDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */
@@ -443,7 +444,6 @@ export class DocumentationProfileDetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_documentationProfile: DocumentationProfile) => {
-          console.log(_documentationProfile);
           if (_documentationProfile) {
             this._notificationService.success(
               'Perfil de documentación actualizada correctamente'
@@ -459,7 +459,6 @@ export class DocumentationProfileDetailsComponent implements OnInit {
           }
         },
         error: (error: { error: MessageAPI }) => {
-          console.log(error);
           this._notificationService.error(
             !error.error
               ? '¡Error interno!, consulte al administrador.'
@@ -514,7 +513,6 @@ export class DocumentationProfileDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (response: boolean) => {
-                console.log(response);
                 if (response) {
                   /**
                    * Return if the documentationProfile wasn't deleted...
@@ -553,7 +551,6 @@ export class DocumentationProfileDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

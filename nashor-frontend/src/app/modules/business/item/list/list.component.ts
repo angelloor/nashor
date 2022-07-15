@@ -39,6 +39,7 @@ export class ItemListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   items$!: Observable<Item[]>;
+  id_company: string = '';
 
   openMatDrawer: boolean = false;
 
@@ -107,16 +108,17 @@ export class ItemListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the items
      */
     this.items$ = this._itemService.items$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._itemService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((items: Item[]) => {
         /**
@@ -153,7 +155,10 @@ export class ItemListComponent implements OnInit {
           /**
            * Search
            */
-          return this._itemService.queryRead(query.toLowerCase());
+          return this._itemService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -362,7 +367,6 @@ export class ItemListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_item: Item) => {
-                console.log(_item);
                 if (_item) {
                   this._notificationService.success(
                     'Artículo agregada correctamente'
@@ -378,7 +382,6 @@ export class ItemListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

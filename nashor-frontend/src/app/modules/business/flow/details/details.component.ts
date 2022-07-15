@@ -34,6 +34,7 @@ export class FlowDetailsComponent implements OnInit {
   listProcessType: ProcessType[] = [];
   selectedProcessType: ProcessType = processType;
   flowVersions!: FlowVersion[];
+  id_company: string = '';
 
   nameEntity: string = 'Flujo';
   private data!: AppInitialData;
@@ -107,6 +108,7 @@ export class FlowDetailsComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Open the drawer
@@ -151,7 +153,7 @@ export class FlowDetailsComponent implements OnInit {
 
         // ProcessType
         this._processTypeService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((process_types: ProcessType[]) => {
             this.listProcessType = process_types;
@@ -205,7 +207,6 @@ export class FlowDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */
@@ -311,7 +312,6 @@ export class FlowDetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_flow: Flow) => {
-          console.log(_flow);
           if (_flow) {
             this._notificationService.success(
               'Flujo actualizada correctamente'
@@ -327,7 +327,6 @@ export class FlowDetailsComponent implements OnInit {
           }
         },
         error: (error: { error: MessageAPI }) => {
-          console.log(error);
           this._notificationService.error(
             !error.error
               ? '¡Error interno!, consulte al administrador.'
@@ -378,7 +377,6 @@ export class FlowDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (response: boolean) => {
-                console.log(response);
                 if (response) {
                   /**
                    * Return if the flow wasn't deleted...
@@ -417,7 +415,6 @@ export class FlowDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

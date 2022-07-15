@@ -398,7 +398,7 @@ export class UserDetailsComponent implements OnInit {
 
         // TypeUser
         this._typeUserService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((type_users: TypeUser[]) => {
             this.listTypeUser = type_users;

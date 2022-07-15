@@ -39,6 +39,7 @@ export class PositionListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   positions$!: Observable<Position[]>;
+  id_company: string = '';
 
   openMatDrawer: boolean = false;
 
@@ -107,16 +108,17 @@ export class PositionListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the positions
      */
     this.positions$ = this._positionService.positions$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._positionService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((positions: Position[]) => {
         /**
@@ -153,7 +155,10 @@ export class PositionListComponent implements OnInit {
           /**
            * Search
            */
-          return this._positionService.queryRead(query.toLowerCase());
+          return this._positionService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -362,7 +367,6 @@ export class PositionListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_position: Position) => {
-                console.log(_position);
                 if (_position) {
                   this._notificationService.success(
                     'Cargo agregada correctamente'
@@ -378,7 +382,6 @@ export class PositionListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

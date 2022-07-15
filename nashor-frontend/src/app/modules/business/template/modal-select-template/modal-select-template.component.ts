@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { AppInitialData } from 'app/core/app/app.type';
 import { Subject, takeUntil } from 'rxjs';
 import { TemplateService } from '../template.service';
 import { Template } from '../template.types';
@@ -12,13 +14,16 @@ import { ModalSelectTemplateService } from './modal-select-template.service';
 })
 export class ModalSelectTemplateComponent implements OnInit {
   id_template: string = '';
+  id_company: string = '';
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   listTemplate: Template[] = [];
   selectTemplateForm!: FormGroup;
+  private data!: AppInitialData;
 
   constructor(
+    private _store: Store<{ global: AppInitialData }>,
     @Inject(MAT_DIALOG_DATA) public _data: any,
     private _formBuilder: FormBuilder,
     private _templateService: TemplateService,
@@ -27,10 +32,17 @@ export class ModalSelectTemplateComponent implements OnInit {
 
   ngOnInit(): void {
     /**
+     * Subscribe to user changes of state
+     */
+    this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
+      this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
+    });
+    /**
      * get the list of template
      */
     this._templateService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((_templates: Template[]) => {
         this.listTemplate = _templates;

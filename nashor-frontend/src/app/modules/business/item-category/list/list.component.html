@@ -38,7 +38,7 @@
                             <mat-form-field class="angel-mat-dense angel-mat-no-subscript w-full min-w-50">
                                 <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
                                 <input matInput [formControl]="searchInputControl" [autocomplete]="'off'"
-                                    [placeholder]="'Buscar por nombre de la categoría del artículo'">
+                                    [placeholder]="'Buscar por name_item_category'">
                             </mat-form-field>
                         </div>
                         <!-- Add button -->
@@ -70,7 +70,7 @@
                                         <div class="font-medium leading-5 truncate">{{itemCategory.name_item_category}}
                                         </div>
                                         <div class="leading-5 truncate text-secondary">
-                                            {{itemCategory.name_item_category}}</div>
+                                            {{itemCategory.description_item_category}}</div>
                                     </div>
                                 </div>
                             </ng-container>

@@ -21,7 +21,7 @@ export class SessionListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   sessions$!: Observable<Session[]>;
-
+  id_company: string = '';
   _urlPathAvatar: string = environment.urlBackend + '/resource/img/avatar/';
 
   openMatDrawer: boolean = false;
@@ -78,6 +78,7 @@ export class SessionListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the sessions

@@ -62,7 +62,7 @@ export const validation = (level: Level, url: string, token: string) => {
 						 * Validation company
 						 */
 
-						if (url == '/update') {
+						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_company',
 								level.company.id_company,
@@ -78,7 +78,7 @@ export const validation = (level: Level, url: string, token: string) => {
 						 * Validation template
 						 */
 
-						if (url == '/update') {
+						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_template',
 								level.template.id_template,

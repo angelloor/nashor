@@ -97,7 +97,6 @@ export class TemplatesComponent implements OnInit {
       .queryRead('*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((templates: Template[]) => {
-        console.log(templates);
         /**
          * Update the counts
          */

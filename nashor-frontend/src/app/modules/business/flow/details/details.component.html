@@ -24,7 +24,12 @@
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'"></mat-icon>
                         <span class="ml-1">Editar</span>
                     </button>
-                    <button mat-stroked-button class="ml-auto" [matTooltip]="'Cerrar'" [routerLink]="['../']">
+                    <!-- openModalVersion -->
+                    <button mat-flat-button class="ml-auto" [color]="'primary'" [matTooltip]="'Ver versiones'"
+                        (click)="openModalVersion()">
+                        Versiones
+                    </button>
+                    <button mat-stroked-button [matTooltip]="'Cerrar'" class="ml-2" [routerLink]="['../']">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:x'"></mat-icon>
                         <span class="ml-1">Cerrar</span>
                     </button>
@@ -147,14 +152,7 @@
                                 [placeholder]="'description_flow'" [spellcheck]="false">
                         </mat-form-field>
                     </div>
-                    <!-- Nivels -->
-                    <div class="mt-8">
-                        <div class="group inline-flex items-center mt-2 -ml-4 py-2 px-4 rounded cursor-pointer"
-                            (click)="openModalVersion()">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:view-list'"></mat-icon>
-                            <span class="ml-2 font-medium text-secondary group-hover:underline">Ver versiones</span>
-                        </div>
-                    </div>
+
                 </form>
             </div>
         </div>

@@ -39,6 +39,7 @@ export class AreaListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   areas$!: Observable<Area[]>;
+  id_company: string = '';
 
   openMatDrawer: boolean = false;
 
@@ -107,16 +108,17 @@ export class AreaListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the areas
      */
     this.areas$ = this._areaService.areas$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._areaService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((areas: Area[]) => {
         /**
@@ -153,7 +155,10 @@ export class AreaListComponent implements OnInit {
           /**
            * Search
            */
-          return this._areaService.queryRead(query.toLowerCase());
+          return this._areaService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -362,7 +367,6 @@ export class AreaListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_area: Area) => {
-                console.log(_area);
                 if (_area) {
                   this._notificationService.success(
                     'Área agregada correctamente'
@@ -378,7 +382,6 @@ export class AreaListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

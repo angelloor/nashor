@@ -30,7 +30,7 @@ export const view_official_query_read = (official: Official) => {
 
 		const query = `select * from business.view_official_inner_join bvoij${
 			name_user != '*'
-				? ` where lower(bvoij.name_user) LIKE '%${name_user}%'`
+				? ` where (lower(bvoij.name_user) LIKE '%${name_user}%' or lower(bvoij.dni_person) LIKE '%${name_user}%'  or lower(bvoij.name_person) LIKE '%${name_user}%')`
 				: ``
 		} order by bvoij.id_official desc`;
 
@@ -58,9 +58,31 @@ export const view_official_by_company_query_read = (official: Official) => {
 
 		const query = `select * from business.view_official_inner_join bvoij${
 			name_user != '*'
-				? ` where lower(bvoij.name_user) LIKE '%${name_user}%' and bvoij.id_company = ${official.company}`
+				? ` where (lower(bvoij.name_user) LIKE '%${name_user}%' or lower(bvoij.dni_person) LIKE '%${name_user}%'  or lower(bvoij.name_person) LIKE '%${name_user}%') and bvoij.id_company = ${official.company}`
 				: ` where bvoij.id_company = ${official.company}`
 		} order by bvoij.id_official desc`;
+
+		// console.log(query);
+
+		try {
+			const response = await clientANGELPostgreSQL.query(query);
+			resolve(response.rows);
+		} catch (error: any) {
+			if (error.detail == '_database') {
+				reject({
+					..._messages[3],
+					description: error.toString().slice(7),
+				});
+			} else {
+				reject(error.toString());
+			}
+		}
+	});
+};
+
+export const view_official_by_user_read = (official: Official) => {
+	return new Promise<Official[]>(async (resolve, reject) => {
+		const query = `select * from business.view_official_inner_join bvoij where bvoij.id_user = ${official.user}`;
 
 		// console.log(query);
 
@@ -86,7 +108,7 @@ export const view_official_by_area_query_read = (official: Official) => {
 
 		const query = `select * from business.view_official_inner_join bvoij${
 			name_user != '*'
-				? ` where lower(bvoij.name_user) LIKE '%${name_user}%' and bvoij.id_area = ${official.area}`
+				? ` where (lower(bvoij.name_user) LIKE '%${name_user}%' or lower(bvoij.dni_person) LIKE '%${name_user}%'  or lower(bvoij.name_person) LIKE '%${name_user}%') and bvoij.id_area = ${official.area}`
 				: ` where bvoij.id_area = ${official.area}`
 		} order by bvoij.id_official desc`;
 
@@ -114,7 +136,7 @@ export const view_official_by_position_query_read = (official: Official) => {
 
 		const query = `select * from business.view_official_inner_join bvoij${
 			name_user != '*'
-				? ` where lower(bvoij.name_user) LIKE '%${name_user}%' and bvoij.id_position = ${official.position}`
+				? ` where (lower(bvoij.name_user) LIKE '%${name_user}%' or lower(bvoij.dni_person) LIKE '%${name_user}%'  or lower(bvoij.name_person) LIKE '%${name_user}%') and bvoij.id_position = ${official.position}`
 				: ` where bvoij.id_position = ${official.position}`
 		} order by bvoij.id_official desc`;
 

@@ -154,14 +154,15 @@
                             <input matInput maxlength="250" [formControlName]="'description_documentation_profile'"
                                 [placeholder]="'description_documentation_profile'" [spellcheck]="false">
                         </mat-form-field>
-                    </div> <!-- status_documentation_profile -->
+                    </div>
+                    <!-- status_documentation_profile -->
                     <div class="mt-8">
                         <mat-form-field class="angel-mat-no-subscript w-full">
-                            <mat-label>statusDocumentationProfile</mat-label>
-                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
-                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
-                            <input matInput [formControlName]="'status_documentation_profile'"
-                                [placeholder]="'status_documentation_profile'" [spellcheck]="false">
+                            <mat-label>Estado</mat-label>
+                            <mat-select [formControlName]="'status_documentation_profile'" [value]="false">
+                                <mat-option [value]="true">Activo</mat-option>
+                                <mat-option [value]="false">Inactivo</mat-option>
+                            </mat-select>
                         </mat-form-field>
                     </div>
                     <!-- Attacheds -->

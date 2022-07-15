@@ -39,6 +39,7 @@ export class LevelProfileListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   levelProfiles$!: Observable<LevelProfile[]>;
+  id_company: string = '';
 
   openMatDrawer: boolean = false;
 
@@ -107,16 +108,17 @@ export class LevelProfileListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the levelProfiles
      */
     this.levelProfiles$ = this._levelProfileService.levelProfiles$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._levelProfileService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((levelProfiles: LevelProfile[]) => {
         /**
@@ -153,7 +155,10 @@ export class LevelProfileListComponent implements OnInit {
           /**
            * Search
            */
-          return this._levelProfileService.queryRead(query.toLowerCase());
+          return this._levelProfileService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -363,7 +368,6 @@ export class LevelProfileListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_levelProfile: LevelProfile) => {
-                console.log(_levelProfile);
                 if (_levelProfile) {
                   this._notificationService.success(
                     'Perfil del nivel agregada correctamente'
@@ -379,7 +383,6 @@ export class LevelProfileListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

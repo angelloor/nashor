@@ -39,7 +39,6 @@ export class CompanyListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   companys$!: Observable<Company[]>;
-
   openMatDrawer: boolean = false;
 
   private data!: AppInitialData;

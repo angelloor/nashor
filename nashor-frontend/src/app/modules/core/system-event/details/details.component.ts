@@ -27,7 +27,7 @@ import { SystemEvent } from '../system-event.types';
 export class SystemEventDetailsComponent implements OnInit {
   listUser: User[] = [];
   selectedUser: User = user;
-
+  id_company: string = '';
   nameEntity: string = 'Evento del sistema';
   private data!: AppInitialData;
 
@@ -98,6 +98,7 @@ export class SystemEventDetailsComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Open the drawer
@@ -146,7 +147,7 @@ export class SystemEventDetailsComponent implements OnInit {
 
         // User
         this._userService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((users: User[]) => {
             this.listUser = users;

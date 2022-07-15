@@ -15,10 +15,11 @@
                 <mat-form-field class="angel-mat-no-subscript w-full">
                     <mat-label>Funcionarios</mat-label>
                     <mat-select [formControlName]="'id_level_profile_official'" (selectionChange)="changeSelect()">
-                        <mat-option *ngFor="let category of listLevelProfileOfficial"
-                            [value]="category.id_level_profile_official"
-                            [matTooltip]="category.official.user.person.dni_person">
-                            {{category.official.user.person.name_person}}
+                        <mat-option *ngFor="let item of listLevelProfileOfficial"
+                            [value]="item.id_level_profile_official" [disabled]="item.isSelected"
+                            [matTooltip]="item.official.user.person.dni_person">
+                            {{item.official.user.person.name_person}}
+                            {{item.official.user.person.last_name_person}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -26,7 +27,7 @@
             <div class="flex flex-col w-1/4 pl-5">
                 <mat-form-field class="angel-mat-no-subscript w-full">
                     <mat-label>Tareas</mat-label>
-                    <input matInput [formControlName]="'number_task'">
+                    <input matInput [formControlName]="'number_task'" readonly>
                 </mat-form-field>
             </div>
         </div>

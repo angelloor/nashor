@@ -77,7 +77,6 @@ export class FlowVersionService {
                * check the response body to match with the type
                */
               const _flowVersion: FlowVersion = response.body;
-              console.log(_flowVersion);
               /**
                * Update the flowVersion in the store
                */
@@ -170,14 +169,12 @@ export class FlowVersionService {
                * check the response body to match with the type
                */
               const _flowVersion: FlowVersion = response.body;
-              console.log(_flowVersion);
               /**
                * Find the index of the updated flowVersion
                */
               const index = flowVersions.findIndex(
                 (item) => item.id_flow_version == flowVersion.id_flow_version
               );
-              console.log(index);
               /**
                * Update the flowVersion
                */
@@ -220,7 +217,6 @@ export class FlowVersionService {
                 const index = flowVersions.findIndex(
                   (item) => item.id_flow_version == id_flow_version
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

@@ -161,7 +161,6 @@ export class AreaDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */
@@ -263,7 +262,6 @@ export class AreaDetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_area: Area) => {
-          console.log(_area);
           if (_area) {
             this._notificationService.success('Área actualizada correctamente');
             /**
@@ -277,7 +275,6 @@ export class AreaDetailsComponent implements OnInit {
           }
         },
         error: (error: { error: MessageAPI }) => {
-          console.log(error);
           this._notificationService.error(
             !error.error
               ? '¡Error interno!, consulte al administrador.'
@@ -328,7 +325,6 @@ export class AreaDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (response: boolean) => {
-                console.log(response);
                 if (response) {
                   /**
                    * Return if the area wasn't deleted...
@@ -367,7 +363,6 @@ export class AreaDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

@@ -67,7 +67,6 @@ export class AreaService {
                * check the response body to match with the type
                */
               const _area: Area = response.body;
-              console.log(_area);
               /**
                * Update the area in the store
                */
@@ -178,14 +177,12 @@ export class AreaService {
                * check the response body to match with the type
                */
               const _area: Area = response.body;
-              console.log(_area);
               /**
                * Find the index of the updated area
                */
               const index = areas.findIndex(
                 (item) => item.id_area == area.id_area
               );
-              console.log(index);
               /**
                * Update the area
                */
@@ -228,7 +225,6 @@ export class AreaService {
                 const index = areas.findIndex(
                   (item) => item.id_area == id_area
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

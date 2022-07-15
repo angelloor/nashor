@@ -30,7 +30,7 @@ export class ModalTemplateComponent implements OnInit {
   id_template: any;
   categoriesDocumentationProfile: DocumentationProfile[] = [];
   selectedDocumentationProfile: DocumentationProfile = documentationProfile;
-
+  id_company: string = '';
   nameEntity: string = 'Plantilla';
   private data!: AppInitialData;
 
@@ -95,6 +95,7 @@ export class ModalTemplateComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Create the template form
@@ -139,7 +140,7 @@ export class ModalTemplateComponent implements OnInit {
 
         // DocumentationProfile
         this._documentationProfileService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((documentation_profiles: DocumentationProfile[]) => {
             this.categoriesDocumentationProfile = documentation_profiles;

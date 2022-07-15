@@ -135,6 +135,12 @@ const businessRoutes: Route[] = [
     loadChildren: () =>
       import('./process/process.module').then((m) => m.ProcessModule),
   },
+  {
+    path: 'task',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    loadChildren: () => import('./task/task.module').then((m) => m.TaskModule),
+  },
 ];
 
 @NgModule({

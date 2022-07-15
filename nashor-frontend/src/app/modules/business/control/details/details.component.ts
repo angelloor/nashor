@@ -228,7 +228,6 @@ export class ControlDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */
@@ -337,7 +336,6 @@ export class ControlDetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_control: Control) => {
-          console.log(_control);
           if (_control) {
             this._notificationService.success(
               'Control actualizada correctamente'
@@ -353,7 +351,6 @@ export class ControlDetailsComponent implements OnInit {
           }
         },
         error: (error: { error: MessageAPI }) => {
-          console.log(error);
           this._notificationService.error(
             !error.error
               ? '¡Error interno!, consulte al administrador.'
@@ -405,7 +402,6 @@ export class ControlDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (response: boolean) => {
-                console.log(response);
                 if (response) {
                   /**
                    * Return if the control wasn't deleted...
@@ -444,7 +440,6 @@ export class ControlDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

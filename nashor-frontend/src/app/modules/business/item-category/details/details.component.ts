@@ -165,7 +165,6 @@ export class ItemCategoryDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */
@@ -267,7 +266,6 @@ export class ItemCategoryDetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_itemCategory: ItemCategory) => {
-          console.log(_itemCategory);
           if (_itemCategory) {
             this._notificationService.success(
               'Categoría del artículo actualizada correctamente'
@@ -283,7 +281,6 @@ export class ItemCategoryDetailsComponent implements OnInit {
           }
         },
         error: (error: { error: MessageAPI }) => {
-          console.log(error);
           this._notificationService.error(
             !error.error
               ? '¡Error interno!, consulte al administrador.'
@@ -336,7 +333,6 @@ export class ItemCategoryDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (response: boolean) => {
-                console.log(response);
                 if (response) {
                   /**
                    * Return if the itemCategory wasn't deleted...
@@ -375,7 +371,6 @@ export class ItemCategoryDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

@@ -34,6 +34,8 @@ import { LevelListComponent } from '../list/list.component';
   animations: angelAnimations,
 })
 export class LevelDetailsComponent implements OnInit {
+  id_company: string = '';
+
   listTemplate: Template[] = [];
   selectedTemplate: Template = template;
 
@@ -115,6 +117,7 @@ export class LevelDetailsComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Open the drawer
@@ -161,7 +164,7 @@ export class LevelDetailsComponent implements OnInit {
 
         // Template
         this._templateService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((templates: Template[]) => {
             this.listTemplate = templates;
@@ -174,7 +177,7 @@ export class LevelDetailsComponent implements OnInit {
 
         // LevelProfile
         this._levelProfileService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((level_profiles: LevelProfile[]) => {
             this.listLevelProfile = level_profiles;
@@ -188,7 +191,7 @@ export class LevelDetailsComponent implements OnInit {
 
         // LevelStatus
         this._levelStatusService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((level_statuss: LevelStatus[]) => {
             this.listLevelStatus = level_statuss;
@@ -224,7 +227,6 @@ export class LevelDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */
@@ -338,7 +340,6 @@ export class LevelDetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_level: Level) => {
-          console.log(_level);
           if (_level) {
             this._notificationService.success(
               'Nivel actualizada correctamente'
@@ -354,7 +355,6 @@ export class LevelDetailsComponent implements OnInit {
           }
         },
         error: (error: { error: MessageAPI }) => {
-          console.log(error);
           this._notificationService.error(
             !error.error
               ? '¡Error interno!, consulte al administrador.'
@@ -405,7 +405,6 @@ export class LevelDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (response: boolean) => {
-                console.log(response);
                 if (response) {
                   /**
                    * Return if the level wasn't deleted...
@@ -444,7 +443,6 @@ export class LevelDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

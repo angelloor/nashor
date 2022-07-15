@@ -141,7 +141,7 @@ export const validation = (template: Template, url: string, token: string) => {
 						 * Validation company
 						 */
 
-						if (url == '/update') {
+						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_company',
 								template.company.id_company,

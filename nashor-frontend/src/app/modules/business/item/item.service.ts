@@ -67,7 +67,6 @@ export class ItemService {
                * check the response body to match with the type
                */
               const _item: Item = response.body;
-              console.log(_item);
               /**
                * Update the item in the store
                */
@@ -202,14 +201,12 @@ export class ItemService {
                * check the response body to match with the type
                */
               const _item: Item = response.body;
-              console.log(_item);
               /**
                * Find the index of the updated item
                */
               const index = items.findIndex(
                 (item) => item.id_item == item.id_item
               );
-              console.log(index);
               /**
                * Update the item
                */
@@ -252,7 +249,6 @@ export class ItemService {
                 const index = items.findIndex(
                   (item) => item.id_item == id_item
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

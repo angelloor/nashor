@@ -96,7 +96,7 @@ export const validation = (
 						 * Validation company
 						 */
 
-						if (url == '/update') {
+						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_company',
 								process_type.company.id_company,

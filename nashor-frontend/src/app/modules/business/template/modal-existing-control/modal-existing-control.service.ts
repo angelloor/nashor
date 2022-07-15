@@ -12,9 +12,12 @@ export class ModalExistingControlService {
     private _layoutService: LayoutService
   ) {}
 
+  dialogRef: any;
+
   openExistingControl(id_user: string, id_template: string) {
     this._layoutService.setOpenModal(true);
-    return this._dialog.open(ModalExistingControlComponent, {
+
+    return (this.dialogRef = this._dialog.open(ModalExistingControlComponent, {
       minHeight: 'inherit',
       maxHeight: 'inherit',
       height: 'auto',
@@ -26,10 +29,10 @@ export class ModalExistingControlService {
         id_template,
       },
       disableClose: true,
-    });
+    }));
   }
 
   closeExistingControl() {
-    this._dialog.closeAll();
+    this.dialogRef.close();
   }
 }

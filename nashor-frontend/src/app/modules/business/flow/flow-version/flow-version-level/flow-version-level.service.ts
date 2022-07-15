@@ -12,7 +12,7 @@ import {
   throwError,
 } from 'rxjs';
 import { flowVersionLevel, flowVersionLevels } from './flow-version-level.data';
-import { FlowVersionLevel } from './flow-version-level.types';
+import { FlowVersionLevel, TYPE_ELEMENT } from './flow-version-level.types';
 
 @Injectable({
   providedIn: 'root',
@@ -38,6 +38,12 @@ export class FlowVersionLevelService {
     return this._flowVersionLevel.asObservable();
   }
   /**
+   * Setter
+   */
+  set $flowVersionLevels(flow_version_levels: FlowVersionLevel[]) {
+    this._flowVersionLevels.next(flow_version_levels);
+  }
+  /**
    * Getter for _flowVersionLevels
    */
   get flowVersionLevels$(): Observable<FlowVersionLevel[]> {
@@ -46,8 +52,11 @@ export class FlowVersionLevelService {
   /**
    * create
    */
-  create(id_user_: string, id_flow_version: string): Observable<any> {
-    console.log(id_flow_version);
+  create(
+    id_user_: string,
+    id_flow_version: string,
+    type_element: TYPE_ELEMENT
+  ): Observable<any> {
     return this._flowVersionLevels.pipe(
       take(1),
       switchMap((flowVersionLevels) =>
@@ -59,6 +68,7 @@ export class FlowVersionLevelService {
               flow_version: {
                 id_flow_version: parseInt(id_flow_version),
               },
+              type_element,
             },
             {
               headers: this._headers,
@@ -70,7 +80,6 @@ export class FlowVersionLevelService {
                * check the response body to match with the type
                */
               const _flowVersionLevel: FlowVersionLevel = response.body;
-              console.log(_flowVersionLevel);
               /**
                * Update the flowVersionLevel in the store
                */
@@ -191,7 +200,6 @@ export class FlowVersionLevelService {
                * check the response body to match with the type
                */
               const _flowVersionLevel: FlowVersionLevel = response.body;
-              console.log(_flowVersionLevel);
               /**
                * Find the index of the updated flowVersionLevel
                */
@@ -200,7 +208,6 @@ export class FlowVersionLevelService {
                   item.id_flow_version_level ==
                   flowVersionLevel.id_flow_version_level
               );
-              console.log(index);
               /**
                * Update the flowVersionLevel
                */
@@ -282,7 +289,6 @@ export class FlowVersionLevelService {
                 const index = flowVersionLevels.findIndex(
                   (item) => item.id_flow_version_level == id_flow_version_level
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

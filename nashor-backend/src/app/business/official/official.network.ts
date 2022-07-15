@@ -38,6 +38,16 @@ routerOfficial.get(
 	}
 );
 
+routerOfficial.get('/byUserRead/:user', async (req: any, res: any) => {
+	await validation(req.params, req.url, req.headers.token)
+		.then((officials: Official[]) => {
+			res.status(200).send(officials);
+		})
+		.catch((err: MessageAPI | any) => {
+			error(res, err);
+		});
+});
+
 routerOfficial.get(
 	'/byAreaQueryRead/:area/:user',
 	async (req: any, res: any) => {

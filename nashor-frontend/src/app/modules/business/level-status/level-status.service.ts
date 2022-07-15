@@ -71,7 +71,6 @@ export class LevelStatusService {
                * check the response body to match with the type
                */
               const _levelStatus: LevelStatus = response.body;
-              console.log(_levelStatus);
               /**
                * Update the levelStatus in the store
                */
@@ -187,14 +186,12 @@ export class LevelStatusService {
                * check the response body to match with the type
                */
               const _levelStatus: LevelStatus = response.body;
-              console.log(_levelStatus);
               /**
                * Find the index of the updated levelStatus
                */
               const index = levelStatuss.findIndex(
                 (item) => item.id_level_status == levelStatus.id_level_status
               );
-              console.log(index);
               /**
                * Update the levelStatus
                */
@@ -237,7 +234,6 @@ export class LevelStatusService {
                 const index = levelStatuss.findIndex(
                   (item) => item.id_level_status == id_level_status
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

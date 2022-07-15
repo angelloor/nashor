@@ -1,0 +1,123 @@
+<div class="relative flex flex-col w-full h-full">
+
+    <!-- Header -->
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg">Editar</div>
+        <button mat-icon-button (click)="closeModalEditFlowVersionLevel()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+    <!-- Edit level -->
+    <form class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto" [formGroup]="flowVersionLevelForm">
+        <div class="flex flex-col w-full">
+            <!-- Edit mode -->
+            <ng-container>
+                <!-- form -->
+                <div class="flex flex-col md:flex-col flex-auto justify-between">
+                    <!-- Actions -->
+                    <div class="flex items-center py-4 py-0 dark:bg-transparent rounded-t-none rounded-b-2xl">
+                        <!-- toggleEditMode -->
+                        <button mat-flat-button [color]="'primary'" [disabled]="flowVersionLevelForm.invalid"
+                            *ngIf="!editMode" [matTooltip]="'Editar'" (click)="toggleEditMode()">
+                            Editar
+                        </button>
+                        <!-- Save -->
+                        <button mat-flat-button [color]="'primary'" [disabled]="flowVersionLevelForm.invalid"
+                            *ngIf="editMode" [matTooltip]="'Guardar'" (click)="updateFlowVersionLevel()">
+                            Guardar
+                        </button>
+                        <!-- Cancel -->
+                        <button mat-stroked-button class="ml-auto" [matTooltip]="'Cancelar'" *ngIf="editMode"
+                            (click)="toggleEditMode(false)">
+                            Cancelar
+                        </button>
+                    </div>
+                    <form [formGroup]="flowVersionLevelForm">
+                        <!-- Alert -->
+                        <angel-alert class="mt-8" *ngIf="flowVersionLevelForm.invalid || showAlert"
+                            [appearance]="'outline'" [showIcon]="false" [type]="alert.type"
+                            [@shake]="alert.type === 'error'">
+                            <!-- Message if alert is actived for the component -->
+                            {{alert.message}}
+                            <!-- position_level -->
+                            <mat-error *ngIf="flowVersionLevelForm.get('position_level')?.hasError('required')">
+                                • Ingrese position_level
+                            </mat-error>
+                            <!-- type_element -->
+                            <mat-error *ngIf="flowVersionLevelForm.get('type_element')?.hasError('required')">
+                                • Ingrese type_element
+                            </mat-error>
+                        </angel-alert>
+                        <!-- Alert -->
+                        <!-- type_element -->
+                        <div class="mt-8">
+                            <mat-form-field class="angel-mat-no-subscript w-full">
+                                <mat-label>type_element</mat-label>
+                                <mat-select [formControlName]="'type_element'"
+                                    (selectionChange)="selectionChangeTypeElement()">
+                                    <ng-container *ngFor="let element of typeElements">
+                                        <mat-option [value]="element.value_type">
+                                            {{element.name_type}}</mat-option>
+                                    </ng-container>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <!-- id_level -->
+                        <div class="mt-8" *ngIf="!(typeElement === 'conditional' && !this.havedRelations)">
+                            <mat-form-field class="angel-mat-no-subscript w-full">
+                                <mat-label>Level</mat-label>
+                                <mat-select [formControlName]="'id_level'" [value]="selectedLevel.id_level"
+                                    (selectionChange)="selectionChangeLevel()">
+                                    <ng-container *ngFor="let element of listLevel">
+                                        <mat-option [value]="element.id_level">
+                                            {{element.name_level}}</mat-option>
+                                    </ng-container>
+                                </mat-select>
+                            </mat-form-field>
+                        </div> <!-- id_control -->
+                        <div class="mt-8" *ngIf="typeElement === 'conditional' && this.havedRelations">
+                            <mat-form-field class="angel-mat-no-subscript w-full">
+                                <mat-label>id_control</mat-label>
+                                <mat-select [formControlName]="'id_control'">
+                                    <ng-container *ngFor="let control of listControls">
+                                        <mat-option [value]="control.id_control">
+                                            {{control.form_name_control}}</mat-option>
+                                    </ng-container>
+                                </mat-select>
+                            </mat-form-field>
+                        </div> <!-- operator -->
+                        <div class="mt-8" *ngIf="typeElement === 'conditional' && this.havedRelations">
+                            <mat-form-field class="angel-mat-no-subscript w-full">
+                                <mat-label>operator</mat-label>
+                                <mat-select [formControlName]="'operator'">
+                                    <ng-container *ngFor="let operator of typeOperator">
+                                        <mat-option [value]="operator.value_type">
+                                            {{operator.name_type}}</mat-option>
+                                    </ng-container>
+                                </mat-select>
+                            </mat-form-field>
+                        </div> <!-- value_against -->
+                        <div class="mt-8" *ngIf="typeElement === 'conditional' && this.havedRelations">
+                            <mat-form-field class="angel-mat-no-subscript w-full">
+                                <mat-label>valueAgainst</mat-label>
+                                <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                    [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                                <input matInput maxlength="250" [formControlName]="'value_against'"
+                                    [placeholder]="'value_against'" [spellcheck]="false">
+                            </mat-form-field>
+                        </div> <!-- option_true -->
+                        <div class="mt-8" *ngIf="typeElement === 'level' && flowVersionLevel.position_level != 1">
+                            <mat-form-field class="angel-mat-no-subscript w-full">
+                                <mat-label>optionTrue</mat-label>
+                                <mat-select [formControlName]="'option_true'">
+                                    <mat-option [value]="true">Si</mat-option>
+                                    <mat-option [value]="false">No</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </form>
+                </div>
+            </ng-container>
+        </div>
+    </form>
+</div>

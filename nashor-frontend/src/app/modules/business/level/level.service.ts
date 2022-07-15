@@ -74,7 +74,6 @@ export class LevelService {
                * check the response body to match with the type
                */
               const _level: Level = response.body;
-              console.log(_level);
               /**
                * Update the level in the store
                */
@@ -253,14 +252,12 @@ export class LevelService {
                * check the response body to match with the type
                */
               const _level: Level = response.body;
-              console.log(_level);
               /**
                * Find the index of the updated level
                */
               const index = levels.findIndex(
                 (item) => item.id_level == level.id_level
               );
-              console.log(index);
               /**
                * Update the level
                */
@@ -303,7 +300,6 @@ export class LevelService {
                 const index = levels.findIndex(
                   (item) => item.id_level == id_level
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

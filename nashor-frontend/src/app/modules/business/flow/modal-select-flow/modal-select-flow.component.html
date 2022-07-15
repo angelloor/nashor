@@ -15,8 +15,8 @@
                 <mat-label>Flujos</mat-label>
                 <mat-select [formControlName]="'id_flow'" (selectionChange)="changeSelect()">
                     <mat-option *ngFor="let element of listFlow" [value]="element.id_flow"
-                        [matTooltip]="element.id_flow">
-                        {{element.id_flow}}
+                        [matTooltip]="element.description_flow">
+                        {{element.name_flow}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

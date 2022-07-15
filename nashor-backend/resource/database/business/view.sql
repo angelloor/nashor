@@ -405,7 +405,10 @@ ALTER TABLE business.view_level_profile_inner_join
 
 CREATE OR REPLACE VIEW business.view_level_profile_official_inner_join
  AS
- SELECT bvlpo.id_level_profile_official,
+ SELECT (( SELECT count(*) AS count
+           FROM business.view_task bvt
+          WHERE bvt.id_official = bvlpo.id_official AND bvt.type_status_task = 'progress'::business."TYPE_STATUS_TASK"))::numeric AS number_task,
+    bvlpo.id_level_profile_official,
     bvlpo.id_level_profile,
     bvlpo.id_official,
     bvlpo.official_modifier,
@@ -414,24 +417,24 @@ CREATE OR REPLACE VIEW business.view_level_profile_official_inner_join
     bvo.id_user,
     bvo.id_area,
     bvo.id_position,
-    cvu.id_person, 
-    cvu.id_type_user, 
-    cvu.name_user, 
-    cvu.password_user, 
-    cvu.avatar_user, 
-    cvu.status_user, 
-    cvp.id_academic, 
-    cvp.id_job, 
-    cvp.dni_person, 
-    cvp.name_person, 
-    cvp.last_name_person, 
-    cvp.address_person, 
+    cvu.id_person,
+    cvu.id_type_user,
+    cvu.name_user,
+    cvu.password_user,
+    cvu.avatar_user,
+    cvu.status_user,
+    cvp.id_academic,
+    cvp.id_job,
+    cvp.dni_person,
+    cvp.name_person,
+    cvp.last_name_person,
+    cvp.address_person,
     cvp.phone_person
    FROM business.view_level_profile_official bvlpo
      JOIN business.view_level_profile bvlp ON bvlpo.id_level_profile = bvlp.id_level_profile
      JOIN business.view_official bvo ON bvlpo.id_official = bvo.id_official
-	   JOIN core.view_user cvu on bvo.id_user = cvu.id_user
-	   JOIN core.view_person cvp on cvu.id_person = cvp.id_person
+     JOIN core.view_user cvu ON bvo.id_user = cvu.id_user
+     JOIN core.view_person cvp ON cvu.id_person = cvp.id_person
   ORDER BY bvlpo.id_level_profile_official DESC;
 
 ALTER TABLE business.view_level_profile_official_inner_join
@@ -532,6 +535,7 @@ ALTER TABLE business.view_flow_version_inner_join
     OWNER TO postgres;
 
 -- View: business.view_flow_version_level_inner_join
+-- View: business.view_flow_version_level_inner_join
 -- DROP VIEW business.view_flow_version_level_inner_join;
 
 CREATE OR REPLACE VIEW business.view_flow_version_level_inner_join
@@ -540,12 +544,14 @@ CREATE OR REPLACE VIEW business.view_flow_version_level_inner_join
     bvfvl.id_flow_version,
     bvfvl.id_level,
     bvfvl.position_level,
-    bvfvl.is_level,
-    bvfvl.is_go,
-    bvfvl.is_finish,
-    bvfvl.is_conditional,
-    bvfvl.type_conditional,
-    bvfvl.expression,
+    bvfvl.position_level_father,
+    bvfvl.type_element,
+    bvfvl.id_control,
+    bvfvl.operator,
+    bvfvl.value_against,
+    bvfvl.option_true,
+    bvfvl.x,
+    bvfvl.y,
     bvfv.id_flow,
     bvfv.number_flow_version,
     bvfv.status_flow_version,
@@ -599,5 +605,69 @@ CREATE OR REPLACE VIEW business.view_process_inner_join
 ALTER TABLE business.view_process_inner_join
     OWNER TO postgres;
 
+-- View: business.view_control_inner_join_bvt_bvtc_bvc
+-- DROP VIEW business.view_control_inner_join_bvt_bvtc_bvc;
 
+CREATE OR REPLACE VIEW business.view_control_inner_join_bvt_bvtc_bvc
+ AS
+ SELECT bvl.id_level, 
+ 	bvc.id_control,
+    bvc.id_company,
+    bvc.type_control,
+    bvc.title_control,
+    bvc.form_name_control,
+    bvc.initial_value_control,
+    bvc.required_control,
+    bvc.min_length_control,
+    bvc.max_length_control,
+    bvc.placeholder_control,
+    bvc.spell_check_control,
+    bvc.options_control,
+    bvc.in_use,
+    bvc.deleted_control
+   FROM business.view_level bvl
+     JOIN business.view_template bvt ON bvl.id_template = bvt.id_template
+     JOIN business.view_template_control bvtc ON bvt.id_template = bvtc.id_template
+     JOIN business.view_control bvc ON bvtc.id_control = bvc.id_control
+  ORDER BY bvc.id_control DESC;
 
+ALTER TABLE business.view_control_inner_join_bvt_bvtc_bvc
+    OWNER TO postgres;
+
+-- View: business.view_task_inner_join
+-- DROP VIEW business.view_task_inner_join;
+
+CREATE OR REPLACE VIEW business.view_task_inner_join
+ AS
+ SELECT bvt.id_task,
+    bvt.id_process,
+    bvt.id_official,
+    bvt.id_level,
+    bvt.creation_date_task,
+    bvt.type_status_task,
+    bvt.type_action_task,
+    bvt.action_date_task,
+    bvt.deleted_task,
+    bvp.id_process_type,
+    bvp.id_flow_version,
+    bvp.number_process,
+    bvp.date_process,
+    bvp.generated_task,
+    bvp.finalized_process,
+    bvo.id_user,
+    bvo.id_area,
+    bvo.id_position,
+    bvl.id_template,
+    bvl.id_level_profile,
+    bvl.id_level_status,
+    bvl.name_level,
+    bvl.description_level
+   FROM business.view_task bvt
+     JOIN business.view_process bvp ON bvt.id_process = bvp.id_process
+     JOIN business.view_official bvo ON bvt.id_official = bvo.id_official
+     JOIN business.view_level bvl ON bvt.id_level = bvl.id_level
+  WHERE bvt.deleted_task = false
+  ORDER BY bvt.id_task DESC;
+
+ALTER TABLE business.view_task_inner_join
+    OWNER TO postgres;

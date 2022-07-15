@@ -67,7 +67,6 @@ export class ControlService {
                * check the response body to match with the type
                */
               const _control: Control = response.body;
-              console.log(_control);
               /**
                * Update the control in the store
                */
@@ -117,6 +116,29 @@ export class ControlService {
       );
   }
   /**
+   * byLevelAndCompanyRead
+   * @param id_company
+   * @param id_level
+   */
+  byLevelAndCompanyRead(
+    id_company: string,
+    id_level: string
+  ): Observable<Control[]> {
+    return this._httpClient
+      .get<Control[]>(
+        this._url + `/byLevelAndCompanyRead/${id_company}/${id_level}`
+      )
+      .pipe(
+        tap((controls: Control[]) => {
+          if (controls) {
+            this._controls.next(controls);
+          } else {
+            this._controls.next([]);
+          }
+        })
+      );
+  }
+  /**
    * specificRead
    * @param id_control
    */
@@ -126,7 +148,7 @@ export class ControlService {
       .pipe(
         tap((control: Control) => {
           this._control.next(control);
-          return controls;
+          return control;
         })
       );
   }
@@ -179,14 +201,12 @@ export class ControlService {
                * check the response body to match with the type
                */
               const _control: Control = response.body;
-              console.log(_control);
               /**
                * Find the index of the updated control
                */
               const index = controls.findIndex(
                 (item) => item.id_control == control.id_control
               );
-              console.log(index);
               /**
                * Update the control
                */
@@ -229,7 +249,6 @@ export class ControlService {
                 const index = controls.findIndex(
                   (item) => item.id_control == id_control
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

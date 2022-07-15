@@ -77,7 +77,6 @@ export class DocumentationProfileAttachedService {
                */
               const _documentationProfileAttached: DocumentationProfileAttached =
                 response.body;
-              console.log(_documentationProfileAttached);
               /**
                * Update the documentationProfileAttached in the store
                */
@@ -217,7 +216,6 @@ export class DocumentationProfileAttachedService {
                */
               const _documentationProfileAttached: DocumentationProfileAttached =
                 response.body;
-              console.log(_documentationProfileAttached);
               /**
                * Find the index of the updated documentationProfileAttached
                */
@@ -226,7 +224,6 @@ export class DocumentationProfileAttachedService {
                   item.id_documentation_profile_attached ==
                   documentationProfileAttached.id_documentation_profile_attached
               );
-              console.log(index);
               /**
                * Update the documentationProfileAttached
                */
@@ -279,7 +276,6 @@ export class DocumentationProfileAttachedService {
                     item.id_documentation_profile_attached ==
                     id_documentation_profile_attached
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

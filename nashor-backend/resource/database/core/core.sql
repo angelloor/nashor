@@ -688,13 +688,6 @@ BEGIN
 				]
 			},
 			{
-				"id": "business.control",
-				"title": "Control",
-				"type": "basic",
-				"icon": "mat_outline:call_to_action",
-				"link": "/business/control"
-			},
-			{
 				"id": "business.template",
 				"title": "Plantilla",
 				"type": "basic",
@@ -936,13 +929,6 @@ BEGIN
 						"link": "/business/item"
 					}
 				]
-			},
-			{
-				"id": "business.control",
-				"title": "Control",
-				"type": "basic",
-				"icon": "mat_outline:call_to_action",
-				"link": "/business/control"
 			},
 			{
 				"id": "business.template",

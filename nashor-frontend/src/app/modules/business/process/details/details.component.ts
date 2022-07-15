@@ -34,6 +34,8 @@ import { Process } from '../process.types';
   animations: angelAnimations,
 })
 export class ProcessDetailsComponent implements OnInit {
+  id_company: string = '';
+
   listProcessType: ProcessType[] = [];
   selectedProcessType: ProcessType = processType;
 
@@ -115,6 +117,7 @@ export class ProcessDetailsComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Open the drawer
@@ -162,7 +165,7 @@ export class ProcessDetailsComponent implements OnInit {
 
         // ProcessType
         this._processTypeService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((process_types: ProcessType[]) => {
             this.listProcessType = process_types;
@@ -176,7 +179,7 @@ export class ProcessDetailsComponent implements OnInit {
 
         // Official
         this._officialService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((officials: Official[]) => {
             this.listOfficial = officials;
@@ -225,7 +228,6 @@ export class ProcessDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */
@@ -335,7 +337,6 @@ export class ProcessDetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_process: Process) => {
-          console.log(_process);
           if (_process) {
             this._notificationService.success(
               'Procesos actualizada correctamente'
@@ -351,7 +352,6 @@ export class ProcessDetailsComponent implements OnInit {
           }
         },
         error: (error: { error: MessageAPI }) => {
-          console.log(error);
           this._notificationService.error(
             !error.error
               ? '¡Error interno!, consulte al administrador.'
@@ -403,7 +403,6 @@ export class ProcessDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (response: boolean) => {
-                console.log(response);
                 if (response) {
                   /**
                    * Return if the process wasn't deleted...
@@ -442,7 +441,6 @@ export class ProcessDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

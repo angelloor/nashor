@@ -126,15 +126,15 @@
                         [showIcon]="false" [type]="alert.type" [@shake]="alert.type === 'error'">
                         <!-- MessageAPI if alert is actived for the component -->
                         {{alert.message}}
-                        <!-- name_control -->
-                        <mat-error *ngIf="processForm.get('name_control')?.hasError('required')">
-                            • Ingrese name_control
+                        <!-- id_control -->
+                        <mat-error *ngIf="processForm.get('id_control')?.hasError('required')">
+                            • Ingrese id_control
                         </mat-error>
-                        <mat-error *ngIf="processForm.get('name_control')?.hasError('maxlength')">
-                            • longitud maxima name_control
+                        <mat-error *ngIf="processForm.get('id_control')?.hasError('maxlength')">
+                            • longitud maxima id_control
                         </mat-error>
-                        <mat-error *ngIf="processForm.get('name_control')?.hasError('minlength')">
-                            • longitud minima name_control
+                        <mat-error *ngIf="processForm.get('id_control')?.hasError('minlength')">
+                            • longitud minima id_control
                         </mat-error>
                     </angel-alert>
                     <!-- Alert -->

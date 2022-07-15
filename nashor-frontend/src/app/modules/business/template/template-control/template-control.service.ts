@@ -76,7 +76,6 @@ export class TemplateControlService {
                * check the response body to match with the type
                */
               const _templateControl: TemplateControl = response.body;
-              console.log(_templateControl);
               /**
                * Update the templateControl in the store
                */
@@ -248,7 +247,6 @@ export class TemplateControlService {
   updateTemplateControlProperties(
     templateControl: TemplateControl
   ): Observable<any> {
-    console.log(templateControl);
     return this.templateControls$.pipe(
       take(1),
       switchMap((templateControls) =>
@@ -332,7 +330,6 @@ export class TemplateControlService {
                 const index = templateControls.findIndex(
                   (item) => item.id_template_control == id_template_control
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

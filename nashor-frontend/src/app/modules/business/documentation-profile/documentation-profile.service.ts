@@ -9,11 +9,11 @@ import {
   switchMap,
   take,
   tap,
-  throwError
+  throwError,
 } from 'rxjs';
 import {
   documentationProfile,
-  documentationProfiles
+  documentationProfiles,
 } from './documentation-profile.data';
 import { DocumentationProfile } from './documentation-profile.types';
 
@@ -72,7 +72,6 @@ export class DocumentationProfileService {
                * check the response body to match with the type
                */
               const _documentationProfile: DocumentationProfile = response.body;
-              console.log(_documentationProfile);
               /**
                * Update the documentationProfile in the store
                */
@@ -203,7 +202,6 @@ export class DocumentationProfileService {
                * check the response body to match with the type
                */
               const _documentationProfile: DocumentationProfile = response.body;
-              console.log(_documentationProfile);
               /**
                * Find the index of the updated documentationProfile
                */
@@ -212,7 +210,6 @@ export class DocumentationProfileService {
                   item.id_documentation_profile ==
                   documentationProfile.id_documentation_profile
               );
-              console.log(index);
               /**
                * Update the documentationProfile
                */
@@ -256,7 +253,6 @@ export class DocumentationProfileService {
                   (item) =>
                     item.id_documentation_profile == id_documentation_profile
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

@@ -33,6 +33,6 @@ export class ModalSelectTypeValidationService {
   }
 
   closeModalSelectTypeValidationService() {
-    this._dialog.closeAll();
+    this.dialogRef.close();
   }
 }

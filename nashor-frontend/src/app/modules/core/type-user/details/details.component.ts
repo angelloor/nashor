@@ -31,7 +31,7 @@ import { TypeUser } from '../type-user.types';
 export class TypeUserDetailsComponent implements OnInit {
   listProfile: Profile[] = [];
   selectedProfile: Profile = profile;
-
+  id_company: string = '';
   nameEntity: string = 'Tipo de usuario';
   private data!: AppInitialData;
 
@@ -103,6 +103,7 @@ export class TypeUserDetailsComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Open the drawer
@@ -151,7 +152,7 @@ export class TypeUserDetailsComponent implements OnInit {
 
         // Profile
         this._profileService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((profiles: Profile[]) => {
             this.listProfile = profiles;

@@ -6,7 +6,7 @@ import { Official } from './official.types';
 
 export const officials: Official[] = [];
 export const official: Official = {
-  id_official: ' ',
+  id_official: '0',
   company: company,
   user: user,
   area: area,

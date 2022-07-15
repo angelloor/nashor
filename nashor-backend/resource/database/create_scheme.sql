@@ -37,7 +37,6 @@ CREATE TYPE core."TYPE_PROFILE" AS ENUM
 
 
 
-
 /*==============================================================*/
 /* SCHEMA: BUSINESS		                                        */
 /*==============================================================*/
@@ -51,13 +50,25 @@ CREATE TYPE business."TYPE_CONTROL" AS ENUM
     ('input', 'textArea', 'radioButton', 'checkBox', 'select', 'date', 'dateRange');
 
 /*==============================================================*/
-/* Type: TYPE_ACTION                                            */
+/* Type: TYPE_STATUS_TASK                                       */
 /*==============================================================*/
-CREATE TYPE business."TYPE_ACTION" AS ENUM
-    ('progress', 'reassigned', 'finished');
+CREATE TYPE business."TYPE_STATUS_TASK" AS ENUM
+    ('progress', 'finished');
 
 /*==============================================================*/
-/* Type: TYPE_CONDITIONAL                                       */
+/* Type: TYPE_ACTION_TASK                                       */
 /*==============================================================*/
-CREATE TYPE business."TYPE_CONDITIONAL" AS ENUM
-    ('if', 'switch');
+CREATE TYPE business."TYPE_ACTION_TASK" AS ENUM
+    ('dispatched', 'reassigned');
+
+/*==============================================================*/
+/* Type: TYPE_ELEMENT                                           */
+/*==============================================================*/
+CREATE TYPE business."TYPE_ELEMENT" AS ENUM
+    ('level', 'conditional');
+
+/*==============================================================*/
+/* Type: TYPE_OPERATOR                                          */
+/*==============================================================*/
+CREATE TYPE business."TYPE_OPERATOR" AS ENUM
+    ('==' , '!=' , '<' , '>' , '<=' , '>=');

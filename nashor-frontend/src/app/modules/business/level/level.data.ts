@@ -11,7 +11,7 @@ export const level: Level = {
   template: template,
   level_profile: levelProfile,
   level_status: levelStatus,
-  name_level: ' ',
+  name_level: ' Nivel',
   description_level: ' ',
   deleted_level: false,
 };

@@ -1,5 +1,6 @@
 import { AngelAlertModule } from '@angel/components/alert';
 import { AngelFindByKeyPipeModule } from '@angel/pipes/find-by-key';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +30,9 @@ import { flowRoutes } from './flow.routing';
 import { FlowListComponent } from './list/list.component';
 import { ModalFlowVersionComponent } from './modal-flow-version/modal-flow-version.component';
 import { ModalSelectFlowComponent } from './modal-select-flow/modal-select-flow.component';
+import { ModalVersionComponent } from './modal-version/modal-version.component';
+import { ModalEditPositionLevelFatherComponent } from './modal-edit-position-level-father/modal-edit-position-level-father.component';
+import { ModalEditFlowVersionLevelComponent } from './modal-edit-flow-version-level/modal-edit-flow-version-level.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +41,9 @@ import { ModalSelectFlowComponent } from './modal-select-flow/modal-select-flow.
     FlowComponent,
     ModalSelectFlowComponent,
     ModalFlowVersionComponent,
+    ModalVersionComponent,
+    ModalEditPositionLevelFatherComponent,
+    ModalEditFlowVersionLevelComponent,
   ],
   imports: [
     RouterModule.forChild(flowRoutes),
@@ -45,6 +52,7 @@ import { ModalSelectFlowComponent } from './modal-select-flow/modal-select-flow.
     MatCheckboxModule,
     MatDatepickerModule,
     MatDividerModule,
+    DragDropModule,
     MatExpansionModule,
     MatDialogModule,
     MatFormFieldModule,

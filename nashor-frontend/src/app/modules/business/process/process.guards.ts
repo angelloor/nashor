@@ -6,16 +6,16 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { ProcessDetailsComponent } from './details/details.component';
+import { ContainerModalProcessComponent } from './container-modal-process/container-modal-process.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CanDeactivateProcessDetails
-  implements CanDeactivate<ProcessDetailsComponent>
+  implements CanDeactivate<ContainerModalProcessComponent>
 {
   canDeactivate(
-    component: ProcessDetailsComponent,
+    component: ContainerModalProcessComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot

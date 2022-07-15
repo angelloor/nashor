@@ -60,7 +60,7 @@ export const validation = (
 					 * Validation levelProfile
 					 */
 
-					if (url == '/update') {
+					if (url == '/create' || url == '/update') {
 						attributeValidate(
 							'id_level_profile',
 							level_profile_official.level_profile.id_level_profile,

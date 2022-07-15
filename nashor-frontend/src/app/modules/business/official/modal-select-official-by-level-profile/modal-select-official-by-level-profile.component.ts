@@ -12,6 +12,7 @@ import { ModalSelectOfficialByLevelProfileService } from './modal-select-officia
 })
 export class ModalSelectOfficialByLevelProfileComponent implements OnInit {
   id_level_profile: string = '';
+  id_user_: string = '';
   id_official: string = '';
   id_level_profile_official: string = '';
 
@@ -29,6 +30,7 @@ export class ModalSelectOfficialByLevelProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.id_level_profile = this._data.id_level_profile;
+    this.id_user_ = this._data.id_user_;
     /**
      * get the list of official
      */
@@ -36,6 +38,26 @@ export class ModalSelectOfficialByLevelProfileComponent implements OnInit {
       .byLevelProfileRead(this.id_level_profile)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((_levelProfileOfficial: LevelProfileOfficial[]) => {
+        /**
+         * Filter selected official
+         */
+        _levelProfileOfficial.map(
+          (item: LevelProfileOfficial, index: number) => {
+            if (item.official.user.id_user == this.id_user_) {
+              _levelProfileOfficial[index] = {
+                ..._levelProfileOfficial[index],
+                isSelected: true,
+              };
+            } else {
+              _levelProfileOfficial[index] = {
+                ..._levelProfileOfficial[index],
+                isSelected: false,
+              };
+            }
+          }
+        );
+        console.log(_levelProfileOfficial);
+
         this.listLevelProfileOfficial = _levelProfileOfficial;
       });
     /**

@@ -15,8 +15,8 @@
                 <mat-label>Tipo de procesos</mat-label>
                 <mat-select [formControlName]="'id_process_type'" (selectionChange)="changeSelect()">
                     <mat-option *ngFor="let element of listProcessType" [value]="element.id_process_type"
-                        [matTooltip]="element.id_process_type">
-                        {{element.id_process_type}}
+                        [matTooltip]="element.description_process_type">
+                        {{element.name_process_type}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

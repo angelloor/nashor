@@ -170,7 +170,6 @@ export class ProcessTypeDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */
@@ -273,7 +272,6 @@ export class ProcessTypeDetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_processType: ProcessType) => {
-          console.log(_processType);
           if (_processType) {
             this._notificationService.success(
               'Tipo de proceso actualizada correctamente'
@@ -289,7 +287,6 @@ export class ProcessTypeDetailsComponent implements OnInit {
           }
         },
         error: (error: { error: MessageAPI }) => {
-          console.log(error);
           this._notificationService.error(
             !error.error
               ? '¡Error interno!, consulte al administrador.'
@@ -342,7 +339,6 @@ export class ProcessTypeDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (response: boolean) => {
-                console.log(response);
                 if (response) {
                   /**
                    * Return if the processType wasn't deleted...
@@ -381,7 +377,6 @@ export class ProcessTypeDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

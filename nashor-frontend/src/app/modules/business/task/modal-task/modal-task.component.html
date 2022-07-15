@@ -1,0 +1,148 @@
+<div class="relative flex flex-col w-full h-full">
+
+    <!-- Header -->
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="background-level-status">
+            <div class="leading-5 truncate text-secondary"
+                [ngStyle]="{'background': selectedLevelStatus.color_level_status, 'padding': '3px', 'border-radius': '25px', 'width': '25px', 'height': '25px'}">
+            </div>
+        </div>
+        <div class="text-lg mr-auto ml-4">{{task.process.number_process}}</div>
+        <button mat-icon-button (click)="closeModalTask()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+    <div class="flex items-center justify-center py-8 px-8 space-x-3 ng-star-inserted br-10 text-2xl">
+        Fecha de creación: {{task.creation_date_task | date:'medium'}}
+    </div>
+    <!-- Process form -->
+    <form class="flex flex-col flex-auto px-6 pb-6 sm:px-8 sm:pb-8 overflow-y-auto" [formGroup]="taskForm">
+
+        <!-- Alert -->
+        <!-- <angel-alert class="mt-8" *ngIf="true" [appearance]="'outline'" [showIcon]="false"
+            [type]="enrollment.completed_course  ? 'success':'warning'" [@shake]="alert.type === 'error'">
+            {{enrollment.completed_course ? 'Asignatura finalizada': 'La asignatura esta en marcha'}}
+        </angel-alert> -->
+        <!-- Alert -->
+        <div class="flex flex-auto">
+            <div class="flex flex-col w-2/4 pr-3">
+                <!-- number_process -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>number_process</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
+                        </mat-icon>
+                        <input matInput [value]="task.process.number_process" readonly
+                            [matTooltip]="task.process.number_process">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex flex-col w-2/4 pl-3">
+                <!-- process_type -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>process_type</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:timeline'">
+                        </mat-icon>
+                        <input matInput [value]="selectedProcessType.name_process_type" readonly
+                            [matTooltip]="selectedProcessType.description_process_type">
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-auto mt-8">
+            <div class="flex flex-col w-2/4 pr-3">
+                <!-- type_status_task -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>type_status_task</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
+                        </mat-icon>
+                        <input matInput [value]="getTypeStatusTaskEnum(task.type_status_task).name_type" readonly
+                            [matTooltip]="getTypeStatusTaskEnum(task.type_status_task).name_type">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex flex-col w-2/4 pl-3">
+                <!-- type_action_task -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>type_action_task</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:timeline'">
+                        </mat-icon>
+                        <input matInput [value]="getTypeActionTaskEnum(task.type_action_task).name_type" readonly
+                            [matTooltip]="parseTime(task.action_date_task)">
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-auto mt-8">
+            <div class="flex flex-col w-2/4 pr-3">
+                <!-- name_level -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>name_level</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
+                        </mat-icon>
+                        <input matInput [value]="task.level.name_level" readonly
+                            [matTooltip]="task.level.description_level">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex flex-col w-2/4 pl-3">
+                <!-- level_profile -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>level_profile</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:timeline'">
+                        </mat-icon>
+                        <input matInput [value]="selectedLevelProfile.name_level_profile" readonly
+                            [matTooltip]="selectedLevelProfile.description_level_profile">
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="flex flex-auto mt-8">
+            <div class="flex flex-col w-full">
+                <div>
+                    <mat-form-field class="angel-mat-textarea angel-mat-no-subscript w-full">
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                            [svgIcon]="'heroicons_outline:menu-alt-2'"></mat-icon>
+                        <textarea matInput matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                            [value]="task.level.description_level" cdkAutosizeMinRows="3" cdkAutosizeMaxRows="30"
+                            disabled [placeholder]="'Descripción del nivel'"></textarea>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center mt-4">
+            <a (click)="openModalTaskRealize()" *ngIf="task.type_status_task === 'progress'"
+                class="flex flex-col items-center w-56 p-6 rounded-lg shadow bg-card rounded-lg hover:shadow-xl transition-shadow duration-150 ease-in-out cursor-pointer">
+                <div
+                    class="flex items-center justify-center p-4 rounded-full bg-primary-50 text-primary-700 dark:bg-primary dark:text-on-primary">
+                    <mat-icon class="text-current" [svgIcon]="'heroicons_outline:template'"></mat-icon>
+                </div>
+                <div class="mt-5 text-lg font-medium leading-5">Realizar tarea</div>
+                <div class="mt-0.5 line-clamp-2 text-secondary text-center">
+                    Realiza la tarea</div>
+            </a>
+            <a (click)="reasign()" *ngIf="task.type_status_task === 'progress'"
+                class="flex flex-col items-center w-56 p-6 rounded-lg shadow bg-card rounded-lg hover:shadow-xl transition-shadow duration-150 ease-in-out cursor-pointer">
+                <div
+                    class="flex items-center justify-center p-4 rounded-full bg-primary-50 text-primary-700 dark:bg-primary dark:text-on-primary">
+                    <mat-icon class="text-current" [svgIcon]="'heroicons_outline:template'"></mat-icon>
+                </div>
+                <div class="mt-5 text-lg font-medium leading-5">Reasignar tarea</div>
+                <div class="mt-0.5 line-clamp-2 text-secondary text-center">
+                    Reasigna la tarea a un comapañero</div>
+            </a>
+        </div>
+
+    </form>
+</div>

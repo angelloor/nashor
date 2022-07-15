@@ -12,9 +12,11 @@ export class ModalViewSchemaService {
     private _layoutService: LayoutService
   ) {}
 
+  dialogRef: any;
+
   openModalViewSchemaService(schema: any) {
     this._layoutService.setOpenModal(true);
-    return this._dialog.open(ModalViewSchemaComponent, {
+    return (this.dialogRef = this._dialog.open(ModalViewSchemaComponent, {
       minHeight: 'inherit',
       maxHeight: 'inherit',
       height: 'auto',
@@ -25,10 +27,10 @@ export class ModalViewSchemaService {
         schema,
       },
       disableClose: true,
-    });
+    }));
   }
 
   closeModalViewSchemaService() {
-    this._dialog.closeAll();
+    this.dialogRef.close();
   }
 }

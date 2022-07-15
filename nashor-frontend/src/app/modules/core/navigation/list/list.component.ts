@@ -42,7 +42,7 @@ export class NavigationListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   navigations$!: Observable<Navigation[]>;
-
+  id_company: string = '';
   openMatDrawer: boolean = false;
 
   private data!: AppInitialData;
@@ -119,16 +119,17 @@ export class NavigationListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the navigations
      */
     this.navigations$ = this._navigationService.navigations$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._navigationService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((navigations: Navigation[]) => {
         /**
@@ -165,7 +166,10 @@ export class NavigationListComponent implements OnInit {
           /**
            * Search
            */
-          return this._navigationService.queryRead(query.toLowerCase());
+          return this._navigationService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();

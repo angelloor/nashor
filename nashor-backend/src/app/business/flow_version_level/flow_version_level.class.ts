@@ -20,12 +20,14 @@ export class FlowVersionLevel {
 	public flow_version: FlowVersion;
 	public level: Level;
 	public position_level?: number;
-	public is_level?: boolean;
-	public is_go?: boolean;
-	public is_finish?: boolean;
-	public is_conditional?: boolean;
-	public type_conditional?: TYPE_CONDITIONAL;
-	public expression?: string;
+	public position_level_father?: number;
+	public type_element?: TYPE_ELEMENT;
+	public id_control?: string;
+	public operator?: TYPE_OPERATOR;
+	public value_against?: string;
+	public option_true?: boolean;
+	public x?: number;
+	public y?: number;
 	/** Constructor */
 	constructor(
 		id_user_: number = 0,
@@ -33,24 +35,28 @@ export class FlowVersionLevel {
 		flow_version: FlowVersion = _flowVersion,
 		level: Level = _level,
 		position_level: number = 0,
-		is_level: boolean = false,
-		is_go: boolean = false,
-		is_finish: boolean = false,
-		is_conditional: boolean = false,
-		type_conditional: TYPE_CONDITIONAL = 'if',
-		expression: string = ''
+		position_level_father: number = 0,
+		type_element: TYPE_ELEMENT = 'level',
+		id_control: string = '',
+		operator: TYPE_OPERATOR = '==',
+		value_against: string = '',
+		option_true: boolean = false,
+		x: number = 0,
+		y: number = 0
 	) {
 		this.id_user_ = id_user_;
 		this.id_flow_version_level = id_flow_version_level;
 		this.flow_version = flow_version;
 		this.level = level;
 		this.position_level = position_level;
-		this.is_level = is_level;
-		this.is_go = is_go;
-		this.is_finish = is_finish;
-		this.is_conditional = is_conditional;
-		this.type_conditional = type_conditional;
-		this.expression = expression;
+		this.position_level_father = position_level_father;
+		this.type_element = type_element;
+		this.id_control = id_control;
+		this.operator = operator;
+		this.value_against = value_against;
+		this.option_true = option_true;
+		this.x = x;
+		this.y = y;
 	}
 	/** Setters and Getters */
 	set _id_user_(id_user_: number) {
@@ -88,46 +94,60 @@ export class FlowVersionLevel {
 		return this.position_level!;
 	}
 
-	set _is_level(is_level: boolean) {
-		this.is_level = is_level;
+	set _position_level_father(position_level_father: number) {
+		this.position_level_father = position_level_father;
 	}
-	get _is_level() {
-		return this.is_level!;
-	}
-
-	set _is_go(is_go: boolean) {
-		this.is_go = is_go;
-	}
-	get _is_go() {
-		return this.is_go!;
+	get _position_level_father() {
+		return this.position_level_father!;
 	}
 
-	set _is_finish(is_finish: boolean) {
-		this.is_finish = is_finish;
+	set _type_element(type_element: TYPE_ELEMENT) {
+		this.type_element = type_element;
 	}
-	get _is_finish() {
-		return this.is_finish!;
-	}
-
-	set _is_conditional(is_conditional: boolean) {
-		this.is_conditional = is_conditional;
-	}
-	get _is_conditional() {
-		return this.is_conditional!;
+	get _type_element() {
+		return this.type_element!;
 	}
 
-	set _type_conditional(type_conditional: TYPE_CONDITIONAL) {
-		this.type_conditional = type_conditional;
+	set _name_control(id_control: string) {
+		this.id_control = id_control;
 	}
-	get _type_conditional() {
-		return this.type_conditional!;
+	get _name_control() {
+		return this.id_control!;
 	}
 
-	set _expression(expression: string) {
-		this.expression = expression;
+	set _operator(operator: TYPE_OPERATOR) {
+		this.operator = operator;
 	}
-	get _expression() {
-		return this.expression!;
+	get _operator() {
+		return this.operator!;
+	}
+
+	set _value_against(value_against: string) {
+		this.value_against = value_against;
+	}
+	get _value_against() {
+		return this.value_against!;
+	}
+
+	set _option_true(option_true: boolean) {
+		this.option_true = option_true;
+	}
+	get _option_true() {
+		return this.option_true!;
+	}
+
+	set _x(x: number) {
+		this.x = x;
+	}
+	get _x() {
+		return this.x!;
+	}
+
+	set _y(y: number) {
+		this.y = y;
+	}
+	get _y() {
+		return this.y!;
 	}
 
 	/** Methods */
@@ -239,6 +259,7 @@ export class FlowVersionLevel {
 				});
 		});
 	}
+
 	/**
 	 * Eliminar ids de entidades externas y formatear la informacion en el esquema correspondiente
 	 * @param flowVersionLevels
@@ -268,6 +289,10 @@ export class FlowVersionLevel {
 					name_level: item.name_level,
 					description_level: item.description_level,
 				},
+				position_level: parseInt(item.position_level),
+				position_level_father: parseInt(item.position_level_father),
+				x: parseInt(item.x),
+				y: parseInt(item.y),
 				/**
 				 * Generate structure of second level the entity (is important add the ids of entity)
 				 * similar the return of read
@@ -298,33 +323,33 @@ export class FlowVersionLevel {
 }
 
 /**
- * Type Enum TYPE_CONDITIONAL
+ * Type Enum TYPE_ELEMENT
  */
-export type TYPE_CONDITIONAL = 'if' | 'switch';
+export type TYPE_ELEMENT = 'level' | 'conditional';
 
-export interface TYPE_CONDITIONAL_ENUM {
+export interface TYPE_ELEMENT_ENUM {
 	name_type: string;
-	value_type: TYPE_CONDITIONAL;
+	value_type: TYPE_ELEMENT;
 }
 
-export const _typeConditional: TYPE_CONDITIONAL_ENUM[] = [
+export const _typeConditional: TYPE_ELEMENT_ENUM[] = [
 	{
-		name_type: 'IF',
-		value_type: 'if',
+		name_type: 'Nivel',
+		value_type: 'level',
 	},
 	{
-		name_type: 'SWITCH',
-		value_type: 'switch',
+		name_type: 'Condicional',
+		value_type: 'conditional',
 	},
 ];
 
-export const validationTypeConditional = (
+export const validationTypeElement = (
 	attribute: string,
-	value: string | TYPE_CONDITIONAL
+	value: string | TYPE_ELEMENT
 ) => {
 	return new Promise<Boolean>((resolve, reject) => {
 		const typeConditional = _typeConditional.find(
-			(typeConditional: TYPE_CONDITIONAL_ENUM) =>
+			(typeConditional: TYPE_ELEMENT_ENUM) =>
 				typeConditional.value_type == value
 		);
 
@@ -333,12 +358,73 @@ export const validationTypeConditional = (
 				..._messages[7],
 				description: _messages[7].description
 					.replace('_nameAttribute', `${attribute}`)
-					.replace('_expectedType', 'TYPE_CONDITIONAL'),
+					.replace('_expectedType', 'TYPE_ELEMENT'),
 			});
 		}
 	});
 };
 
 /**
- * Type Enum TYPE_CONDITIONAL
+ * Type Enum TYPE_ELEMENT
+ */
+
+/**
+ * Type Enum TYPE_OPERATOR
+ */
+export type TYPE_OPERATOR = '==' | '!=' | '<' | '>' | '<=' | '>=';
+
+export interface TYPE_OPERATOR_ENUM {
+	name_type: string;
+	value_type: TYPE_OPERATOR;
+}
+
+export const _typeOperators: TYPE_OPERATOR_ENUM[] = [
+	{
+		name_type: 'igual',
+		value_type: '==',
+	},
+	{
+		name_type: 'Diferente',
+		value_type: '!=',
+	},
+	{
+		name_type: 'Menor',
+		value_type: '<',
+	},
+	{
+		name_type: 'Mayor',
+		value_type: '>',
+	},
+	{
+		name_type: 'Menor que',
+		value_type: '<=',
+	},
+	{
+		name_type: 'Mayor que',
+		value_type: '>=',
+	},
+];
+
+export const validationTypeOperator = (
+	attribute: string,
+	value: string | TYPE_OPERATOR
+) => {
+	return new Promise<Boolean>((resolve, reject) => {
+		const typeOperator = _typeOperators.find(
+			(typeOperator: TYPE_OPERATOR_ENUM) => typeOperator.value_type == value
+		);
+
+		if (!typeOperator) {
+			reject({
+				..._messages[7],
+				description: _messages[7].description
+					.replace('_nameAttribute', `${attribute}`)
+					.replace('_expectedType', 'TYPE_OPERATOR'),
+			});
+		}
+	});
+};
+
+/**
+ * Type Enum TYPE_OPERATOR
  */

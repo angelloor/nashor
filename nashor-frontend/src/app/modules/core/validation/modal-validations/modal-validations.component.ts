@@ -92,7 +92,7 @@ export class ModalValidationsComponent implements OnInit {
      */
     this.validations$ = this._validationService.validations$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._validationService
       .byCompanyQueryRead(this.id_company, '*')

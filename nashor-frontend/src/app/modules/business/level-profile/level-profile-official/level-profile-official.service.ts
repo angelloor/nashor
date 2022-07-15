@@ -72,13 +72,12 @@ export class LevelProfileOfficialService {
                * check the response body to match with the type
                */
               const _levelProfileOfficial: LevelProfileOfficial = response.body;
-              console.log(_levelProfileOfficial);
               /**
                * Update the levelProfileOfficial in the store
                */
               this._levelProfileOfficials.next([
-                _levelProfileOfficial,
                 ...levelProfileOfficials,
+                _levelProfileOfficial,
               ]);
 
               return of(_levelProfileOfficial);
@@ -182,7 +181,6 @@ export class LevelProfileOfficialService {
                * check the response body to match with the type
                */
               const _levelProfileOfficial: LevelProfileOfficial = response.body;
-              console.log(_levelProfileOfficial);
               /**
                * Find the index of the updated levelProfileOfficial
                */
@@ -191,7 +189,6 @@ export class LevelProfileOfficialService {
                   item.id_level_profile_official ==
                   levelProfileOfficial.id_level_profile_official
               );
-              console.log(index);
               /**
                * Update the levelProfileOfficial
                */
@@ -235,7 +232,6 @@ export class LevelProfileOfficialService {
                   (item) =>
                     item.id_level_profile_official == id_level_profile_official
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

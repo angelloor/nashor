@@ -40,7 +40,7 @@ export class OfficialListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   officials$!: Observable<Official[]>;
-
+  id_company: string = '';
   _urlPathAvatar: string = environment.urlBackend + '/resource/img/avatar/';
 
   openMatDrawer: boolean = false;
@@ -110,16 +110,17 @@ export class OfficialListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the officials
      */
     this.officials$ = this._officialService.officials$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._officialService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((officials: Official[]) => {
         /**
@@ -156,7 +157,10 @@ export class OfficialListComponent implements OnInit {
           /**
            * Search
            */
-          return this._officialService.queryRead(query.toLowerCase());
+          return this._officialService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -365,7 +369,6 @@ export class OfficialListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_official: Official) => {
-                console.log(_official);
                 if (_official) {
                   this._notificationService.success(
                     'Funcionario agregada correctamente'
@@ -381,7 +384,6 @@ export class OfficialListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

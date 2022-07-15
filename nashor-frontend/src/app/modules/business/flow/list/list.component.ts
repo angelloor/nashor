@@ -37,6 +37,7 @@ export class FlowListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   flows$!: Observable<Flow[]>;
+  id_company: string = '';
 
   openMatDrawer: boolean = false;
 
@@ -106,16 +107,17 @@ export class FlowListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the flows
      */
     this.flows$ = this._flowService.flows$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._flowService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((flows: Flow[]) => {
         /**
@@ -152,7 +154,10 @@ export class FlowListComponent implements OnInit {
           /**
            * Search
            */
-          return this._flowService.queryRead(query.toLowerCase());
+          return this._flowService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -357,7 +362,6 @@ export class FlowListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_flow: Flow) => {
-                console.log(_flow);
                 if (_flow) {
                   this._notificationService.success(
                     'Flujo agregada correctamente'
@@ -373,7 +377,6 @@ export class FlowListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

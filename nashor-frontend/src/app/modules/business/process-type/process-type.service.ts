@@ -71,7 +71,6 @@ export class ProcessTypeService {
                * check the response body to match with the type
                */
               const _processType: ProcessType = response.body;
-              console.log(_processType);
               /**
                * Update the processType in the store
                */
@@ -187,14 +186,12 @@ export class ProcessTypeService {
                * check the response body to match with the type
                */
               const _processType: ProcessType = response.body;
-              console.log(_processType);
               /**
                * Find the index of the updated processType
                */
               const index = processTypes.findIndex(
                 (item) => item.id_process_type == processType.id_process_type
               );
-              console.log(index);
               /**
                * Update the processType
                */
@@ -237,7 +234,6 @@ export class ProcessTypeService {
                 const index = processTypes.findIndex(
                   (item) => item.id_process_type == id_process_type
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

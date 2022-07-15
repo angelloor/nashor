@@ -409,7 +409,7 @@ export class OfficialDetailsComponent implements OnInit {
 
         // User
         this._userService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((users: User[]) => {
             this.listUser = users;
@@ -421,7 +421,7 @@ export class OfficialDetailsComponent implements OnInit {
 
         // Area
         this._areaService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((areas: Area[]) => {
             this.listArea = areas;
@@ -433,7 +433,7 @@ export class OfficialDetailsComponent implements OnInit {
 
         // Position
         this._positionService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((positions: Position[]) => {
             this.listPosition = positions;
@@ -461,7 +461,7 @@ export class OfficialDetailsComponent implements OnInit {
 
         // TypeUser
         this._typeUserService
-          .queryRead('*')
+          .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((type_users: TypeUser[]) => {
             this.listTypeUser = type_users;
@@ -497,7 +497,6 @@ export class OfficialDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */

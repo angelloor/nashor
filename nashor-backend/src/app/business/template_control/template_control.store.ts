@@ -54,7 +54,7 @@ export const view_template_control_by_template_read = (
 	template_control: TemplateControl
 ) => {
 	return new Promise<TemplateControl[]>(async (resolve, reject) => {
-		const query = `select * from business.view_template_control_inner_join bvtcij where bvtcij.id_template = ${template_control.template} order by bvtcij.id_template_control desc`;
+		const query = `select * from business.view_template_control_inner_join bvtcij where bvtcij.id_template = ${template_control.template} order by bvtcij.ordinal_position asc`;
 
 		// console.log(query);
 

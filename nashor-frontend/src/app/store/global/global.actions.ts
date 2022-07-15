@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { AppConfig } from 'app/core/app/app.config';
 import { RememberMe } from 'app/core/app/app.type';
 import { Message } from 'app/layout/common/messages/messages.types';
+import { Official } from 'app/modules/business/official/official.types';
 import { User } from 'app/modules/core/user/user.types';
 
 /**
@@ -44,6 +45,13 @@ export const UPDATE_AVATAR = '[USER] UPDATE_AVATAR';
 export const addUser = createAction(POST_USER, props<User>());
 export const deleteUser = createAction(DELETE_USER);
 export const updateAvatar = createAction(UPDATE_AVATAR, props<User>());
+
+// Official
+export const POST_OFFICIAL = '[OFFICIAL] POST';
+export const DELETE_OFFICIAL = '[OFFICIAL] DELETE';
+
+export const addOfficial = createAction(POST_OFFICIAL, props<Official>());
+export const deleteOfficial = createAction(DELETE_OFFICIAL);
 
 // Navigation
 export const POST_NAVIGATION_DEFAULT = '[NAVIGATION DEFAULT] POST';

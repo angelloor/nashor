@@ -41,6 +41,19 @@ routerControl.get(
 	}
 );
 
+routerControl.get(
+	'/byLevelAndCompanyRead/:company/:form_name_control',
+	async (req: any, res: any) => {
+		await validation(req.params, req.url, req.headers.token)
+			.then((controls: Control[]) => {
+				res.status(200).send(controls);
+			})
+			.catch((err: MessageAPI | any) => {
+				error(res, err);
+			});
+	}
+);
+
 routerControl.get('/specificRead/:id_control', async (req: any, res: any) => {
 	await validation(req.params, req.url, req.headers.token)
 		.then((control: Control) => {

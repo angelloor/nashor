@@ -1,7 +1,3 @@
-import {
-  ActionAngelConfirmation,
-  AngelConfirmationService,
-} from '@angel/services/confirmation';
 import { AngelMediaWatcherService } from '@angel/services/media-watcher';
 import { DOCUMENT } from '@angular/common';
 import {
@@ -28,6 +24,9 @@ import {
   takeWhile,
   tap,
 } from 'rxjs/operators';
+import { official } from '../../official/official.data';
+import { Official } from '../../official/official.types';
+import { ModalSelectProcessTypeService } from '../../process-type/modal-select-process-type/modal-select-process-type.service';
 import { ProcessService } from '../process.service';
 import { Process } from '../process.types';
 
@@ -39,7 +38,7 @@ export class ProcessListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   processs$!: Observable<Process[]>;
-
+  id_company: string = '';
   openMatDrawer: boolean = false;
 
   private data!: AppInitialData;
@@ -66,6 +65,8 @@ export class ProcessListComponent implements OnInit {
   /**
    * isOpenModal
    */
+  official: Official = official;
+
   constructor(
     private _store: Store<{ global: AppInitialData }>,
     private _activatedRoute: ActivatedRoute,
@@ -75,9 +76,9 @@ export class ProcessListComponent implements OnInit {
     private _angelMediaWatcherService: AngelMediaWatcherService,
     private _processService: ProcessService,
     private _notificationService: NotificationService,
-    private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _modalSelectProcessTypeService: ModalSelectProcessTypeService
   ) {}
 
   ngOnInit(): void {
@@ -107,6 +108,10 @@ export class ProcessListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
+      if (this.data.official) {
+        this.official = this.data.official;
+      }
     });
     /**
      * Get the processs
@@ -115,19 +120,22 @@ export class ProcessListComponent implements OnInit {
     /**
      *  queryRead *
      */
-    this._processService
-      .queryRead('*')
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((processs: Process[]) => {
-        /**
-         * Update the counts
-         */
-        this.count = processs.length;
-        /**
-         * Mark for check
-         */
-        this._changeDetectorRef.markForCheck();
-      });
+    if (this.official) {
+      this._processService
+        .byOfficialQueryRead(this.official.id_official, '*')
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe((processs: Process[]) => {
+          /**
+           * Update the counts
+           */
+          this.count = processs.length;
+          /**
+           * Mark for check
+           */
+          this._changeDetectorRef.markForCheck();
+        });
+    }
+
     /**
      *  Count Subscribe
      */
@@ -153,7 +161,10 @@ export class ProcessListComponent implements OnInit {
           /**
            * Search
            */
-          return this._processService.queryRead(query.toLowerCase());
+          return this._processService.byOfficialQueryRead(
+            this.official.id_official,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -342,26 +353,21 @@ export class ProcessListComponent implements OnInit {
    * createProcess
    */
   createProcess(): void {
-    this._angelConfirmationService
-      .open({
-        title: 'Añadir procesos',
-        message:
-          '¿Estás seguro de que deseas añadir una nueva procesos? ¡Esta acción no se puede deshacer!',
-      })
+    this._modalSelectProcessTypeService
+      .openModalSelectProcessType()
       .afterClosed()
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((confirm: ActionAngelConfirmation) => {
-        if (confirm === 'confirmed') {
+      .subscribe((id_process_type: string) => {
+        if (id_process_type) {
           const id_user_ = this.data.user.id_user;
           /**
            * Create the process
            */
           this._processService
-            .create(id_user_)
+            .create(id_user_, id_process_type)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_process: Process) => {
-                console.log(_process);
                 if (_process) {
                   this._notificationService.success(
                     'Procesos agregada correctamente'
@@ -377,7 +383,6 @@ export class ProcessListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

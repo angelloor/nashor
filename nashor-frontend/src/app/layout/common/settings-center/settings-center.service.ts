@@ -1,25 +1,32 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { LayoutService } from 'app/layout/layout.service';
 import { SettingsCenterComponent } from './settings-center.component';
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class SettingsCenterService {
-    constructor(public _dialog: MatDialog) {}
+  constructor(
+    private _dialog: MatDialog,
+    private _layoutService: LayoutService
+  ) {}
+  dialogRef: any;
 
-    openDrawerSettings() {
-        return this._dialog.open(SettingsCenterComponent, {
-            minHeight: 'inherit',
-            maxHeight: '90vh',
-            height: 'auto',
-            width: '32rem',
-            maxWidth: '',
-            panelClass: ['mat-dialog-cont'],
-        });
-    }
+  openDrawerSettings() {
+    this._layoutService.setOpenModal(true);
 
-    closeDrawerSettings() {
-        this._dialog.closeAll();
-    }
+    return (this.dialogRef = this._dialog.open(SettingsCenterComponent, {
+      minHeight: 'inherit',
+      maxHeight: '90vh',
+      height: 'auto',
+      width: '32rem',
+      maxWidth: '',
+      panelClass: ['mat-dialog-cont'],
+    }));
+  }
+
+  closeDrawerSettings() {
+    this.dialogRef.close();
+  }
 }

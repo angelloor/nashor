@@ -35,6 +35,7 @@ import { Level } from '../level.types';
 })
 export class LevelListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
+  id_company: string = '';
   count: number = 0;
   levels$!: Observable<Level[]>;
 
@@ -106,16 +107,17 @@ export class LevelListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the levels
      */
     this.levels$ = this._levelService.levels$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._levelService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((levels: Level[]) => {
         /**
@@ -152,7 +154,10 @@ export class LevelListComponent implements OnInit {
           /**
            * Search
            */
-          return this._levelService.queryRead(query.toLowerCase());
+          return this._levelService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -357,7 +362,6 @@ export class LevelListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_level: Level) => {
-                console.log(_level);
                 if (_level) {
                   this._notificationService.success(
                     'Nivel agregada correctamente'
@@ -373,7 +377,6 @@ export class LevelListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

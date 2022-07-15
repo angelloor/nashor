@@ -58,7 +58,7 @@ export const validation = (flow: Flow, url: string, token: string) => {
 					 * Validation company
 					 */
 
-					if (url == '/update') {
+					if (url == '/create' || url == '/update') {
 						attributeValidate(
 							'id_company',
 							flow.company.id_company,
@@ -74,7 +74,7 @@ export const validation = (flow: Flow, url: string, token: string) => {
 					 * Validation processType
 					 */
 
-					if (url == '/update') {
+					if (url == '/create' || url == '/update') {
 						attributeValidate(
 							'id_process_type',
 							flow.process_type.id_process_type,

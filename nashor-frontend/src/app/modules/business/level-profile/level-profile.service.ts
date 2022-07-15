@@ -71,7 +71,6 @@ export class LevelProfileService {
                * check the response body to match with the type
                */
               const _levelProfile: LevelProfile = response.body;
-              console.log(_levelProfile);
               /**
                * Update the levelProfile in the store
                */
@@ -189,14 +188,12 @@ export class LevelProfileService {
                * check the response body to match with the type
                */
               const _levelProfile: LevelProfile = response.body;
-              console.log(_levelProfile);
               /**
                * Find the index of the updated levelProfile
                */
               const index = levelProfiles.findIndex(
                 (item) => item.id_level_profile == levelProfile.id_level_profile
               );
-              console.log(index);
               /**
                * Update the levelProfile
                */
@@ -239,7 +236,6 @@ export class LevelProfileService {
                 const index = levelProfiles.findIndex(
                   (item) => item.id_level_profile == id_level_profile
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

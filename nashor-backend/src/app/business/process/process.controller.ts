@@ -1,3 +1,4 @@
+import { checkDateString, FullDate } from '../../../utils/date';
 import { verifyToken } from '../../../utils/jwt';
 import { _messages } from '../../../utils/message/message';
 import { Process } from './process.class';
@@ -62,6 +63,24 @@ export const validation = (process: Process, url: string, token: string) => {
 								validationStatus = true;
 								reject(err);
 							});
+
+							/**
+							 * checkDateString
+							 */
+							await checkDateString(process.date_process!)
+								.then((fullDate: FullDate) => {
+									process.date_process = `${fullDate.fullYear}-${fullDate.month}-${fullDate.day} ${fullDate.hours}:${fullDate.minutes}:${fullDate.seconds}.${fullDate.milliSeconds}`;
+								})
+								.catch(() => {
+									validationStatus = true;
+									reject({
+										..._messages[12],
+										description: _messages[12].description.replace(
+											'value_date',
+											process.date_process!
+										),
+									});
+								});
 						}
 
 						if (url == '/update') {
@@ -90,7 +109,7 @@ export const validation = (process: Process, url: string, token: string) => {
 						 * Validation processType
 						 */
 
-						if (url == '/update') {
+						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_process_type',
 								process.process_type.id_process_type,
@@ -195,7 +214,7 @@ export const validation = (process: Process, url: string, token: string) => {
 							} else if (url.substring(0, 20) == '/byOfficialQueryRead') {
 								const id_official: any = process.official;
 
-								if (id_official >= 1) {
+								if (id_official >= 0) {
 									/** set required attributes for action */
 									_process.official = process.official;
 									_process.number_process = process.number_process;

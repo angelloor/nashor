@@ -1,0 +1,104 @@
+<div class="relative flex flex-col w-full h-full">
+
+    <!-- Header -->
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg">Versión {{flowVersion.number_flow_version}}</div>
+        <button mat-icon-button [matMenuTriggerFor]="addActions" [tabIndex]="-1" class="ml-auto"
+            [matTooltip]="'Nuevo elemento'">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+        </button>
+        <button mat-icon-button (click)="resetFlowVersionLevel()" [tabIndex]="-1" [matTooltip]="'Restablecer'">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:lightning-bolt'"></mat-icon>
+        </button>
+        <button mat-icon-button (click)="closeModalVersion()" [tabIndex]="-1" [matTooltip]="'Cerrar'">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+    <div class="container-drag flex flex-col flex-auto px-6 pb-6 sm:px-8 sm:pb-8 overflow-y-auto"
+        [formGroup]="versionForm">
+        <mat-menu [xPosition]="'before'" #addActions="matMenu">
+            <button mat-menu-item (click)="createFlowVersionLevel('level')">
+                <mat-icon [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                <span>Nivel</span>
+            </button>
+            <button mat-menu-item (click)="createFlowVersionLevel('conditional')">
+                <mat-icon [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                <span>Condicional</span>
+            </button>
+        </mat-menu>
+
+        <mat-menu [xPosition]="'before'" #levelActions="matMenu">
+            <button mat-menu-item (click)="openModalEditFlowVersionLevel()">
+                <mat-icon [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                <span>Editar</span>
+            </button>
+            <button mat-menu-item (click)="openModalEditPositionLevelFather()" *ngIf="position_level != 1">
+                <mat-icon [svgIcon]="'heroicons_solid:credit-card'">
+                </mat-icon>
+                <span>Relación</span>
+            </button>
+            <button mat-menu-item (click)="deleteFlowVersionLevel()">
+                <mat-icon [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                <span>Eliminar</span>
+            </button>
+        </mat-menu>
+
+        <ng-container
+            *ngFor="let versionElement of formArrayFlowVersionLevel.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+            <!-- LEVEL -->
+            <div class="container-box-drag" cdkDragBoundary=".container-drag" cdkDrag
+                *ngIf="getValueFlowVersionLevel(i).type_element === 'level'" (cdkDragEnded)="dragEnded($event, i)"
+                [cdkDragFreeDragPosition]="{x: getValueFlowVersionLevel(i).x, y: getValueFlowVersionLevel(i).y}">
+                <!-- Opciones -->
+                <button mat-mini-fab color="primary" class="mr-2" [matTooltip]="'Opciones'" (click)="setIndex(i)"
+                    [matMenuTriggerFor]="levelActions">
+                    <mat-icon>filter_list</mat-icon>
+                </button>
+                <!-- Title -->
+                <div class="box-drag"
+                    [ngClass]="{'box-drag-true': getValueFlowVersionLevel(i).option_true === true, 'box-drag-false': getValueFlowVersionLevel(i).option_true === false}">
+                    <div class="box-drag-selector bg-primary-600">
+                        <p>{{getValueFlowVersionLevel(i).position_level}}</p>
+                    </div>
+                    <div>{{getValueFlowVersionLevel(i).name_level}}</div>
+                </div>
+                <!-- Selector -->
+                <div class="box-drag-selector bg-primary-600"
+                    *ngIf="getValueFlowVersionLevel(i).position_level_father >= 1">
+                    <p>
+                        {{getValueFlowVersionLevel(i).position_level_father}}</p>
+                </div>
+            </div>
+            <!-- IF -->
+            <div class="container-box-drag" cdkDragBoundary=".container-drag" cdkDrag
+                *ngIf="getValueFlowVersionLevel(i).type_element === 'conditional'" (cdkDragEnded)="dragEnded($event, i)"
+                [cdkDragFreeDragPosition]="{x: getValueFlowVersionLevel(i).x, y: getValueFlowVersionLevel(i).y}">
+                <!-- Opciones -->
+                <button mat-mini-fab color="primary" class="mr-2" [matTooltip]="'Opciones'" (click)="setIndex(i)"
+                    [matMenuTriggerFor]="levelActions">
+                    <mat-icon>filter_list</mat-icon>
+                </button>
+                <!-- Title -->
+                <div class="box-drag-rombo"
+                    [ngClass]="{'bg-primary-600': getValueFlowVersionLevel(i).type_element === 'conditional'}">
+                    <div class="box-drag-selector bg-primary-600">
+                        <p>{{getValueFlowVersionLevel(i).position_level}}</p>
+                    </div>
+                    <div>{{getValueFlowVersionLevel(i).id_control}} {{getValueFlowVersionLevel(i).operator}}
+                        {{getValueFlowVersionLevel(i).value_against}}
+                    </div>
+                </div>
+                <!-- Selector -->
+                <div class="box-drag-selector bg-primary-600"
+                    *ngIf="getValueFlowVersionLevel(i).position_level_father >= 1">
+                    <p>
+                        {{getValueFlowVersionLevel(i).position_level_father}}</p>
+                </div>
+            </div>
+
+        </ng-container>
+
+
+    </div>
+
+</div>

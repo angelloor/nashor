@@ -39,6 +39,7 @@ export class ItemCategoryListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   itemCategorys$!: Observable<ItemCategory[]>;
+  id_company: string = '';
 
   openMatDrawer: boolean = false;
 
@@ -107,16 +108,17 @@ export class ItemCategoryListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the itemCategorys
      */
     this.itemCategorys$ = this._itemCategoryService.itemCategorys$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._itemCategoryService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((itemCategorys: ItemCategory[]) => {
         /**
@@ -153,7 +155,10 @@ export class ItemCategoryListComponent implements OnInit {
           /**
            * Search
            */
-          return this._itemCategoryService.queryRead(query.toLowerCase());
+          return this._itemCategoryService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
@@ -363,7 +368,6 @@ export class ItemCategoryListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_itemCategory: ItemCategory) => {
-                console.log(_itemCategory);
                 if (_itemCategory) {
                   this._notificationService.success(
                     'Categoría del artículo agregada correctamente'
@@ -379,7 +383,6 @@ export class ItemCategoryListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

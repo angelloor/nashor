@@ -13,7 +13,10 @@ export class ModalSelectOfficialByLevelProfileService {
   ) {}
   dialogRef: any;
 
-  openModalSelectOfficialByLevelProfile(id_level_profile: string) {
+  openModalSelectOfficialByLevelProfile(
+    id_level_profile: string,
+    id_user_: string
+  ) {
     this._layoutService.setOpenModal(true);
 
     return (this.dialogRef = this._dialog.open(
@@ -27,6 +30,7 @@ export class ModalSelectOfficialByLevelProfileService {
         panelClass: ['mat-dialog-cont'],
         data: {
           id_level_profile,
+          id_user_,
         },
         disableClose: true,
       }

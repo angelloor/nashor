@@ -15,8 +15,8 @@
                 <mat-label>Plantillas</mat-label>
                 <mat-select [formControlName]="'id_template'" (selectionChange)="changeSelect()">
                     <mat-option *ngFor="let element of listTemplate" [value]="element.id_template"
-                        [matTooltip]="element.id_template">
-                        {{element.id_template}}
+                        [matTooltip]="element.description_template">
+                        {{element.name_template}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

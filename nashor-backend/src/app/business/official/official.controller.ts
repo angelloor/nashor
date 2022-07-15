@@ -416,6 +416,29 @@ export const validation = (official: Official, url: string, token: string) => {
 										),
 									});
 								}
+							} else if (url.substring(0, 11) == '/byUserRead') {
+								const id_user: any = official.user;
+
+								if (id_user >= 1) {
+									/** set required attributes for action */
+									_official.user = official.user;
+									await _official
+										.byUserRead()
+										.then((official: Official) => {
+											resolve(official);
+										})
+										.catch((error: any) => {
+											reject(error);
+										});
+								} else {
+									reject({
+										..._messages[11],
+										description: _messages[11].description.replace(
+											'name_entity',
+											'company'
+										),
+									});
+								}
 							} else if (url.substring(0, 16) == '/byAreaQueryRead') {
 								const id_area: any = official.area;
 

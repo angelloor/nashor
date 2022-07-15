@@ -24,7 +24,9 @@ import {
   _navegacionFuturistic,
   _navegacionHorizontal,
 } from 'app/layout/layout.types';
-import { setInactive } from 'app/store/global/global.actions';
+import { OfficialService } from 'app/modules/business/official/official.service';
+import { Official } from 'app/modules/business/official/official.types';
+import { addOfficial, setInactive } from 'app/store/global/global.actions';
 import { GlobalUtils } from 'app/utils/GlobalUtils';
 import { combineLatest, filter, map, Subject, takeUntil } from 'rxjs';
 import { SettingsCenterService } from './common/settings-center/settings-center.service';
@@ -59,6 +61,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   lengthHorizontal: number = 0;
 
   navegacions: Layout[] = [];
+
   /**
    * Constructor
    */
@@ -74,11 +77,13 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private _angelMediaWatcherService: AngelMediaWatcherService,
     private _globalUtils: GlobalUtils,
     private _angelConfirmationService: AngelConfirmationService,
-    private _settingsCenterService: SettingsCenterService
+    private _settingsCenterService: SettingsCenterService,
+    private _officialService: OfficialService
   ) {
     // Subscribe to user changes of state
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+
       /**
        * Check the navigation and stablished the length
        * lengthDefault Navigation
@@ -242,6 +247,18 @@ export class LayoutComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
+    /**
+     * Get the official
+     */
+    this._officialService
+      .byUserRead(this.data.user.id_user)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((_official: Official) => {
+        if (_official) {
+          this._store.dispatch(addOfficial(_official));
+        }
+      });
+
     /**
      * Subscribe activeSession
      */

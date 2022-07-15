@@ -2,6 +2,8 @@ import { Action, createReducer, on } from '@ngrx/store';
 import { appConfig } from 'app/core/app/app.config';
 import { AppInitialData, RememberMe } from 'app/core/app/app.type';
 import { Message } from 'app/layout/common/messages/messages.types';
+import { official } from 'app/modules/business/official/official.data';
+import { Official } from 'app/modules/business/official/official.types';
 import { user } from 'app/modules/core/user/user.data';
 import { User } from 'app/modules/core/user/user.types';
 import * as _ from 'lodash';
@@ -11,6 +13,7 @@ import {
   addNavigationDefault,
   addNavigationFuturistic,
   addNavigationHorizontal,
+  addOfficial,
   addUser,
   deleteMessage,
   deleteNavigationAll,
@@ -18,6 +21,7 @@ import {
   deleteNavigationDefault,
   deleteNavigationFuturistic,
   deleteNavigationHorizontal,
+  deleteOfficial,
   deleteUser,
   disabledRememberMe,
   enabledRememberMe,
@@ -42,6 +46,7 @@ const _rememberMe: RememberMe = {
 };
 
 const _user: User = user;
+const _official: Official = official;
 
 const _navigation = {
   defaultNavigation: [],
@@ -56,6 +61,7 @@ export const globalState: AppInitialData = {
   inside: _inside,
   rememberMe: _rememberMe,
   user: _user,
+  official: _official,
   navigation: _navigation,
   messages: [],
   notifications: [],
@@ -141,6 +147,19 @@ const _reducer = createReducer(
     return {
       ...state,
       user: newUser,
+    };
+  }),
+  // Official
+  on(addOfficial, (state, _official) => {
+    return {
+      ...state,
+      official: _official,
+    };
+  }),
+  on(deleteOfficial, (state) => {
+    return {
+      ...state,
+      official: _official,
     };
   }),
   // Navigation Default

@@ -13,6 +13,7 @@ import {
 	view_official_by_area_query_read,
 	view_official_by_company_query_read,
 	view_official_by_position_query_read,
+	view_official_by_user_read,
 	view_official_query_read,
 	view_official_specific_read,
 } from './official.store';
@@ -139,6 +140,23 @@ export class Official {
 					const _officials = this.mutateResponse(officials);
 
 					resolve(_officials);
+				})
+				.catch((error: any) => {
+					reject(error);
+				});
+		});
+	}
+
+	byUserRead() {
+		return new Promise<Official>(async (resolve, reject) => {
+			await view_official_by_user_read(this)
+				.then((officials: Official[]) => {
+					/**
+					 * Mutate response
+					 */
+					const _officials = this.mutateResponse(officials);
+
+					resolve(_officials[0]);
 				})
 				.catch((error: any) => {
 					reject(error);

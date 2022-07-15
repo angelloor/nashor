@@ -44,7 +44,7 @@ export class ProcessService {
   /**
    * create
    */
-  create(id_user_: string): Observable<any> {
+  create(id_user_: string, id_process_type: string): Observable<any> {
     return this._processs.pipe(
       take(1),
       switchMap((processs) =>
@@ -53,6 +53,9 @@ export class ProcessService {
             this._url + '/create',
             {
               id_user_: parseInt(id_user_),
+              process_type: {
+                id_process_type: parseInt(id_process_type),
+              },
             },
             {
               headers: this._headers,
@@ -64,7 +67,6 @@ export class ProcessService {
                * check the response body to match with the type
                */
               const _process: Process = response.body;
-              console.log(_process);
               /**
                * Update the process in the store
                */
@@ -227,14 +229,12 @@ export class ProcessService {
                * check the response body to match with the type
                */
               const _process: Process = response.body;
-              console.log(_process);
               /**
                * Find the index of the updated process
                */
               const index = processs.findIndex(
                 (item) => item.id_process == process.id_process
               );
-              console.log(index);
               /**
                * Update the process
                */
@@ -277,7 +277,6 @@ export class ProcessService {
                 const index = processs.findIndex(
                   (item) => item.id_process == id_process
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

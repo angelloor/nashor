@@ -74,7 +74,6 @@ export class FlowService {
                * check the response body to match with the type
                */
               const _flow: Flow = response.body;
-              console.log(_flow);
               /**
                * Update the flow in the store
                */
@@ -209,14 +208,12 @@ export class FlowService {
                * check the response body to match with the type
                */
               const _flow: Flow = response.body;
-              console.log(_flow);
               /**
                * Find the index of the updated flow
                */
               const index = flows.findIndex(
                 (item) => item.id_flow == flow.id_flow
               );
-              console.log(index);
               /**
                * Update the flow
                */
@@ -259,7 +256,6 @@ export class FlowService {
                 const index = flows.findIndex(
                   (item) => item.id_flow == id_flow
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

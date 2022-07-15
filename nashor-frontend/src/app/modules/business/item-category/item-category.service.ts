@@ -71,7 +71,6 @@ export class ItemCategoryService {
                * check the response body to match with the type
                */
               const _itemCategory: ItemCategory = response.body;
-              console.log(_itemCategory);
               /**
                * Update the itemCategory in the store
                */
@@ -189,14 +188,12 @@ export class ItemCategoryService {
                * check the response body to match with the type
                */
               const _itemCategory: ItemCategory = response.body;
-              console.log(_itemCategory);
               /**
                * Find the index of the updated itemCategory
                */
               const index = itemCategorys.findIndex(
                 (item) => item.id_item_category == itemCategory.id_item_category
               );
-              console.log(index);
               /**
                * Update the itemCategory
                */
@@ -239,7 +236,6 @@ export class ItemCategoryService {
                 const index = itemCategorys.findIndex(
                   (item) => item.id_item_category == id_item_category
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

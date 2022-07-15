@@ -30,7 +30,7 @@ export const view_level_profile_official_by_level_profile_read = (
 	level_profile_official: LevelProfileOfficial
 ) => {
 	return new Promise<LevelProfileOfficial[]>(async (resolve, reject) => {
-		const query = `select * from business.view_level_profile_official_inner_join bvlpoij where bvlpoij.id_level_profile = ${level_profile_official.level_profile} order by bvlpoij.id_level_profile_official desc`;
+		const query = `select * from business.view_level_profile_official_inner_join bvlpoij where bvlpoij.id_level_profile = ${level_profile_official.level_profile} order by bvlpoij.id_level_profile_official asc`;
 
 		// console.log(query);
 

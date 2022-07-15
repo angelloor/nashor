@@ -39,7 +39,7 @@ export class DocumentationProfileListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   documentationProfiles$!: Observable<DocumentationProfile[]>;
-
+  id_company: string = '';
   openMatDrawer: boolean = false;
 
   private data!: AppInitialData;
@@ -107,6 +107,7 @@ export class DocumentationProfileListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the documentationProfiles
@@ -114,10 +115,10 @@ export class DocumentationProfileListComponent implements OnInit {
     this.documentationProfiles$ =
       this._documentationProfileService.documentationProfiles$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._documentationProfileService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((documentationProfiles: DocumentationProfile[]) => {
         /**
@@ -154,7 +155,8 @@ export class DocumentationProfileListComponent implements OnInit {
           /**
            * Search
            */
-          return this._documentationProfileService.queryRead(
+          return this._documentationProfileService.byCompanyQueryRead(
+            this.id_company,
             query.toLowerCase()
           );
         })
@@ -366,7 +368,6 @@ export class DocumentationProfileListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_documentationProfile: DocumentationProfile) => {
-                console.log(_documentationProfile);
                 if (_documentationProfile) {
                   this._notificationService.success(
                     'Perfil de documentación agregada correctamente'
@@ -384,7 +385,6 @@ export class DocumentationProfileListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

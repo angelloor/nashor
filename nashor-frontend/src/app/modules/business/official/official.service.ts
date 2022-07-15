@@ -130,6 +130,21 @@ export class OfficialService {
       );
   }
   /**
+   * byUserRead
+   * @param id_user
+   */
+  byUserRead(id_user: string): Observable<Official> {
+    return this._httpClient
+      .get<Official>(this._url + `/byUserRead/${id_user}`)
+      .pipe(
+        tap((_official: Official) => {
+          if (official) {
+            this._official.next(_official);
+          }
+        })
+      );
+  }
+  /**
    * byAreaQueryRead
    * @param id_area
    * @param query

@@ -2,7 +2,8 @@ import { verifyToken } from '../../../utils/jwt';
 import { _messages } from '../../../utils/message/message';
 import {
 	FlowVersionLevel,
-	validationTypeConditional,
+	validationTypeElement,
+	validationTypeOperator,
 } from './flow_version_level.class';
 
 export const validation = (
@@ -61,9 +62,20 @@ export const validation = (
 
 						if (url == '/update') {
 							attributeValidate(
-								'is_level',
-								flow_version_level.is_level,
-								'boolean'
+								'position_level_father',
+								flow_version_level.position_level_father,
+								'number',
+								5
+							).catch((err) => {
+								validationStatus = true;
+								reject(err);
+							});
+						}
+
+						if (url == '/update' || url == '/create') {
+							validationTypeElement(
+								'type_element',
+								flow_version_level.type_element!
 							).catch((err) => {
 								validationStatus = true;
 								reject(err);
@@ -72,9 +84,20 @@ export const validation = (
 
 						if (url == '/update') {
 							attributeValidate(
-								'is_go',
-								flow_version_level.is_go,
-								'boolean'
+								'id_control',
+								flow_version_level.id_control,
+								'string',
+								5
+							).catch((err) => {
+								validationStatus = true;
+								reject(err);
+							});
+						}
+
+						if (url == '/update') {
+							validationTypeOperator(
+								'operator',
+								flow_version_level.operator!
 							).catch((err) => {
 								validationStatus = true;
 								reject(err);
@@ -83,46 +106,43 @@ export const validation = (
 
 						if (url == '/update') {
 							attributeValidate(
-								'is_finish',
-								flow_version_level.is_finish,
-								'boolean'
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
-						if (url == '/update') {
-							attributeValidate(
-								'is_conditional',
-								flow_version_level.is_conditional,
-								'boolean'
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
-						if (url == '/update') {
-							validationTypeConditional(
-								'type_conditional',
-								flow_version_level.type_conditional!
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
-						if (url == '/update') {
-							attributeValidate(
-								'expression',
-								flow_version_level.expression,
+								'value_against',
+								flow_version_level.value_against,
 								'string',
 								250
 							).catch((err) => {
 								validationStatus = true;
 								reject(err);
 							});
+						}
+
+						if (url == '/update') {
+							attributeValidate(
+								'option_true',
+								flow_version_level.option_true,
+								'boolean'
+							).catch((err) => {
+								validationStatus = true;
+								reject(err);
+							});
+						}
+
+						if (url == '/update') {
+							attributeValidate('x', flow_version_level.x, 'number', 10).catch(
+								(err) => {
+									validationStatus = true;
+									reject(err);
+								}
+							);
+						}
+
+						if (url == '/update') {
+							attributeValidate('y', flow_version_level.y, 'number', 10).catch(
+								(err) => {
+									validationStatus = true;
+									reject(err);
+								}
+							);
 						}
 
 						/**
@@ -173,6 +193,8 @@ export const validation = (
 								_flow_version_level.id_user_ = flow_version_level.id_user_;
 								_flow_version_level.flow_version =
 									flow_version_level.flow_version;
+								_flow_version_level.type_element =
+									flow_version_level.type_element;
 								await _flow_version_level
 									.create()
 									.then((_flowVersionLevel: FlowVersionLevel) => {
@@ -263,14 +285,18 @@ export const validation = (
 								_flow_version_level.level = flow_version_level.level;
 								_flow_version_level.position_level =
 									flow_version_level.position_level;
-								_flow_version_level.is_level = flow_version_level.is_level;
-								_flow_version_level.is_go = flow_version_level.is_go;
-								_flow_version_level.is_finish = flow_version_level.is_finish;
-								_flow_version_level.is_conditional =
-									flow_version_level.is_conditional;
-								_flow_version_level.type_conditional =
-									flow_version_level.type_conditional;
-								_flow_version_level.expression = flow_version_level.expression;
+								_flow_version_level.position_level_father =
+									flow_version_level.position_level_father;
+								_flow_version_level.type_element =
+									flow_version_level.type_element;
+								_flow_version_level.id_control = flow_version_level.id_control;
+								_flow_version_level.operator = flow_version_level.operator;
+								_flow_version_level.value_against =
+									flow_version_level.value_against;
+								_flow_version_level.option_true =
+									flow_version_level.option_true;
+								_flow_version_level.x = flow_version_level.x;
+								_flow_version_level.y = flow_version_level.y;
 								await _flow_version_level
 									.update()
 									.then((_flowVersionLevel: FlowVersionLevel) => {

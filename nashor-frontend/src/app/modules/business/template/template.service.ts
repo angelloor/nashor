@@ -69,7 +69,6 @@ export class TemplateService {
                * check the response body to match with the type
                */
               const _template: Template = response.body;
-              console.log(_template);
               /**
                * Update the template in the store
                */
@@ -210,14 +209,12 @@ export class TemplateService {
                * check the response body to match with the type
                */
               const _template: Template = response.body;
-              console.log(_template);
               /**
                * Find the index of the updated template
                */
               const index = templates.findIndex(
                 (item) => item.id_template == template.id_template
               );
-              console.log(index);
               /**
                * Update the template
                */
@@ -260,7 +257,6 @@ export class TemplateService {
                 const index = templates.findIndex(
                   (item) => item.id_template == id_template
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

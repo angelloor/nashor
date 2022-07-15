@@ -12,9 +12,12 @@ export class ModalProcessService {
     private _layoutService: LayoutService
   ) {}
 
+  dialogRef: any;
+
   openModalProcess() {
     this._layoutService.setOpenModal(true);
-    return this._dialog.open(ModalProcessComponent, {
+
+    return (this.dialogRef = this._dialog.open(ModalProcessComponent, {
       minHeight: 'inherit',
       maxHeight: '90vh',
       height: 'auto',
@@ -22,10 +25,10 @@ export class ModalProcessService {
       maxWidth: '',
       panelClass: ['mat-dialog-cont'],
       disableClose: true,
-    });
+    }));
   }
 
   closeModalProcess() {
-    this._dialog.closeAll();
+    this.dialogRef.close();
   }
 }

@@ -14,7 +14,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { FlowVersionLevelService } from '../../flow/flow-version/flow-version-level/flow-version-level.service';
 import { FlowVersionLevel } from '../../flow/flow-version/flow-version-level/flow-version-level.types';
 import { LevelProfile } from '../../level-profile/level-profile.types';
-import { ModalSelectOfficialByLevelProfileService } from '../../official/modal-select-official-by-level-profile/modal-select-official-by-level-profile.service';
+import { official } from '../../official/official.data';
+import { Official } from '../../official/official.types';
 import { ProcessService } from '../process.service';
 import { Process } from '../process.types';
 import { ModalProcessService } from './modal-process.service';
@@ -42,6 +43,8 @@ export class ModalProcessComponent implements OnInit {
   /**
    * isOpenModal
    */
+  official: Official = official;
+
   /**
    * Constructor
    */
@@ -55,7 +58,6 @@ export class ModalProcessComponent implements OnInit {
     private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
     private _modalProcessService: ModalProcessService,
-    private _modalSelectOfficialByLevelProfileService: ModalSelectOfficialByLevelProfileService,
     private _flowVersionLevelService: FlowVersionLevelService
   ) {}
 
@@ -83,6 +85,9 @@ export class ModalProcessComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      if (this.data.official) {
+        this.official = this.data.official;
+      }
     });
     /**
      * Create the process form
@@ -132,7 +137,7 @@ export class ModalProcessComponent implements OnInit {
    */
   getLevelProfile(_flowVersionLevel: FlowVersionLevel[]): LevelProfile {
     return _flowVersionLevel.find((item) => item.position_level >= 1)!.level
-      .level_profile;
+      ?.level_profile!;
   }
   /**
    * Pacth the form with the information of the database
@@ -164,18 +169,17 @@ export class ModalProcessComponent implements OnInit {
    * Update the process
    */
   updateProcess(): void {
-    if (this.levelProfile.id_level_profile) {
-      this._modalSelectOfficialByLevelProfileService
-        .openModalSelectOfficialByLevelProfile(
-          this.levelProfile.id_level_profile
-        )
-        .afterClosed()
-        .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe((id_official: string) => {
-          if (id_official) {
-            /**
-             * Get the process
-             */
+    this._angelConfirmationService
+      .open({
+        title: 'Generar tarea',
+        message:
+          '¿Estás seguro de que deseas generar la tarea? ¡Esta acción no se puede deshacer!',
+      })
+      .afterClosed()
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((confirm: ActionAngelConfirmation) => {
+        if (confirm === 'confirmed') {
+          if (this.official.id_official != '0') {
             const id_user_ = this.data.user.id_user;
             let process = this.processForm.getRawValue();
             /**
@@ -190,7 +194,7 @@ export class ModalProcessComponent implements OnInit {
               },
               // Se envia el id_official seleccionado para asignar en la tarea
               official: {
-                id_official: parseInt(id_official),
+                id_official: parseInt(this.official.id_official),
               },
               flow_version: {
                 id_flow_version: parseInt(process.flow_version.id_flow_version),
@@ -226,13 +230,13 @@ export class ModalProcessComponent implements OnInit {
                   );
                 },
               });
+          } else {
+            this._notificationService.error(
+              '¡Error interno!, consulte al administrador. (No se encontró el id_official)'
+            );
           }
-        });
-    } else {
-      this._notificationService.error(
-        'No se encontró un level_profile en el primer nivel del flujo'
-      );
-    }
+        }
+      });
   }
   /**
    * Delete the process

@@ -7,4 +7,6 @@ export interface LevelProfileOfficial {
   official: Official;
   official_modifier: boolean;
   number_task?: number;
+
+  isSelected?: boolean;
 }

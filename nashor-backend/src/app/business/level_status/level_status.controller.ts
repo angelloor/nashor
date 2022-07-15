@@ -84,7 +84,7 @@ export const validation = (
 						 * Validation company
 						 */
 
-						if (url == '/update') {
+						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_company',
 								level_status.company.id_company,

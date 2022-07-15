@@ -12,9 +12,12 @@ export class ModalTemplateService {
     private _layoutService: LayoutService
   ) {}
 
+  dialogRef: any;
+
   openModalTemplate(id_template: any) {
     this._layoutService.setOpenModal(true);
-    return this._dialog.open(ModalTemplateComponent, {
+
+    return (this.dialogRef = this._dialog.open(ModalTemplateComponent, {
       minHeight: 'inherit',
       maxHeight: '90vh',
       height: 'auto',
@@ -25,10 +28,10 @@ export class ModalTemplateService {
         id_template,
       },
       disableClose: true,
-    });
+    }));
   }
 
   closeModalTemplate() {
-    this._dialog.closeAll();
+    this.dialogRef.close();
   }
 }

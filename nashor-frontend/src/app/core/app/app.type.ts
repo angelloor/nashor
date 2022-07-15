@@ -1,5 +1,6 @@
 import { AngelNavigationItem } from '@angel/components/navigation';
 import { Shortcut } from 'app/layout/common/shortcuts/shortcuts.types';
+import { Official } from 'app/modules/business/official/official.types';
 import { User } from 'app/modules/core/user/user.types';
 import { Message } from '../../layout/common/messages/messages.types';
 import { Notification } from '../../layout/common/notifications/notifications.types';
@@ -8,6 +9,7 @@ import { AppConfig } from './app.config';
 export interface AppInitialData {
   appConfig: AppConfig;
   user: User;
+  official?: Official;
   access_token?: string;
   inactive: boolean;
   inside: boolean;

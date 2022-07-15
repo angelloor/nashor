@@ -21,3 +21,10 @@ select dev.ddl_create_crud_all('business');
 
 select dev.dml_reset_sequences('business');
 select dev.dml_truncate_all('business');
+
+-- ONLY TABLES RESET
+-- SELECT setval('business.serial_process', 1);
+-- SELECT setval('business.serial_task', 1);
+
+-- TRUNCATE TABLE business.process CASCADE;
+-- TRUNCATE TABLE business.task CASCADE;

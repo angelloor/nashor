@@ -283,8 +283,6 @@ export class UserService {
     formData.append('avatar', avatar);
     formData.append('id_user', user.id_user);
 
-    console.log(formData);
-
     return this.users$.pipe(
       take(1),
       switchMap((users) =>

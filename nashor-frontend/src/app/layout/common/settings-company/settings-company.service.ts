@@ -17,6 +17,7 @@ export class SettingsCompanyService {
     private _layoutService: LayoutService
   ) {}
 
+  dialogRef: any;
   /**
    * Getter
    */
@@ -26,7 +27,8 @@ export class SettingsCompanyService {
 
   openSettingsCompanyService(id_company: string) {
     this._layoutService.setOpenModal(true);
-    return this._dialog.open(SettingsCompanyComponent, {
+
+    return (this.dialogRef = this._dialog.open(SettingsCompanyComponent, {
       minHeight: 'inherit',
       maxHeight: '90vh',
       height: 'auto',
@@ -34,10 +36,10 @@ export class SettingsCompanyService {
       maxWidth: '',
       panelClass: ['mat-dialog-cont'],
       data: { id_company },
-    });
+    }));
   }
 
   closeSettingsCompanyService() {
-    this._dialog.closeAll();
+    this.dialogRef.close();
   }
 }

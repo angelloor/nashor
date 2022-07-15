@@ -42,7 +42,7 @@ export class ValidationListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   validations$!: Observable<Validation[]>;
-
+  id_company: string = '';
   openMatDrawer: boolean = false;
 
   private data!: AppInitialData;
@@ -119,16 +119,17 @@ export class ValidationListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the validations
      */
     this.validations$ = this._validationService.validations$;
     /**
-     *  queryRead *
+     *  byCompanyQueryRead *
      */
     this._validationService
-      .queryRead('*')
+      .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((validations: Validation[]) => {
         /**
@@ -165,7 +166,10 @@ export class ValidationListComponent implements OnInit {
           /**
            * Search
            */
-          return this._validationService.queryRead(query.toLowerCase());
+          return this._validationService.byCompanyQueryRead(
+            this.id_company,
+            query.toLowerCase()
+          );
         })
       )
       .subscribe();
