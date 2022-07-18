@@ -4,7 +4,7 @@ import { ProcessItem } from './process_item.class';
 
 export const dml_process_item_create = (process_item: ProcessItem) => {
 	return new Promise<ProcessItem[]>(async (resolve, reject) => {
-		const query = `select * from business.dml_process_item_create_modified(${process_item.id_user_})`;
+		const query = `select * from business.dml_process_item_create_modified(${process_item.id_user_}, ${process_item.official.id_official}, ${process_item.process.id_process}, ${process_item.task.id_task}, ${process_item.level.id_level})`;
 
 		// console.log(query);
 
@@ -171,7 +171,7 @@ export const dml_process_item_update = (process_item: ProcessItem) => {
 			${process_item.item.id_item},
 			${process_item.amount_process_item},
 			'${process_item.features_process_item}',
-			${process_item.entry_date_process_item})`;
+			'${process_item.entry_date_process_item}')`;
 
 		// console.log(query);
 
@@ -193,7 +193,7 @@ export const dml_process_item_update = (process_item: ProcessItem) => {
 
 export const dml_process_item_delete = (process_item: ProcessItem) => {
 	return new Promise<boolean>(async (resolve, reject) => {
-		const query = `select * from business.dml_process_item_delete_modified(${process_item.id_user_},${process_item.id_process_item}) as result`;
+		const query = `select * from business.dml_process_item_delete(${process_item.id_user_},${process_item.id_process_item}) as result`;
 
 		// console.log(query);
 

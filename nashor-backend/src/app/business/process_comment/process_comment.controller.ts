@@ -1,13 +1,13 @@
 import { verifyToken } from '../../../utils/jwt';
 import { _messages } from '../../../utils/message/message';
-import { ProcessItem } from './process_item.class';
+import { ProcessComment } from './process_comment.class';
 
 export const validation = (
-	process_item: ProcessItem,
+	process_comment: ProcessComment,
 	url: string,
 	token: string
 ) => {
-	return new Promise<ProcessItem | ProcessItem[] | boolean | any>(
+	return new Promise<ProcessComment | ProcessComment[] | boolean | any>(
 		async (resolve, reject) => {
 			/**
 			 * Capa de Autentificación con el token
@@ -23,7 +23,7 @@ export const validation = (
 						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_user_',
-								process_item.id_user_,
+								process_comment.id_user_,
 								'number',
 								10
 							).catch((err) => {
@@ -34,8 +34,8 @@ export const validation = (
 
 						if (url == '/update') {
 							attributeValidate(
-								'id_process_item',
-								process_item.id_process_item,
+								'id_process_comment',
+								process_comment.id_process_comment,
 								'number',
 								10
 							).catch((err) => {
@@ -46,20 +46,8 @@ export const validation = (
 
 						if (url == '/update') {
 							attributeValidate(
-								'amount_process_item',
-								process_item.amount_process_item,
-								'number',
-								5
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
-						if (url == '/update') {
-							attributeValidate(
-								'features_process_item',
-								process_item.features_process_item,
+								'value_process_comment',
+								process_comment.value_process_comment,
 								'string',
 								250
 							).catch((err) => {
@@ -70,8 +58,8 @@ export const validation = (
 
 						if (url == '/update') {
 							attributeValidate(
-								'entry_date_process_item',
-								process_item.entry_date_process_item,
+								'date_process_comment',
+								process_comment.date_process_comment,
 								'string',
 								30
 							).catch((err) => {
@@ -84,10 +72,10 @@ export const validation = (
 						 * Validation official
 						 */
 
-						if (url == '/create' || url == '/update') {
+						if (url == '/update') {
 							attributeValidate(
 								'id_official',
-								process_item.official.id_official,
+								process_comment.official.id_official,
 								'number',
 								10
 							).catch((err) => {
@@ -100,10 +88,10 @@ export const validation = (
 						 * Validation process
 						 */
 
-						if (url == '/create' || url == '/update') {
+						if (url == '/update') {
 							attributeValidate(
 								'id_process',
-								process_item.process.id_process,
+								process_comment.process.id_process,
 								'number',
 								10
 							).catch((err) => {
@@ -116,10 +104,10 @@ export const validation = (
 						 * Validation task
 						 */
 
-						if (url == '/create' || url == '/update') {
+						if (url == '/update') {
 							attributeValidate(
 								'id_task',
-								process_item.task.id_task,
+								process_comment.task.id_task,
 								'number',
 								10
 							).catch((err) => {
@@ -132,26 +120,10 @@ export const validation = (
 						 * Validation level
 						 */
 
-						if (url == '/create' || url == '/update') {
-							attributeValidate(
-								'id_level',
-								process_item.level.id_level,
-								'number',
-								5
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
-						/**
-						 * Validation item
-						 */
-
 						if (url == '/update') {
 							attributeValidate(
-								'id_item',
-								process_item.item.id_item,
+								'id_level',
+								process_comment.level.id_level,
 								'number',
 								5
 							).catch((err) => {
@@ -167,35 +139,36 @@ export const validation = (
 							/**
 							 * Instance the class
 							 */
-							const _process_item = new ProcessItem();
+							const _process_comment = new ProcessComment();
 							/**
 							 * Execute the url depending on the path
 							 */
 							if (url == '/create') {
 								/** set required attributes for action */
-								_process_item.id_user_ = process_item.id_user_;
-								_process_item.official = process_item.official;
-								_process_item.process = process_item.process;
-								_process_item.task = process_item.task;
-								_process_item.level = process_item.level;
-								await _process_item
+								_process_comment.id_user_ = process_comment.id_user_;
+								_process_comment.official = process_comment.official;
+								_process_comment.process = process_comment.process;
+								_process_comment.task = process_comment.task;
+								_process_comment.level = process_comment.level;
+								await _process_comment
 									.create()
-									.then((_processItem: ProcessItem) => {
-										resolve(_processItem);
+									.then((_processComment: ProcessComment) => {
+										resolve(_processComment);
 									})
 									.catch((error: any) => {
 										reject(error);
 									});
 							} else if (url.substring(0, 15) == '/byOfficialRead') {
-								const id_official: any = process_item.official;
+								const id_official: any = process_comment.official;
 
 								if (id_official >= 1) {
 									/** set required attributes for action */
-									_process_item.official = process_item.official;
-									await _process_item
+									_process_comment.official = process_comment.official;
+									_process_comment.process = process_comment.process;
+									await _process_comment
 										.byOfficialRead()
-										.then((_process_items: ProcessItem[]) => {
-											resolve(_process_items);
+										.then((_process_comments: ProcessComment[]) => {
+											resolve(_process_comments);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -210,15 +183,16 @@ export const validation = (
 									});
 								}
 							} else if (url.substring(0, 14) == '/byProcessRead') {
-								const id_process: any = process_item.process;
+								const id_process: any = process_comment.process;
 
 								if (id_process >= 1) {
 									/** set required attributes for action */
-									_process_item.process = process_item.process;
-									await _process_item
+									_process_comment.process = process_comment.process;
+									_process_comment.process = process_comment.process;
+									await _process_comment
 										.byProcessRead()
-										.then((_process_items: ProcessItem[]) => {
-											resolve(_process_items);
+										.then((_process_comments: ProcessComment[]) => {
+											resolve(_process_comments);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -233,15 +207,16 @@ export const validation = (
 									});
 								}
 							} else if (url.substring(0, 11) == '/byTaskRead') {
-								const id_task: any = process_item.task;
+								const id_task: any = process_comment.task;
 
 								if (id_task >= 1) {
 									/** set required attributes for action */
-									_process_item.task = process_item.task;
-									await _process_item
+									_process_comment.task = process_comment.task;
+									_process_comment.process = process_comment.process;
+									await _process_comment
 										.byTaskRead()
-										.then((_process_items: ProcessItem[]) => {
-											resolve(_process_items);
+										.then((_process_comments: ProcessComment[]) => {
+											resolve(_process_comments);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -256,15 +231,16 @@ export const validation = (
 									});
 								}
 							} else if (url.substring(0, 12) == '/byLevelRead') {
-								const id_level: any = process_item.level;
+								const id_level: any = process_comment.level;
 
 								if (id_level >= 1) {
 									/** set required attributes for action */
-									_process_item.level = process_item.level;
-									await _process_item
+									_process_comment.level = process_comment.level;
+									_process_comment.process = process_comment.process;
+									await _process_comment
 										.byLevelRead()
-										.then((_process_items: ProcessItem[]) => {
-											resolve(_process_items);
+										.then((_process_comments: ProcessComment[]) => {
+											resolve(_process_comments);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -278,39 +254,18 @@ export const validation = (
 										),
 									});
 								}
-							} else if (url.substring(0, 11) == '/byItemRead') {
-								const id_item: any = process_item.item;
-
-								if (id_item >= 1) {
-									/** set required attributes for action */
-									_process_item.item = process_item.item;
-									await _process_item
-										.byItemRead()
-										.then((_process_items: ProcessItem[]) => {
-											resolve(_process_items);
-										})
-										.catch((error: any) => {
-											reject(error);
-										});
-								} else {
-									reject({
-										..._messages[11],
-										description: _messages[11].description.replace(
-											'name_entity',
-											'item'
-										),
-									});
-								}
 							} else if (url.substring(0, 13) == '/specificRead') {
-								const id_process_item: any = process_item.id_process_item;
+								const id_process_comment: any =
+									process_comment.id_process_comment;
 
-								if (id_process_item >= 1) {
+								if (id_process_comment >= 1) {
 									/** set required attributes for action */
-									_process_item.id_process_item = process_item.id_process_item;
-									await _process_item
+									_process_comment.id_process_comment =
+										process_comment.id_process_comment;
+									await _process_comment
 										.specificRead()
-										.then((_processItem: ProcessItem) => {
-											resolve(_processItem);
+										.then((_processComment: ProcessComment) => {
+											resolve(_processComment);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -320,38 +275,37 @@ export const validation = (
 										..._messages[11],
 										description: _messages[11].description.replace(
 											'name_entity',
-											'process_item'
+											'process_comment'
 										),
 									});
 								}
 							} else if (url == '/update') {
 								/** set required attributes for action */
-								_process_item.id_user_ = process_item.id_user_;
-								_process_item.id_process_item = process_item.id_process_item;
-								_process_item.official = process_item.official;
-								_process_item.process = process_item.process;
-								_process_item.task = process_item.task;
-								_process_item.level = process_item.level;
-								_process_item.item = process_item.item;
-								_process_item.amount_process_item =
-									process_item.amount_process_item;
-								_process_item.features_process_item =
-									process_item.features_process_item;
-								_process_item.entry_date_process_item =
-									process_item.entry_date_process_item;
-								await _process_item
+								_process_comment.id_user_ = process_comment.id_user_;
+								_process_comment.id_process_comment =
+									process_comment.id_process_comment;
+								_process_comment.official = process_comment.official;
+								_process_comment.process = process_comment.process;
+								_process_comment.task = process_comment.task;
+								_process_comment.level = process_comment.level;
+								_process_comment.value_process_comment =
+									process_comment.value_process_comment;
+								_process_comment.date_process_comment =
+									process_comment.date_process_comment;
+								await _process_comment
 									.update()
-									.then((_processItem: ProcessItem) => {
-										resolve(_processItem);
+									.then((_processComment: ProcessComment) => {
+										resolve(_processComment);
 									})
 									.catch((error: any) => {
 										reject(error);
 									});
 							} else if (url.substring(0, 7) == '/delete') {
 								/** set required attributes for action */
-								_process_item.id_user_ = process_item.id_user_;
-								_process_item.id_process_item = process_item.id_process_item;
-								await _process_item
+								_process_comment.id_user_ = process_comment.id_user_;
+								_process_comment.id_process_comment =
+									process_comment.id_process_comment;
+								await _process_comment
 									.delete()
 									.then((response: boolean) => {
 										resolve(response);

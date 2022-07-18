@@ -24,16 +24,20 @@ export const generateToken = (_payload: Payload, _expiresIn: number = 180) => {
  * @param _token
  * @returns decoded
  */
-export const verifyToken = (_token: string) => {
-	return new Promise((resolve, reject) => {
+export const verifyToken = (_token: string): Promise<Payload> => {
+	return new Promise<Payload>((resolve, reject) => {
 		try {
-			jwt.verify(_token, `${process.env.KEY_JWT}`, async (err, decoded) => {
-				if (decoded != undefined && typeof decoded == 'object') {
-					resolve(decoded);
-				} else {
-					reject(_messages[4]);
+			jwt.verify(
+				_token,
+				`${process.env.KEY_JWT}`,
+				async (err, decoded: Payload | any) => {
+					if (decoded != undefined && typeof decoded == 'object') {
+						resolve(decoded);
+					} else {
+						reject(_messages[4]);
+					}
 				}
-			});
+			);
 		} catch (error: any) {
 			reject(error.toString());
 		}

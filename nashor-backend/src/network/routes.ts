@@ -15,6 +15,9 @@ import { routerLevelStatus } from '../app/business/level_status/level_status.net
 import { routerOfficial } from '../app/business/official/official.network';
 import { routerPosition } from '../app/business/position/position.network';
 import { routerProcess } from '../app/business/process/process.network';
+import { routerProcessAttached } from '../app/business/process_attached/process_attached.network';
+import { routerProcessComment } from '../app/business/process_comment/process_comment.network';
+import { routerProcessControl } from '../app/business/process_control/process_control.network';
 import { routerProcessItem } from '../app/business/process_item/process_item.network';
 import { routerProcessType } from '../app/business/process_type/process_type.network';
 import { routerTask } from '../app/business/task/task.network';
@@ -86,4 +89,7 @@ export const appRoutes = (app: any) => {
 	app.use('/app/business/process', routerProcess);
 	app.use('/app/business/task', routerTask);
 	app.use('/app/business/process_item', routerProcessItem);
+	app.use('/app/business/process_attached', routerProcessAttached);
+	app.use('/app/business/process_control', routerProcessControl);
+	app.use('/app/business/process_comment', routerProcessComment);
 };

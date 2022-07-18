@@ -78,4 +78,6 @@ export interface Payload {
 	name_person: string;
 	last_name_person?: string;
 	company: Company;
+	iat?: number;
+	exp?: number;
 }

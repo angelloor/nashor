@@ -65,6 +65,8 @@ select * from business.dml_level_create(1, 1, 5, 2, '3', 'Nivel 5', 'Este es el 
 
 select * from business.dml_process_type_create(1, 1, 'Solicitud de materiales', 'Tipo de proceso para solicitud de materiales', 'SM', 1, false);
 
+CREATE SEQUENCE IF NOT EXISTS business.serial_process_type_id_1 INCREMENT 1 MINVALUE  1 MAXVALUE 9999999999 START 2 CACHE 1;
+
 select * from business.dml_flow_create(1, 1, 1, 'Solicitud de materiales', 'Flujo para la solicitud de materiales', false);
 
 select * from business.dml_flow_version_create(1, 1, 1, true, '2022-07-14 14:57:25.828', false);

@@ -2987,3 +2987,384 @@ $BODY$;
 
 ALTER FUNCTION business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp with time zone, boolean)
     OWNER TO postgres;
+
+-- FUNCTION: business.dml_process_item_create_modified(numeric, numeric, numeric, numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_process_item_create_modified(numeric, numeric, numeric, numeric, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_process_item_create_modified(
+	id_user_ numeric,
+	_id_official numeric,
+	_id_process numeric,
+	_id_task numeric,
+	_id_level numeric)
+    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, amount_process_item numeric, features_process_item character varying, entry_date_process_item timestamp without time zone, id_user numeric, id_area numeric, id_position numeric, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying, cpc_item character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+	_ID_COMPANY NUMERIC;
+	_ID_ITEM NUMERIC;
+	_ID_PROCESS_ITEM NUMERIC;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+	-- Get the id company _ID_COMPANY
+	_ID_COMPANY = (select vu.id_company from core.view_user vu where vu.id_user = id_user_); 
+
+	_ID_ITEM = (select items.id_item from (select * from business.view_item bvi where bvi.id_company = _ID_COMPANY) as items
+		LEFT JOIN (select distinct bvpi.id_item from business.view_process_item bvpi where bvpi.id_level = _id_level) as assignedItems
+		on items.id_item = assignedItems.id_item where assignedItems.id_item IS NULL order by items.id_item asc limit 1);
+
+	IF (_ID_ITEM >= 1) THEN
+		_ID_PROCESS_ITEM = (select * from business.dml_process_item_create(id_user_, _id_official, _id_process, _id_task, _id_level, _ID_ITEM, 1, '', now()::timestamp));
+	
+		IF (_ID_PROCESS_ITEM >= 1) THEN
+			RETURN QUERY select * from business.view_process_item_inner_join bvpiij 
+				where bvpiij.id_process_item = _ID_PROCESS_ITEM;
+		ELSE
+			_EXCEPTION = 'Ocurrió un error al ingresar process_item';
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+	ELSE
+		_EXCEPTION = 'No se encontraron items registrados';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_process_item_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_process_item_create_modified(numeric, numeric, numeric, numeric, numeric)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_process_item_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone)
+-- DROP FUNCTION IF EXISTS business.dml_process_item_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone);
+
+CREATE OR REPLACE FUNCTION business.dml_process_item_update_modified(
+	id_user_ numeric,
+	_id_process_item numeric,
+	_id_official numeric,
+	_id_process numeric,
+	_id_task numeric,
+	_id_level numeric,
+	_id_item numeric,
+	_amount_process_item numeric,
+	_features_process_item character varying,
+	_entry_date_process_item timestamp without time zone)
+    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, amount_process_item numeric, features_process_item character varying, entry_date_process_item timestamp without time zone, id_user numeric, id_area numeric, id_position numeric, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying, cpc_item character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+ 	_UPDATE_PROCESS_ITEM BOOLEAN;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+ 	_UPDATE_PROCESS_ITEM = (select * from business.dml_process_item_update(id_user_, _id_process_item, _id_official, _id_process, _id_task, _id_level, _id_item, _amount_process_item, _features_process_item, _entry_date_process_item));
+
+ 	IF (_UPDATE_PROCESS_ITEM) THEN
+		RETURN QUERY select * from business.view_process_item_inner_join bvpiij 
+			where bvpiij.id_process_item = _id_process_item;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al actualizar process_item';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_process_item_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_process_item_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_process_attached_create_modified(numeric, numeric, numeric, numeric, numeric, numeric, character varying, character varying, character varying, character varying, character varying)
+-- DROP FUNCTION IF EXISTS business.dml_process_attached_create_modified(numeric, numeric, numeric, numeric, numeric, numeric, character varying, character varying, character varying, character varying, character varying);
+
+CREATE OR REPLACE FUNCTION business.dml_process_attached_create_modified(
+	id_user_ numeric,
+	_id_official numeric,
+	_id_process numeric,
+	_id_task numeric,
+	_id_level numeric,
+	_id_attached numeric,
+	_file_name character varying,
+	_length_mb character varying,
+	_extension character varying,
+	_server_path character varying,
+	_alfresco_path character varying)
+    RETURNS TABLE(id_process_attached numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_attached numeric, file_name character varying, length_mb character varying, extension character varying, server_path character varying, alfresco_path character varying, upload_date timestamp without time zone, deleted_process_attached boolean, id_user numeric, id_area numeric, id_position numeric, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, name_attached character varying, description_attached character varying, length_mb_attached numeric, required_attached boolean) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+	_ID_PROCESS_ATTACHED NUMERIC;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+	_ID_PROCESS_ATTACHED = (select * from business.dml_process_attached_create(id_user_, _id_official, _id_process, _id_task, _id_level, _id_attached, _file_name, _length_mb, _extension, _server_path, _alfresco_path, now()::timestamp, false));
+	
+	IF (_ID_PROCESS_ATTACHED >= 1) THEN
+		RETURN QUERY select * from business.view_process_attached_inner_join bvpaij 
+			where bvpaij.id_process_attached = _ID_PROCESS_ATTACHED;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al ingresar process_attached';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_process_attached_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_process_attached_create_modified(numeric, numeric, numeric, numeric, numeric, numeric, character varying, character varying, character varying, character varying, character varying)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_process_attached_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, character varying, character varying, character varying, character varying, character varying, timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_process_attached_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, character varying, character varying, character varying, character varying, character varying, timestamp without time zone, boolean);
+
+CREATE OR REPLACE FUNCTION business.dml_process_attached_update_modified(
+	id_user_ numeric,
+	_id_process_attached numeric,
+	_id_official numeric,
+	_id_process numeric,
+	_id_task numeric,
+	_id_level numeric,
+	_id_attached numeric,
+	_file_name character varying,
+	_length_mb character varying,
+	_extension character varying,
+	_server_path character varying,
+	_alfresco_path character varying,
+	_upload_date timestamp without time zone,
+	_deleted_process_attached boolean)
+    RETURNS TABLE(id_process_attached numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_attached numeric, file_name character varying, length_mb character varying, extension character varying, server_path character varying, alfresco_path character varying, upload_date timestamp without time zone, deleted_process_attached boolean, id_user numeric, id_area numeric, id_position numeric, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, name_attached character varying, description_attached character varying, length_mb_attached numeric, required_attached boolean) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+ 	_UPDATE_PROCESS_ATTACHED BOOLEAN;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+ 	_UPDATE_PROCESS_ATTACHED = (select * from business.dml_process_attached_update(id_user_, _id_process_attached, _id_official, _id_process, _id_task, _id_level, _id_attached, _file_name, _length_mb, _extension, _server_path, _alfresco_path, _upload_date, _deleted_process_attached));
+
+ 	IF (_UPDATE_PROCESS_ATTACHED) THEN
+		RETURN QUERY select * from business.view_process_attached_inner_join bvpaij 
+			where bvpaij.id_process_attached = _id_process_attached;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al actualizar process_attached';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_process_attached_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_process_attached_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, character varying, character varying, character varying, character varying, character varying, timestamp without time zone, boolean)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_process_control_create_modified(numeric, numeric, numeric, numeric, numeric, numeric, text)
+-- DROP FUNCTION IF EXISTS business.dml_process_control_create_modified(numeric, numeric, numeric, numeric, numeric, numeric, text);
+
+CREATE OR REPLACE FUNCTION business.dml_process_control_create_modified(
+	id_user_ numeric,
+	_id_official numeric,
+	_id_process numeric,
+	_id_task numeric,
+	_id_level numeric,
+	_id_control numeric,
+	_value_process_control text)
+    RETURNS TABLE(id_process_control numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_control numeric, value_process_control text, last_change_process_control timestamp without time zone, deleted_process_control boolean, id_user numeric, id_area numeric, id_position numeric, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+	_ID_PROCESS_CONTROL NUMERIC;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+	_ID_PROCESS_CONTROL = (select * from business.dml_process_control_create(id_user_, _id_official, _id_process, _id_task, _id_level, _id_control, _value_process_control, now()::timestamp, false));
+	
+	IF (_ID_PROCESS_CONTROL >= 1) THEN
+		RETURN QUERY select * from business.view_process_control_inner_join bvpcij 
+			where bvpcij.id_process_control = _ID_PROCESS_CONTROL;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al ingresar process_control';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_process_control_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_process_control_create_modified(numeric, numeric, numeric, numeric, numeric, numeric, text)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_process_control_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, text, timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_process_control_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, text, timestamp without time zone, boolean);
+
+CREATE OR REPLACE FUNCTION business.dml_process_control_update_modified(
+	id_user_ numeric,
+	_id_process_control numeric,
+	_id_official numeric,
+	_id_process numeric,
+	_id_task numeric,
+	_id_level numeric,
+	_id_control numeric,
+	_value_process_control text,
+	_last_change_process_control timestamp without time zone,
+	_deleted_process_control boolean)
+    RETURNS TABLE(id_process_control numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_control numeric, value_process_control text, last_change_process_control timestamp without time zone, deleted_process_control boolean, id_user numeric, id_area numeric, id_position numeric, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+ 	_UPDATE_PROCESS_CONTROL BOOLEAN;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+ 	_UPDATE_PROCESS_CONTROL = (select * from business.dml_process_control_update(id_user_, _id_process_control, _id_official, _id_process, _id_task, _id_level, _id_control, _value_process_control, _last_change_process_control, _deleted_process_control));
+
+ 	IF (_UPDATE_PROCESS_CONTROL) THEN
+		RETURN QUERY select * from business.view_process_control_inner_join bvpcij 
+			where bvpcij.id_process_control = _id_process_control;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al actualizar process_control';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_process_control_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_process_control_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, text, timestamp without time zone, boolean)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_process_comment_create_modified(numeric, numeric, numeric, numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_process_comment_create_modified(numeric, numeric, numeric, numeric, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_process_comment_create_modified(
+	id_user_ numeric,
+	_id_official numeric,
+	_id_process numeric,
+	_id_task numeric,
+	_id_level numeric)
+    RETURNS TABLE(id_process_comment numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, value_process_comment character varying, date_process_comment timestamp without time zone, deleted_process_comment boolean, id_user numeric, id_area numeric, id_position numeric, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+	_ID_PROCESS_COMMENT NUMERIC;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+	_ID_PROCESS_COMMENT = (select * from business.dml_process_comment_create(id_user_, _id_official, _id_process, _id_task, _id_level, 'Nuevo comentario', now()::timestamp, false));
+	
+	IF (_ID_PROCESS_COMMENT >= 1) THEN
+		RETURN QUERY select * from business.view_process_comment_inner_join bvpcij 
+			where bvpcij.id_process_comment = _ID_PROCESS_COMMENT;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al ingresar process_comment';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_process_comment_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_process_comment_create_modified(numeric, numeric, numeric, numeric, numeric)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_process_comment_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_process_comment_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean);
+
+CREATE OR REPLACE FUNCTION business.dml_process_comment_update_modified(
+	id_user_ numeric,
+	_id_process_comment numeric,
+	_id_official numeric,
+	_id_process numeric,
+	_id_task numeric,
+	_id_level numeric,
+	_value_process_comment character varying,
+	_date_process_comment timestamp without time zone,
+	_deleted_process_comment boolean)
+    RETURNS TABLE(id_process_comment numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, value_process_comment character varying, date_process_comment timestamp without time zone, deleted_process_comment boolean, id_user numeric, id_area numeric, id_position numeric, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+ 	_UPDATE_PROCESS_COMMENT BOOLEAN;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+ 	_UPDATE_PROCESS_COMMENT = (select * from business.dml_process_comment_update(id_user_, _id_process_comment, _id_official, _id_process, _id_task, _id_level, _value_process_comment, _date_process_comment, _deleted_process_comment));
+
+ 	IF (_UPDATE_PROCESS_COMMENT) THEN
+		RETURN QUERY select * from business.view_process_comment_inner_join bvpcij 
+			where bvpcij.id_process_comment = _id_process_comment;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al actualizar process_comment';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_process_comment_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_process_comment_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean)
+    OWNER TO postgres;

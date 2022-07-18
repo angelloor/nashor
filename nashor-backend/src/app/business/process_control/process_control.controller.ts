@@ -1,13 +1,13 @@
 import { verifyToken } from '../../../utils/jwt';
 import { _messages } from '../../../utils/message/message';
-import { ProcessItem } from './process_item.class';
+import { ProcessControl } from './process_control.class';
 
 export const validation = (
-	process_item: ProcessItem,
+	process_control: ProcessControl,
 	url: string,
 	token: string
 ) => {
-	return new Promise<ProcessItem | ProcessItem[] | boolean | any>(
+	return new Promise<ProcessControl | ProcessControl[] | boolean | any>(
 		async (resolve, reject) => {
 			/**
 			 * Capa de Autentificación con el token
@@ -23,7 +23,7 @@ export const validation = (
 						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_user_',
-								process_item.id_user_,
+								process_control.id_user_,
 								'number',
 								10
 							).catch((err) => {
@@ -34,8 +34,8 @@ export const validation = (
 
 						if (url == '/update') {
 							attributeValidate(
-								'id_process_item',
-								process_item.id_process_item,
+								'id_process_control',
+								process_control.id_process_control,
 								'number',
 								10
 							).catch((err) => {
@@ -44,24 +44,12 @@ export const validation = (
 							});
 						}
 
-						if (url == '/update') {
+						if (url == '/create' || url == '/update') {
 							attributeValidate(
-								'amount_process_item',
-								process_item.amount_process_item,
-								'number',
-								5
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
-						if (url == '/update') {
-							attributeValidate(
-								'features_process_item',
-								process_item.features_process_item,
+								'value_process_control',
+								process_control.value_process_control,
 								'string',
-								250
+								9999999999
 							).catch((err) => {
 								validationStatus = true;
 								reject(err);
@@ -70,8 +58,8 @@ export const validation = (
 
 						if (url == '/update') {
 							attributeValidate(
-								'entry_date_process_item',
-								process_item.entry_date_process_item,
+								'last_change_process_control',
+								process_control.last_change_process_control,
 								'string',
 								30
 							).catch((err) => {
@@ -87,7 +75,7 @@ export const validation = (
 						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_official',
-								process_item.official.id_official,
+								process_control.official.id_official,
 								'number',
 								10
 							).catch((err) => {
@@ -103,7 +91,7 @@ export const validation = (
 						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_process',
-								process_item.process.id_process,
+								process_control.process.id_process,
 								'number',
 								10
 							).catch((err) => {
@@ -119,7 +107,7 @@ export const validation = (
 						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_task',
-								process_item.task.id_task,
+								process_control.task.id_task,
 								'number',
 								10
 							).catch((err) => {
@@ -135,7 +123,7 @@ export const validation = (
 						if (url == '/create' || url == '/update') {
 							attributeValidate(
 								'id_level',
-								process_item.level.id_level,
+								process_control.level.id_level,
 								'number',
 								5
 							).catch((err) => {
@@ -145,13 +133,13 @@ export const validation = (
 						}
 
 						/**
-						 * Validation item
+						 * Validation control
 						 */
 
-						if (url == '/update') {
+						if (url == '/create' || url == '/update') {
 							attributeValidate(
-								'id_item',
-								process_item.item.id_item,
+								'id_control',
+								process_control.control.id_control,
 								'number',
 								5
 							).catch((err) => {
@@ -167,35 +155,39 @@ export const validation = (
 							/**
 							 * Instance the class
 							 */
-							const _process_item = new ProcessItem();
+							const _process_control = new ProcessControl();
 							/**
 							 * Execute the url depending on the path
 							 */
 							if (url == '/create') {
 								/** set required attributes for action */
-								_process_item.id_user_ = process_item.id_user_;
-								_process_item.official = process_item.official;
-								_process_item.process = process_item.process;
-								_process_item.task = process_item.task;
-								_process_item.level = process_item.level;
-								await _process_item
+								_process_control.id_user_ = process_control.id_user_;
+								_process_control.official = process_control.official;
+								_process_control.process = process_control.process;
+								_process_control.task = process_control.task;
+								_process_control.level = process_control.level;
+								_process_control.control = process_control.control;
+								_process_control.value_process_control =
+									process_control.value_process_control;
+								await _process_control
 									.create()
-									.then((_processItem: ProcessItem) => {
-										resolve(_processItem);
+									.then((_processControl: ProcessControl) => {
+										resolve(_processControl);
 									})
 									.catch((error: any) => {
 										reject(error);
 									});
 							} else if (url.substring(0, 15) == '/byOfficialRead') {
-								const id_official: any = process_item.official;
+								const id_official: any = process_control.official;
 
 								if (id_official >= 1) {
 									/** set required attributes for action */
-									_process_item.official = process_item.official;
-									await _process_item
+									_process_control.official = process_control.official;
+									_process_control.process = process_control.process;
+									await _process_control
 										.byOfficialRead()
-										.then((_process_items: ProcessItem[]) => {
-											resolve(_process_items);
+										.then((_process_controls: ProcessControl[]) => {
+											resolve(_process_controls);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -210,15 +202,16 @@ export const validation = (
 									});
 								}
 							} else if (url.substring(0, 14) == '/byProcessRead') {
-								const id_process: any = process_item.process;
+								const id_process: any = process_control.process;
 
 								if (id_process >= 1) {
 									/** set required attributes for action */
-									_process_item.process = process_item.process;
-									await _process_item
+									_process_control.process = process_control.process;
+									_process_control.process = process_control.process;
+									await _process_control
 										.byProcessRead()
-										.then((_process_items: ProcessItem[]) => {
-											resolve(_process_items);
+										.then((_process_controls: ProcessControl[]) => {
+											resolve(_process_controls);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -233,15 +226,16 @@ export const validation = (
 									});
 								}
 							} else if (url.substring(0, 11) == '/byTaskRead') {
-								const id_task: any = process_item.task;
+								const id_task: any = process_control.task;
 
 								if (id_task >= 1) {
 									/** set required attributes for action */
-									_process_item.task = process_item.task;
-									await _process_item
+									_process_control.task = process_control.task;
+									_process_control.process = process_control.process;
+									await _process_control
 										.byTaskRead()
-										.then((_process_items: ProcessItem[]) => {
-											resolve(_process_items);
+										.then((_process_controls: ProcessControl[]) => {
+											resolve(_process_controls);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -256,15 +250,16 @@ export const validation = (
 									});
 								}
 							} else if (url.substring(0, 12) == '/byLevelRead') {
-								const id_level: any = process_item.level;
+								const id_level: any = process_control.level;
 
 								if (id_level >= 1) {
 									/** set required attributes for action */
-									_process_item.level = process_item.level;
-									await _process_item
+									_process_control.level = process_control.level;
+									_process_control.process = process_control.process;
+									await _process_control
 										.byLevelRead()
-										.then((_process_items: ProcessItem[]) => {
-											resolve(_process_items);
+										.then((_process_controls: ProcessControl[]) => {
+											resolve(_process_controls);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -278,16 +273,17 @@ export const validation = (
 										),
 									});
 								}
-							} else if (url.substring(0, 11) == '/byItemRead') {
-								const id_item: any = process_item.item;
+							} else if (url.substring(0, 14) == '/byControlRead') {
+								const id_control: any = process_control.control;
 
-								if (id_item >= 1) {
+								if (id_control >= 1) {
 									/** set required attributes for action */
-									_process_item.item = process_item.item;
-									await _process_item
-										.byItemRead()
-										.then((_process_items: ProcessItem[]) => {
-											resolve(_process_items);
+									_process_control.control = process_control.control;
+									_process_control.process = process_control.process;
+									await _process_control
+										.byControlRead()
+										.then((_process_controls: ProcessControl[]) => {
+											resolve(_process_controls);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -297,20 +293,22 @@ export const validation = (
 										..._messages[11],
 										description: _messages[11].description.replace(
 											'name_entity',
-											'item'
+											'control'
 										),
 									});
 								}
 							} else if (url.substring(0, 13) == '/specificRead') {
-								const id_process_item: any = process_item.id_process_item;
+								const id_process_control: any =
+									process_control.id_process_control;
 
-								if (id_process_item >= 1) {
+								if (id_process_control >= 1) {
 									/** set required attributes for action */
-									_process_item.id_process_item = process_item.id_process_item;
-									await _process_item
+									_process_control.id_process_control =
+										process_control.id_process_control;
+									await _process_control
 										.specificRead()
-										.then((_processItem: ProcessItem) => {
-											resolve(_processItem);
+										.then((_processControl: ProcessControl) => {
+											resolve(_processControl);
 										})
 										.catch((error: any) => {
 											reject(error);
@@ -320,38 +318,38 @@ export const validation = (
 										..._messages[11],
 										description: _messages[11].description.replace(
 											'name_entity',
-											'process_item'
+											'process_control'
 										),
 									});
 								}
 							} else if (url == '/update') {
 								/** set required attributes for action */
-								_process_item.id_user_ = process_item.id_user_;
-								_process_item.id_process_item = process_item.id_process_item;
-								_process_item.official = process_item.official;
-								_process_item.process = process_item.process;
-								_process_item.task = process_item.task;
-								_process_item.level = process_item.level;
-								_process_item.item = process_item.item;
-								_process_item.amount_process_item =
-									process_item.amount_process_item;
-								_process_item.features_process_item =
-									process_item.features_process_item;
-								_process_item.entry_date_process_item =
-									process_item.entry_date_process_item;
-								await _process_item
+								_process_control.id_user_ = process_control.id_user_;
+								_process_control.id_process_control =
+									process_control.id_process_control;
+								_process_control.official = process_control.official;
+								_process_control.process = process_control.process;
+								_process_control.task = process_control.task;
+								_process_control.level = process_control.level;
+								_process_control.control = process_control.control;
+								_process_control.value_process_control =
+									process_control.value_process_control;
+								_process_control.last_change_process_control =
+									process_control.last_change_process_control;
+								await _process_control
 									.update()
-									.then((_processItem: ProcessItem) => {
-										resolve(_processItem);
+									.then((_processControl: ProcessControl) => {
+										resolve(_processControl);
 									})
 									.catch((error: any) => {
 										reject(error);
 									});
 							} else if (url.substring(0, 7) == '/delete') {
 								/** set required attributes for action */
-								_process_item.id_user_ = process_item.id_user_;
-								_process_item.id_process_item = process_item.id_process_item;
-								await _process_item
+								_process_control.id_user_ = process_control.id_user_;
+								_process_control.id_process_control =
+									process_control.id_process_control;
+								await _process_control
 									.delete()
 									.then((response: boolean) => {
 										resolve(response);

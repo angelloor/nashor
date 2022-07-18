@@ -671,3 +671,200 @@ CREATE OR REPLACE VIEW business.view_task_inner_join
 
 ALTER TABLE business.view_task_inner_join
     OWNER TO postgres;
+
+-- View: business.view_process_item_inner_join
+-- DROP VIEW business.view_process_item_inner_join;
+
+CREATE OR REPLACE VIEW business.view_process_item_inner_join
+ AS
+ SELECT bvpi.id_process_item,
+    bvpi.id_official,
+    bvpi.id_process,
+    bvpi.id_task,
+    bvpi.id_level,
+    bvpi.id_item,
+    bvpi.amount_process_item,
+    bvpi.features_process_item,
+    bvpi.entry_date_process_item,
+    bvo.id_user,
+    bvo.id_area,
+    bvo.id_position,
+    bvp.id_process_type,
+    bvp.id_flow_version,
+    bvp.number_process,
+    bvp.date_process,
+    bvp.generated_task,
+    bvp.finalized_process,
+    bvt.creation_date_task,
+    bvt.type_status_task,
+    bvt.type_action_task,
+    bvt.action_date_task,
+    bvl.id_template,
+    bvl.id_level_profile,
+    bvl.id_level_status,
+    bvl.name_level,
+    bvl.description_level,
+    bvi.id_item_category,
+    bvi.name_item,
+    bvi.description_item,
+    bvi.cpc_item
+   FROM business.view_process_item bvpi
+     JOIN business.view_official bvo ON bvpi.id_official = bvo.id_official
+     JOIN business.view_process bvp ON bvpi.id_process = bvp.id_process
+     JOIN business.view_task bvt ON bvpi.id_task = bvt.id_task
+     JOIN business.view_level bvl ON bvpi.id_level = bvl.id_level
+     JOIN business.view_item bvi ON bvpi.id_item = bvi.id_item
+  ORDER BY bvpi.id_process_item DESC;
+
+ALTER TABLE business.view_process_item_inner_join
+    OWNER TO postgres;
+
+-- View: business.view_process_attached_inner_join
+-- DROP VIEW business.view_process_attached_inner_join;
+
+CREATE OR REPLACE VIEW business.view_process_attached_inner_join
+ AS
+ SELECT bvpa.id_process_attached,
+    bvpa.id_official,
+    bvpa.id_process,
+    bvpa.id_task,
+    bvpa.id_level,
+    bvpa.id_attached,
+    bvpa.file_name,
+    bvpa.length_mb,
+    bvpa.extension,
+    bvpa.server_path,
+    bvpa.alfresco_path,
+    bvpa.upload_date,
+    bvpa.deleted_process_attached,
+    bvo.id_user,
+    bvo.id_area,
+    bvo.id_position,
+    bvp.id_process_type,
+    bvp.id_flow_version,
+    bvp.number_process,
+    bvp.date_process,
+    bvp.generated_task,
+    bvp.finalized_process,
+    bvt.creation_date_task,
+    bvt.type_status_task,
+    bvt.type_action_task,
+    bvt.action_date_task,
+    bvl.id_template,
+    bvl.id_level_profile,
+    bvl.id_level_status,
+    bvl.name_level,
+    bvl.description_level,
+    bva.name_attached,
+    bva.description_attached,
+    bva.length_mb_attached,
+    bva.required_attached
+   FROM business.view_process_attached bvpa
+     JOIN business.view_official bvo ON bvpa.id_official = bvo.id_official
+     JOIN business.view_process bvp ON bvpa.id_process = bvp.id_process
+     JOIN business.view_task bvt ON bvpa.id_task = bvt.id_task
+     JOIN business.view_level bvl ON bvpa.id_level = bvl.id_level
+     JOIN business.view_attached bva ON bvpa.id_attached = bva.id_attached
+  WHERE bvpa.deleted_process_attached = false
+  ORDER BY bvpa.id_process_attached DESC;
+
+ALTER TABLE business.view_process_attached_inner_join
+    OWNER TO postgres;
+
+-- View: business.view_process_control_inner_join
+-- DROP VIEW business.view_process_control_inner_join;
+
+CREATE OR REPLACE VIEW business.view_process_control_inner_join
+ AS
+ SELECT bvpc.id_process_control,
+    bvpc.id_official,
+    bvpc.id_process,
+    bvpc.id_task,
+    bvpc.id_level,
+    bvpc.id_control,
+    bvpc.value_process_control,
+    bvpc.last_change_process_control,
+    bvpc.deleted_process_control,
+    bvo.id_user,
+    bvo.id_area,
+    bvo.id_position,
+    bvp.id_process_type,
+    bvp.id_flow_version,
+    bvp.number_process,
+    bvp.date_process,
+    bvp.generated_task,
+    bvp.finalized_process,
+    bvt.creation_date_task,
+    bvt.type_status_task,
+    bvt.type_action_task,
+    bvt.action_date_task,
+    bvl.id_template,
+    bvl.id_level_profile,
+    bvl.id_level_status,
+    bvl.name_level,
+    bvl.description_level,
+    bvc.type_control,
+    bvc.title_control,
+    bvc.form_name_control,
+    bvc.initial_value_control,
+    bvc.required_control,
+    bvc.min_length_control,
+    bvc.max_length_control,
+    bvc.placeholder_control,
+    bvc.spell_check_control,
+    bvc.options_control,
+    bvc.in_use
+   FROM business.view_process_control bvpc
+     JOIN business.view_official bvo ON bvpc.id_official = bvo.id_official
+     JOIN business.view_process bvp ON bvpc.id_process = bvp.id_process
+     JOIN business.view_task bvt ON bvpc.id_task = bvt.id_task
+     JOIN business.view_level bvl ON bvpc.id_level = bvl.id_level
+     JOIN business.view_control bvc ON bvpc.id_control = bvc.id_control
+  WHERE bvpc.deleted_process_control = false
+  ORDER BY bvpc.id_process_control DESC;
+
+ALTER TABLE business.view_process_control_inner_join
+    OWNER TO postgres;
+
+-- View: business.view_process_comment_inner_join
+-- DROP VIEW business.view_process_comment_inner_join;
+
+CREATE OR REPLACE VIEW business.view_process_comment_inner_join
+ AS
+ SELECT bvpc.id_process_comment,
+    bvpc.id_official,
+    bvpc.id_process,
+    bvpc.id_task,
+    bvpc.id_level,
+    bvpc.value_process_comment,
+    bvpc.date_process_comment,
+    bvpc.deleted_process_comment,
+    bvo.id_user,
+    bvo.id_area,
+    bvo.id_position,
+    bvp.id_process_type,
+    bvp.id_flow_version,
+    bvp.number_process,
+    bvp.date_process,
+    bvp.generated_task,
+    bvp.finalized_process,
+    bvt.creation_date_task,
+    bvt.type_status_task,
+    bvt.type_action_task,
+    bvt.action_date_task,
+    bvl.id_template,
+    bvl.id_level_profile,
+    bvl.id_level_status,
+    bvl.name_level,
+    bvl.description_level
+   FROM business.view_process_comment bvpc
+     JOIN business.view_official bvo ON bvpc.id_official = bvo.id_official
+     JOIN business.view_process bvp ON bvpc.id_process = bvp.id_process
+     JOIN business.view_task bvt ON bvpc.id_task = bvt.id_task
+     JOIN business.view_level bvl ON bvpc.id_level = bvl.id_level
+  WHERE bvpc.deleted_process_comment = false
+  ORDER BY bvpc.id_process_comment DESC;
+
+ALTER TABLE business.view_process_comment_inner_join
+    OWNER TO postgres;
+
