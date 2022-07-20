@@ -480,7 +480,30 @@ export class ProcessAttached {
 				official: {
 					id_official: item.id_official,
 					company: { id_company: item.id_company },
-					user: { id_user: item.id_user },
+					user: {
+						id_user: item.id_user,
+						person: {
+							id_person: item.id_person,
+							academic: {
+								id_academic: item.id_academic,
+							},
+							job: {
+								id_job: item.id_job,
+							},
+							dni_person: item.dni_person,
+							name_person: item.name_person,
+							last_name_person: item.last_name_person,
+							address_person: item.address_person,
+							phone_person: item.phone_person,
+						},
+						type_user: {
+							id_type_user: item.id_type_user,
+						},
+						name_user: item.name_user,
+						password_user: item.password_user,
+						avatar_user: item.avatar_user,
+						status_user: item.status_user,
+					},
 					area: { id_area: item.id_area },
 					position: { id_position: item.id_position },
 				},
@@ -518,7 +541,7 @@ export class ProcessAttached {
 					company: { id_company: item.id_company },
 					name_attached: item.name_attached,
 					description_attached: item.description_attached,
-					length_mb_attached: item.length_mb_attached,
+					length_mb_attached: parseInt(item.length_mb_attached),
 					required_attached: item.required_attached,
 				},
 				/**
@@ -564,6 +587,21 @@ export class ProcessAttached {
 			delete _processAttached.description_attached;
 			delete _processAttached.length_mb_attached;
 			delete _processAttached.required_attached;
+
+			delete _processAttached.id_person;
+			delete _processAttached.id_type_user;
+			delete _processAttached.name_user;
+			delete _processAttached.password_user;
+			delete _processAttached.avatar_user;
+			delete _processAttached.status_user;
+
+			delete _processAttached.id_academic;
+			delete _processAttached.id_job;
+			delete _processAttached.dni_person;
+			delete _processAttached.name_person;
+			delete _processAttached.last_name_person;
+			delete _processAttached.address_person;
+			delete _processAttached.phone_person;
 
 			_processAttacheds.push(_processAttached);
 		});

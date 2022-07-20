@@ -260,7 +260,30 @@ export class ProcessComment {
 				official: {
 					id_official: item.id_official,
 					company: { id_company: item.id_company },
-					user: { id_user: item.id_user },
+					user: {
+						id_user: item.id_user,
+						person: {
+							id_person: item.id_person,
+							academic: {
+								id_academic: item.id_academic,
+							},
+							job: {
+								id_job: item.id_job,
+							},
+							dni_person: item.dni_person,
+							name_person: item.name_person,
+							last_name_person: item.last_name_person,
+							address_person: item.address_person,
+							phone_person: item.phone_person,
+						},
+						type_user: {
+							id_type_user: item.id_type_user,
+						},
+						name_user: item.name_user,
+						password_user: item.password_user,
+						avatar_user: item.avatar_user,
+						status_user: item.status_user,
+					},
 					area: { id_area: item.id_area },
 					position: { id_position: item.id_position },
 				},
@@ -330,6 +353,21 @@ export class ProcessComment {
 			delete _processComment.id_level_status;
 			delete _processComment.name_level;
 			delete _processComment.description_level;
+
+			delete _processComment.id_person;
+			delete _processComment.id_type_user;
+			delete _processComment.name_user;
+			delete _processComment.password_user;
+			delete _processComment.avatar_user;
+			delete _processComment.status_user;
+
+			delete _processComment.id_academic;
+			delete _processComment.id_job;
+			delete _processComment.dni_person;
+			delete _processComment.name_person;
+			delete _processComment.last_name_person;
+			delete _processComment.address_person;
+			delete _processComment.phone_person;
 
 			_processComments.push(_processComment);
 		});

@@ -28,7 +28,7 @@ export const view_process_item_by_official_read = (
 	process_item: ProcessItem
 ) => {
 	return new Promise<ProcessItem[]>(async (resolve, reject) => {
-		const query = `select * from business.view_process_item_inner_join bvpiij where bvpiij.id_official = ${process_item.official} order by bvpiij.id_process_item desc`;
+		const query = `select * from business.view_process_item_inner_join bvpiij where bvpiij.id_official = ${process_item.official} order by bvpiij.id_process_item asc`;
 
 		// console.log(query);
 
@@ -52,7 +52,7 @@ export const view_process_item_by_process_read = (
 	process_item: ProcessItem
 ) => {
 	return new Promise<ProcessItem[]>(async (resolve, reject) => {
-		const query = `select * from business.view_process_item_inner_join bvpiij where bvpiij.id_process = ${process_item.process} order by bvpiij.id_process_item desc`;
+		const query = `select * from business.view_process_item_inner_join bvpiij where bvpiij.id_process = ${process_item.process} order by bvpiij.id_process_item asc`;
 
 		// console.log(query);
 
@@ -74,7 +74,7 @@ export const view_process_item_by_process_read = (
 
 export const view_process_item_by_task_read = (process_item: ProcessItem) => {
 	return new Promise<ProcessItem[]>(async (resolve, reject) => {
-		const query = `select * from business.view_process_item_inner_join bvpiij where bvpiij.id_task = ${process_item.task} order by bvpiij.id_process_item desc`;
+		const query = `select * from business.view_process_item_inner_join bvpiij where bvpiij.id_task = ${process_item.task} order by bvpiij.id_process_item asc`;
 
 		// console.log(query);
 
@@ -96,7 +96,7 @@ export const view_process_item_by_task_read = (process_item: ProcessItem) => {
 
 export const view_process_item_by_level_read = (process_item: ProcessItem) => {
 	return new Promise<ProcessItem[]>(async (resolve, reject) => {
-		const query = `select * from business.view_process_item_inner_join bvpiij where bvpiij.id_level = ${process_item.level} order by bvpiij.id_process_item desc`;
+		const query = `select * from business.view_process_item_inner_join bvpiij where bvpiij.id_level = ${process_item.level} order by bvpiij.id_process_item asc`;
 
 		// console.log(query);
 
@@ -118,7 +118,7 @@ export const view_process_item_by_level_read = (process_item: ProcessItem) => {
 
 export const view_process_item_by_item_read = (process_item: ProcessItem) => {
 	return new Promise<ProcessItem[]>(async (resolve, reject) => {
-		const query = `select * from business.view_process_item_inner_join bvpiij where bvpiij.id_item = ${process_item.item} order by bvpiij.id_process_item desc`;
+		const query = `select * from business.view_process_item_inner_join bvpiij where bvpiij.id_item = ${process_item.item} order by bvpiij.id_process_item asc`;
 
 		// console.log(query);
 

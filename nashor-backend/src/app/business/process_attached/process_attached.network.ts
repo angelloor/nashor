@@ -118,6 +118,16 @@ routerProcessAttached.get(
 	}
 );
 
+routerProcessAttached.post('/downloadFile', async (req: any, res: any) => {
+	await validation(req.body, req.url, req.headers.token)
+		.then((data: any) => {
+			res.sendFile(data);
+		})
+		.catch((err: MessageAPI | any) => {
+			error(res, err);
+		});
+});
+
 routerProcessAttached.patch('/update', async (req: any, res: any) => {
 	await validation(req.body, req.url, req.headers.token)
 		.then((processAttached: ProcessAttached) => {

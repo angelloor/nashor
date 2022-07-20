@@ -8,25 +8,37 @@
         </button>
     </div>
     <!-- Edit process -->
-    <form class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto" [formGroup]="taskRealizeForm">
+    <form class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto bg-default" [formGroup]="taskRealizeForm">
         <!-- Lists -->
         <div class="flex">
             <div class="flex items-start w-full">
-                <div class="flex-0 w-full p-2 rounded-2xl bg-default">
+                <div class="flex-0 w-full rounded-2xl bg-default">
                     <div class="mt-2 rounded-xl bg-gray-400 bg-opacity-12 dark:bg-transparent dark:border p-3">
                         <div>
                             <ng-container *ngIf="template.plugin_item_process">
                                 <div class="text-2xl mt-4">Items</div>
                                 <!-- Items -->
-                                <div class="space-y-4 mt-5">
+                                <div class="space-y-4 mt-5 mb-5">
                                     <ng-container
-                                        *ngFor="let items of ['one', 'Two']; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                                        *ngFor="let elementItem of formArrayProcessItems.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
                                         <div class="relative flex">
+                                            <button mat-icon-button class="self-center" class="self-start"
+                                                [ngClass]="first ? 'self-center' : 'self-start'"
+                                                [matTooltip]="formArrayProcessItems.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessItems.getRawValue()[i].official.user.person.last_name_person">
+                                                <span class="relative">
+                                                    <img class="w-7 h-7 rounded-full"
+                                                        *ngIf="formArrayProcessItems.getRawValue()[i].official.user.avatar_user"
+                                                        [src]="_urlPathAvatar + formArrayProcessItems.getRawValue()[i].official.user.avatar_user">
+                                                </span>
+                                            </button>
                                             <mat-form-field class="angel-mat-no-subscript w-full max-w-40">
                                                 <mat-label *ngIf="first">Elemento</mat-label>
-                                                <mat-select>
+                                                <mat-select
+                                                    [formControl]="getFromControl(formArrayProcessItems, i, 'id_item')"
+                                                    (selectionChange)="updateProcessItem(i)">
                                                     <mat-option *ngFor="let item of listItem; trackBy: trackByFn"
-                                                        [value]="item.name_item" matTooltip="{{item.description_item}}">
+                                                        [disabled]="item.isSelected" [value]="item.id_item"
+                                                        matTooltip="{{item.description_item}}">
                                                         {{item.name_item}}
                                                     </mat-option>
                                                 </mat-select>
@@ -36,7 +48,9 @@
                                                 <mat-icon matPrefix class="hidden sm:flex icon-size-5"
                                                     [svgIcon]="'heroicons_solid:tag'">
                                                 </mat-icon>
-                                                <input matInput maxlength="5" type="number" min="1" max="99999">
+                                                <input matInput maxlength="5" type="number" min="1" max="99999"
+                                                    [formControl]="getFromControl(formArrayProcessItems, i, 'amount_process_item')"
+                                                    (change)="updateProcessItem(i)">
                                             </mat-form-field>
                                             <mat-form-field
                                                 class="angel-mat-no-subscript flex-auto w-full ml-2 sm:ml-4">
@@ -45,13 +59,15 @@
                                                     [svgIcon]="'heroicons_solid:tag'">
                                                 </mat-icon>
                                                 <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
-                                                    [cdkAutosizeMinRows]="2" [cdkAutosizeMaxRows]="30"></textarea>
+                                                    [cdkAutosizeMinRows]="2" [cdkAutosizeMaxRows]="30"
+                                                    [formControl]="getFromControl(formArrayProcessItems, i, 'features_process_item')"
+                                                    (change)="updateProcessItem(i)"></textarea>
                                             </mat-form-field>
                                             <ng-container>
                                                 <div class="flex items-center w-10 pl-2 self-start"
                                                     [ngClass]="{'mt-6': first}">
                                                     <button class="w-8 h-8 min-h-8" mat-icon-button
-                                                        matTooltip="Eliminar">
+                                                        (click)="deleteProcessItem(i)" matTooltip="Eliminar">
                                                         <mat-icon class="icon-size-5"
                                                             [svgIcon]="'heroicons_solid:trash'">
                                                         </mat-icon>
@@ -61,9 +77,11 @@
                                         </div>
                                     </ng-container>
                                 </div>
-                                <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer">
+                                <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
+                                    *ngIf="!isSelectedAllProcessItem">
                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
-                                    <span class="ml-2 font-medium text-secondary group-hover:underline">Añadir
+                                    <span class="ml-2 font-medium text-secondary group-hover:underline"
+                                        (click)="createProcessItem()">Añadir
                                         elemento</span>
                                 </div>
                             </ng-container>
@@ -80,7 +98,7 @@
                                             <mat-icon matPrefix class="hidden sm:flex icon-size-5"
                                                 [svgIcon]="'heroicons_outline:annotation'">
                                             </mat-icon>
-                                            <input matInput
+                                            <input matInput (change)="updateProcessControl()"
                                                 [minlength]="_templateControl.control.min_length_control ? _templateControl.control.min_length_control : 0"
                                                 [maxlength]="_templateControl.control.max_length_control ? _templateControl.control.max_length_control : 500"
                                                 [formControlName]="_templateControl.control.form_name_control"
@@ -174,21 +192,32 @@
                                 <div class="text-2xl mt-4">Anexos</div>
                                 <div class="space-y-4">
                                     <ng-container
-                                        *ngFor="let atacheds of formArrayAttached.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                                        *ngFor="let atacheds of formArrayProcessAttacheds.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
                                         <div class="relative flex">
                                             <div class="flex flex-row w-full h-14 items-center">
+                                                <button mat-icon-button class="self-center" class="self-start"
+                                                    *ngIf="formArrayProcessAttacheds.getRawValue()[i].isUpload"
+                                                    [ngClass]="first ? 'self-center' : 'self-start'"
+                                                    [matTooltip]="formArrayProcessAttacheds.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessAttacheds.getRawValue()[i].official.user.person.last_name_person">
+                                                    <span class="relative">
+                                                        <img class="w-7 h-7 rounded-full"
+                                                            *ngIf="formArrayProcessAttacheds.getRawValue()[i].official.user.avatar_user"
+                                                            [src]="_urlPathAvatar + formArrayProcessAttacheds.getRawValue()[i].official.user.avatar_user">
+                                                    </span>
+                                                </button>
                                                 <div class="w-4/12 p-1">
-                                                    {{formArrayAttached.getRawValue()[i].name_attached}}
+                                                    {{formArrayProcessAttacheds.getRawValue()[i].name_attached}}
                                                 </div>
                                                 <div class="w-6/12 p-1">
-                                                    {{formArrayAttached.getRawValue()[i].description_attached}}</div>
+                                                    {{formArrayProcessAttacheds.getRawValue()[i].description_attached}}
+                                                </div>
                                                 <div class="w-1/12 p-1">
-                                                    {{(formArrayAttached.getRawValue()[i].required_attached)
+                                                    {{(formArrayProcessAttacheds.getRawValue()[i].required_attached)
                                                     ?
                                                     'Obl' : 'Opc'}}
                                                 </div>
                                                 <div class="w-1/12 p-1">
-                                                    {{formArrayAttached.getRawValue()[i].length_mb_attached
+                                                    {{formArrayProcessAttacheds.getRawValue()[i].length_mb_attached
                                                     +
                                                     'MB'}}
                                                 </div>
@@ -197,18 +226,19 @@
                                                 <mat-label>Seleccionar archivo</mat-label>
                                                 <ngx-mat-file-input #removableInput
                                                     formControlName="{{'removablefile'+i}}"
-                                                    (change)="removableInput.setDisabledState(true)" [accept]="'.*'"
-                                                    placeholder="Removable Input" (value)="removableInput">
+                                                    (change)="removableInput.setDisabledState(true);  createProcessAttached( $event.target,i); removableInput.clear($event);"
+                                                    [accept]="'.*'" placeholder="Removable Input"
+                                                    (value)="removableInput">
                                                 </ngx-mat-file-input>
                                                 <mat-icon *ngIf="removableInput.empty" matSuffix>upload</mat-icon>
                                                 <button mat-icon-button matSuffix *ngIf="!removableInput.empty"
-                                                    [matTooltip]="formArrayAttached.getRawValue()[i].matTooltip"
-                                                    (click)="removableInput.setDisabledState(true)">
-                                                    <mat-icon class="icon-size-5"
+                                                    [matTooltip]="formArrayProcessAttacheds.getRawValue()[i].matTooltip"
+                                                    (click)="removableInput.setDisabledState(true); downloadProcessAttached(i)">
+                                                    <mat-icon class=" icon-size-5"
                                                         [svgIcon]="'heroicons_solid:download'"></mat-icon>
                                                 </button>
                                                 <button mat-icon-button matSuffix *ngIf="!removableInput.empty"
-                                                    (click)="removableInput.clear($event); removableInput.setDisabledState(false)">
+                                                    (click)="removableInput.clear($event); removableInput.setDisabledState(false); deleteProcessAttached(i);">
                                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'">
                                                     </mat-icon>
                                                 </button>
@@ -216,27 +246,56 @@
                                         </div>
                                     </ng-container>
                                 </div>
-                                <!-- Attacheds -->
                             </ng-container>
+                            <!-- Attacheds -->
+                            <!-- Alert -->
+                            <angel-alert class="mt-8" *ngIf="taskRealizeForm.invalid || showAlert"
+                                [appearance]="'outline'" [showIcon]="false" [type]="alert.type"
+                                [@shake]="alert.type === 'error'">
+                                <!-- Message if alert is actived for the component -->
+                                {{alert.message}}
+                                <mat-error *ngIf="listItem.length == 0">
+                                    • No hay items registrados
+                                </mat-error>
+                                <mat-error *ngIf="processItem.length == 0">
+                                    • Tiene que seleccionar al menos un item
+                                </mat-error>
+                                <!-- amount_process_item -->
+                                <mat-error
+                                    *ngFor="let elementoSolicitud of formArrayProcessItems.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                                    <div
+                                        *ngIf="getFromControl(formArrayProcessItems, i, 'amount_process_item')?.hasError('required')">
+                                        • Ingrese la cantidad del item {{i +1}}
+                                    </div>
+                                </mat-error>
+                                <!-- features_process_item -->
+                                <mat-error
+                                    *ngFor="let elementoSolicitud of formArrayProcessItems.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                                    <div
+                                        *ngIf="getFromControl(formArrayProcessItems, i, 'features_process_item')?.hasError('required')">
+                                        • Ingrese las características del item {{i +1}}
+                                    </div>
+                                </mat-error>
+                                <!-- removablefile -->
+                                <mat-error
+                                    *ngFor="let elementoAnexo of formArrayProcessAttacheds.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                                    <div
+                                        *ngIf="formArrayProcessAttacheds.getRawValue()[i].required_attached && !formArrayProcessAttacheds.getRawValue()[i].isUpload">
+                                        • Seleccione el archivo {{i +1}}
+                                    </div>
+                                </mat-error>
+                            </angel-alert>
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
 
         <div class="flex items-center justify-center sm:justify-end py-2 space-x-3 ng-star-inserted br-10 pt-6">
-            <!-- Cancel -->
-            <button mat-flat-button
-                class="mat-focus-indicator mat-flat-button mat-button-base mat-warn ng-star-inserted"
-                (click)="closeModalTaskRealize()">
-                Cancelar
-            </button>
             <!-- Send -->
             <button class="order-first sm:order-last" mat-stroked-button [color]="'primary'"
                 [disabled]="taskRealizeForm.invalid">
-                Aceptar
+                Enviar
             </button>
         </div>
     </form>

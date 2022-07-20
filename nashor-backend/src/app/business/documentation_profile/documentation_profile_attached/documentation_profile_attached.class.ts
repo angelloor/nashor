@@ -216,7 +216,7 @@ export class DocumentationProfileAttached {
 					company: { id_company: item.id_company },
 					name_attached: item.name_attached,
 					description_attached: item.description_attached,
-					length_mb_attached: item.length_mb_attached,
+					length_mb_attached: parseInt(item.length_mb_attached),
 					required_attached: item.required_attached,
 				},
 				/**

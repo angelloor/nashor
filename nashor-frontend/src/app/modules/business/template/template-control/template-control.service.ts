@@ -132,11 +132,11 @@ export class TemplateControlService {
   }
   /**
    * byTemplateRead
-   * @param id_template
+   * @param _id_template
    */
-  byTemplateRead(id_template: string): Observable<TemplateControl[]> {
+  byTemplateRead(_id_template: string): Observable<TemplateControl[]> {
     return this._httpClient
-      .get<TemplateControl[]>(this._url + `/byTemplateRead/${id_template}`)
+      .get<TemplateControl[]>(this._url + `/byTemplateRead/${_id_template}`)
       .pipe(
         tap((templateControls: TemplateControl[]) => {
           if (templateControls) {

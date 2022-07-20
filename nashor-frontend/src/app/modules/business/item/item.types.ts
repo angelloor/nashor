@@ -9,4 +9,6 @@ export interface Item {
   description_item: string;
   cpc_item: string;
   deleted_item: boolean;
+
+  isSelected?: boolean;
 }

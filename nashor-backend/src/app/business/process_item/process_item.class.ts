@@ -290,7 +290,30 @@ export class ProcessItem {
 				official: {
 					id_official: item.id_official,
 					company: { id_company: item.id_company },
-					user: { id_user: item.id_user },
+					user: {
+						id_user: item.id_user,
+						person: {
+							id_person: item.id_person,
+							academic: {
+								id_academic: item.id_academic,
+							},
+							job: {
+								id_job: item.id_job,
+							},
+							dni_person: item.dni_person,
+							name_person: item.name_person,
+							last_name_person: item.last_name_person,
+							address_person: item.address_person,
+							phone_person: item.phone_person,
+						},
+						type_user: {
+							id_type_user: item.id_type_user,
+						},
+						name_user: item.name_user,
+						password_user: item.password_user,
+						avatar_user: item.avatar_user,
+						status_user: item.status_user,
+					},
 					area: { id_area: item.id_area },
 					position: { id_position: item.id_position },
 				},
@@ -374,6 +397,21 @@ export class ProcessItem {
 			delete _processItem.name_item;
 			delete _processItem.description_item;
 			delete _processItem.cpc_item;
+
+			delete _processItem.id_person;
+			delete _processItem.id_type_user;
+			delete _processItem.name_user;
+			delete _processItem.password_user;
+			delete _processItem.avatar_user;
+			delete _processItem.status_user;
+
+			delete _processItem.id_academic;
+			delete _processItem.id_job;
+			delete _processItem.dni_person;
+			delete _processItem.name_person;
+			delete _processItem.last_name_person;
+			delete _processItem.address_person;
+			delete _processItem.phone_person;
 
 			_processItems.push(_processItem);
 		});

@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { generateRandomNumber } from '../../../utils/global';
 import { verifyToken } from '../../../utils/jwt';
 import { _messages } from '../../../utils/message/message';
@@ -503,6 +504,27 @@ export const validation = (
 									.catch((error: any) => {
 										reject(error);
 									});
+							} else if (url == '/downloadFile') {
+								/** set required attributes for action */
+								_process_attached.server_path = process_attached.server_path;
+
+								/**
+								 * Armar el path final
+								 */
+								const pathFinal = `${path.resolve(
+									'./'
+								)}${_process_attached.server_path?.substring(
+									1,
+									_process_attached.server_path.length
+								)}`;
+								/**
+								 * Si existe el comprobante segun el path, resolvemos el path Final
+								 */
+								if (fs.existsSync(pathFinal)) {
+									resolve(pathFinal);
+								} else {
+									reject('No se encontro el recurso!');
+								}
 							}
 						}
 					})

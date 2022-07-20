@@ -1,28 +1,28 @@
 import multer from 'multer';
 
 const _storageAvatar = multer.diskStorage({
-	destination: function (req, file, cb) {
+	destination: (req: any, file: Express.Multer.File, cb) => {
 		cb(null, './');
 	},
-	filename: function (req, file, cb) {
+	filename: (req: any, file: Express.Multer.File, cb) => {
 		cb(null, file.fieldname + '.jpg');
 	},
 });
 
 const _storageLogo = multer.diskStorage({
-	destination: function (req, file, cb) {
+	destination: (req: any, file: Express.Multer.File, cb) => {
 		cb(null, './');
 	},
-	filename: function (req, file, cb) {
+	filename: (req: any, file: Express.Multer.File, cb) => {
 		cb(null, file.fieldname + '.png');
 	},
 });
 
 const _storageFile = multer.diskStorage({
-	destination: function (req, file, cb) {
+	destination: (req: any, file: Express.Multer.File, cb) => {
 		cb(null, './');
 	},
-	filename: function (req, file, cb) {
+	filename: (req: any, file: Express.Multer.File, cb) => {
 		cb(null, file.originalname);
 	},
 });

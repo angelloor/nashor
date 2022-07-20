@@ -225,8 +225,7 @@ export class LevelProfileOfficial {
 			delete _levelProfileOfficial.id_position;
 
 			delete _levelProfileOfficial.id_person;
-			delete _levelProfileOfficial.id_profile;
-			delete _levelProfileOfficial.type_user;
+			delete _levelProfileOfficial.id_type_user;
 			delete _levelProfileOfficial.name_user;
 			delete _levelProfileOfficial.password_user;
 			delete _levelProfileOfficial.avatar_user;

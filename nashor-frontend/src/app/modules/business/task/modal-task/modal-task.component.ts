@@ -5,7 +5,13 @@ import {
 } from '@angel/services/confirmation';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppInitialData, MessageAPI } from 'app/core/app/app.type';
@@ -14,6 +20,7 @@ import { NotificationService } from 'app/shared/notification/notification.servic
 import { LocalDatePipe } from 'app/shared/pipes/local-date.pipe';
 import { GlobalUtils } from 'app/utils/GlobalUtils';
 import { FullDate } from 'app/utils/utils.types';
+import { environment } from 'environments/environment';
 import { Subject, takeUntil } from 'rxjs';
 import { levelProfile } from '../../level-profile/level-profile.data';
 import { LevelProfileService } from '../../level-profile/level-profile.service';
@@ -34,6 +41,8 @@ import { ProcessType } from '../../process-type/process-type.types';
 import { process } from '../../process/process.data';
 import { ProcessService } from '../../process/process.service';
 import { Process } from '../../process/process.types';
+import { ProcessCommentService } from '../components/process-comment/process-comment.service';
+import { ProcessComment } from '../components/process-comment/process-comment.types';
 import { ModalTaskRealizeService } from '../modal-task-realize/modal-task-realize.service';
 import { TaskService } from '../task.service';
 import {
@@ -54,6 +63,8 @@ import { ModalTaskService } from './modal-task.service';
   providers: [LocalDatePipe],
 })
 export class ModalTaskComponent implements OnInit {
+  _urlPathAvatar: string = environment.urlBackend + '/resource/img/avatar/';
+
   listProcess: Process[] = [];
   selectedProcess: Process = process;
 
@@ -115,6 +126,8 @@ export class ModalTaskComponent implements OnInit {
   taskForm!: FormGroup;
   private tasks!: Task[];
 
+  processComment: ProcessComment[] = [];
+
   private _tagsPanelOverlayRef!: OverlayRef;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   /**
@@ -147,7 +160,8 @@ export class ModalTaskComponent implements OnInit {
     private _levelStatusService: LevelStatusService,
     private _modalSelectOfficialByLevelProfileService: ModalSelectOfficialByLevelProfileService,
     private _globalUtils: GlobalUtils,
-    private _modalTaskRealizeService: ModalTaskRealizeService
+    private _modalTaskRealizeService: ModalTaskRealizeService,
+    private _processCommentService: ProcessCommentService
   ) {}
 
   /** ----------------------------------------------------------------------------------------------------- */
@@ -188,6 +202,7 @@ export class ModalTaskComponent implements OnInit {
       type_status_task: ['', [Validators.required]],
       type_action_task: ['', [Validators.required]],
       action_date_task: ['', [Validators.required]],
+      processComments: this._formBuilder.array([]),
     });
     /**
      * Get the tasks
@@ -212,7 +227,96 @@ export class ModalTaskComponent implements OnInit {
          */
         this.task = task;
 
-        console.log(this.task);
+        this._processCommentService
+          .byLevelRead(this.task.level.id_level)
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe();
+
+        this._processCommentService.processComments$
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((_processComment: ProcessComment[]) => {
+            this.processComment = _processComment;
+            /**
+             * Clear the processComments form arrays
+             */
+            (this.taskForm.get('processComments') as FormArray).clear();
+
+            const lotCommentFormGroups: any = [];
+            /**
+             * Iterate through them
+             */
+
+            this.processComment.forEach((_processComment) => {
+              /**
+               * Create an elemento form group
+               */
+
+              lotCommentFormGroups.push(
+                this._formBuilder.group({
+                  id_process_comment: _processComment.id_process_comment,
+                  value_process_comment: [
+                    {
+                      value: _processComment.value_process_comment,
+                      disabled: true,
+                    },
+                  ],
+                  date_process_comment: [
+                    {
+                      value: _processComment.date_process_comment,
+                      disabled: false,
+                    },
+                    [Validators.required],
+                  ],
+                  official: [
+                    {
+                      value: _processComment.official,
+                      disabled: false,
+                    },
+                    [Validators.required],
+                  ],
+                  process: [
+                    {
+                      value: _processComment.process,
+                      disabled: false,
+                    },
+                    [Validators.required],
+                  ],
+                  task: [
+                    {
+                      value: _processComment.task,
+                      disabled: false,
+                    },
+                    [Validators.required],
+                  ],
+                  level: [
+                    {
+                      value: _processComment.level,
+                      disabled: false,
+                    },
+                    [Validators.required],
+                  ],
+                  editMode: [
+                    {
+                      value: false,
+                      disabled: false,
+                    },
+                  ],
+                  isOwner: [
+                    this.data.user.id_user ==
+                      _processComment.official.user.id_user,
+                  ],
+                })
+              );
+            });
+            /**
+             * Add the elemento form groups to the elemento form array
+             */
+            lotCommentFormGroups.forEach((lotCommentFormGroup: any) => {
+              (this.taskForm.get('processComments') as FormArray).push(
+                lotCommentFormGroup
+              );
+            });
+          });
 
         /**
          * Type Enum TYPE_STATUS_TAKS
@@ -324,6 +428,23 @@ export class ModalTaskComponent implements OnInit {
          */
         this._changeDetectorRef.markForCheck();
       });
+  }
+  get formArrayProcessComments(): FormArray {
+    return this.taskForm.get('processComments') as FormArray;
+  }
+  /**
+   * getFromControl
+   * @param formArray
+   * @param index
+   * @param control
+   * @returns
+   */
+  getFromControl(
+    formArray: FormArray,
+    index: number,
+    control: string
+  ): FormControl {
+    return formArray.controls[index].get(control) as FormControl;
   }
 
   /**
@@ -571,10 +692,221 @@ export class ModalTaskComponent implements OnInit {
       });
   }
   /**
+   * addProcessComment
+   */
+  addProcessComment() {
+    const id_user_ = this.data.user.id_user;
+    const id_official: string = this.task.official.id_official;
+    const id_process: string = this.task.process.id_process;
+    const id_task: string = this.task.id_task;
+    const id_level: string = this.task.level.id_level;
+
+    this._processCommentService
+      .create(id_user_, id_official, id_process, id_task, id_level)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (_processComment: ProcessComment) => {
+          if (_processComment) {
+            const index = this.processComment.findIndex(
+              (_processComment) =>
+                _processComment.id_process_comment ==
+                _processComment.id_process_comment
+            );
+
+            this.editProcessComment(index, true);
+
+            this._notificationService.success(
+              'Comentario agregado correctamente'
+            );
+          } else {
+            this._notificationService.error(
+              'Ocurrió un error agregar el comentario'
+            );
+          }
+          /**
+           * Mark for check
+           */
+          this._changeDetectorRef.markForCheck();
+        },
+        error: (error: { error: MessageAPI }) => {
+          this._notificationService.error(
+            !error.error
+              ? '¡Error interno!, consulte al administrador.'
+              : !error.error.description
+              ? '¡Error interno!, consulte al administrador.'
+              : error.error.description
+          );
+        },
+      });
+  }
+  /**
+   * editProcessComment
+   * @param index
+   * @param status
+   */
+  editProcessComment(index: number, status: boolean) {
+    if (status) {
+      this.desactiveAllControl();
+      /**
+       * set edit mode
+       */
+      this.getFromControl(
+        this.formArrayProcessComments,
+        index,
+        'editMode'
+      ).patchValue(status);
+      /**
+       * Enabled control
+       */
+      this.getFromControl(
+        this.formArrayProcessComments,
+        index,
+        'value_process_comment'
+      ).enable();
+    } else {
+      this.getFromControl(
+        this.formArrayProcessComments,
+        index,
+        'editMode'
+      ).patchValue(status);
+      /**
+       * Enabled control
+       */
+      this.getFromControl(
+        this.formArrayProcessComments,
+        index,
+        'value_process_comment'
+      ).disable();
+    }
+  }
+  /**
+   * desactiveAllControl
+   */
+  desactiveAllControl() {
+    this.processComment.map((item: ProcessComment, index: number) => {
+      this.getFromControl(
+        this.formArrayProcessComments,
+        index,
+        'editMode'
+      ).patchValue(false);
+      /**
+       * Enabled control
+       */
+      this.getFromControl(
+        this.formArrayProcessComments,
+        index,
+        'value_process_comment'
+      ).disable();
+    });
+  }
+  /**
+   * saveProcessComment
+   * @param index
+   */
+  saveProcessComment(index: number) {
+    this.editProcessComment(index, false);
+
+    const id_user_ = this.data.user.id_user;
+    const elementProcessCommentFormArray = this.taskForm.get(
+      'processComments'
+    ) as FormArray;
+
+    let processComment = elementProcessCommentFormArray.getRawValue()[index];
+
+    processComment = {
+      ...processComment,
+      id_user_: parseInt(id_user_),
+      id_process_comment: parseInt(processComment.id_process_comment),
+      official: {
+        id_official: parseInt(processComment.official.id_official),
+      },
+      process: {
+        id_process: parseInt(processComment.process.id_process),
+      },
+      task: {
+        id_task: parseInt(processComment.task.id_task),
+      },
+      level: {
+        id_level: parseInt(processComment.level.id_level),
+      },
+      value_process_comment: processComment.value_process_comment.trim(),
+    };
+
+    this._processCommentService
+      .update(processComment)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (_processComment: ProcessComment) => {
+          if (_processComment) {
+            this._notificationService.success('Comentario actualizado');
+          } else {
+            this._notificationService.error(
+              'Ocurrió un error al actualiar el comentario'
+            );
+          }
+          /**
+           * Mark for check
+           */
+          this._changeDetectorRef.markForCheck();
+        },
+        error: (error: { error: MessageAPI }) => {
+          this._notificationService.error(
+            !error.error
+              ? '¡Error interno!, consulte al administrador.'
+              : !error.error.description
+              ? '¡Error interno!, consulte al administrador.'
+              : error.error.description
+          );
+        },
+      });
+  }
+  /**
+   * deleteProcessComment
+   * @param index
+   */
+  deleteProcessComment(index: number) {
+    const elementProcessCommentFormArray = this.taskForm.get(
+      'processComments'
+    ) as FormArray;
+
+    const id_process_comment =
+      elementProcessCommentFormArray.getRawValue()[index].id_process_comment;
+    const id_user_ = this.data.user.id_user;
+
+    this._processCommentService
+      .delete(id_user_, id_process_comment)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response: boolean) => {
+          if (response) {
+            this._notificationService.success('Comentario eliminado');
+          } else {
+            this._notificationService.error(
+              'Ocurrió un error eliminado el comentario'
+            );
+          }
+          /**
+           * Mark for check
+           */
+          this._changeDetectorRef.markForCheck();
+        },
+        error: (error: { error: MessageAPI }) => {
+          this._notificationService.error(
+            !error.error
+              ? '¡Error interno!, consulte al administrador.'
+              : !error.error.description
+              ? '¡Error interno!, consulte al administrador.'
+              : error.error.description
+          );
+        },
+      });
+  }
+  /**
    * openModalTaskRealize
    */
   openModalTaskRealize(): void {
     this._modalTaskRealizeService.openModalTaskRealize(
+      this.task,
       this.task.level.template.id_template
     );
   }
@@ -611,5 +943,13 @@ export class ModalTaskComponent implements OnInit {
    */
   closeModalTask(): void {
     this._modalTaskService.closeModalTask();
+  }
+  /**
+   * Track by function for ngFor loops
+   * @param index
+   * @param item
+   */
+  trackByFn(index: number, item: any): any {
+    return item.id || index;
   }
 }

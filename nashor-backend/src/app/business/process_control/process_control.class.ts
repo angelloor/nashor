@@ -290,7 +290,30 @@ export class ProcessControl {
 				official: {
 					id_official: item.id_official,
 					company: { id_company: item.id_company },
-					user: { id_user: item.id_user },
+					user: {
+						id_user: item.id_user,
+						person: {
+							id_person: item.id_person,
+							academic: {
+								id_academic: item.id_academic,
+							},
+							job: {
+								id_job: item.id_job,
+							},
+							dni_person: item.dni_person,
+							name_person: item.name_person,
+							last_name_person: item.last_name_person,
+							address_person: item.address_person,
+							phone_person: item.phone_person,
+						},
+						type_user: {
+							id_type_user: item.id_type_user,
+						},
+						name_user: item.name_user,
+						password_user: item.password_user,
+						avatar_user: item.avatar_user,
+						status_user: item.status_user,
+					},
 					area: { id_area: item.id_area },
 					position: { id_position: item.id_position },
 				},
@@ -388,6 +411,21 @@ export class ProcessControl {
 			delete _processControl.spell_check_control;
 			delete _processControl.options_control;
 			delete _processControl.in_use;
+
+			delete _processControl.id_person;
+			delete _processControl.id_type_user;
+			delete _processControl.name_user;
+			delete _processControl.password_user;
+			delete _processControl.avatar_user;
+			delete _processControl.status_user;
+
+			delete _processControl.id_academic;
+			delete _processControl.id_job;
+			delete _processControl.dni_person;
+			delete _processControl.name_person;
+			delete _processControl.last_name_person;
+			delete _processControl.address_person;
+			delete _processControl.phone_person;
 
 			_processControls.push(_processControl);
 		});

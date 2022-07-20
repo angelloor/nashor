@@ -689,6 +689,19 @@ CREATE OR REPLACE VIEW business.view_process_item_inner_join
     bvo.id_user,
     bvo.id_area,
     bvo.id_position,
+    cvu.id_person,
+    cvu.id_type_user,
+    cvu.name_user,
+    cvu.password_user,
+    cvu.avatar_user,
+    cvu.status_user,
+    cvp.id_academic,
+    cvp.id_job,
+    cvp.dni_person,
+    cvp.name_person,
+    cvp.last_name_person,
+    cvp.address_person,
+    cvp.phone_person,
     bvp.id_process_type,
     bvp.id_flow_version,
     bvp.number_process,
@@ -710,6 +723,8 @@ CREATE OR REPLACE VIEW business.view_process_item_inner_join
     bvi.cpc_item
    FROM business.view_process_item bvpi
      JOIN business.view_official bvo ON bvpi.id_official = bvo.id_official
+     JOIN core.view_user cvu ON bvo.id_user = cvu.id_user
+     JOIN core.view_person cvp ON cvu.id_person = cvp.id_person
      JOIN business.view_process bvp ON bvpi.id_process = bvp.id_process
      JOIN business.view_task bvt ON bvpi.id_task = bvt.id_task
      JOIN business.view_level bvl ON bvpi.id_level = bvl.id_level
@@ -740,6 +755,19 @@ CREATE OR REPLACE VIEW business.view_process_attached_inner_join
     bvo.id_user,
     bvo.id_area,
     bvo.id_position,
+    cvu.id_person,
+    cvu.id_type_user,
+    cvu.name_user,
+    cvu.password_user,
+    cvu.avatar_user,
+    cvu.status_user,
+    cvp.id_academic,
+    cvp.id_job,
+    cvp.dni_person,
+    cvp.name_person,
+    cvp.last_name_person,
+    cvp.address_person,
+    cvp.phone_person,
     bvp.id_process_type,
     bvp.id_flow_version,
     bvp.number_process,
@@ -761,6 +789,8 @@ CREATE OR REPLACE VIEW business.view_process_attached_inner_join
     bva.required_attached
    FROM business.view_process_attached bvpa
      JOIN business.view_official bvo ON bvpa.id_official = bvo.id_official
+     JOIN core.view_user cvu ON bvo.id_user = cvu.id_user
+     JOIN core.view_person cvp ON cvu.id_person = cvp.id_person
      JOIN business.view_process bvp ON bvpa.id_process = bvp.id_process
      JOIN business.view_task bvt ON bvpa.id_task = bvt.id_task
      JOIN business.view_level bvl ON bvpa.id_level = bvl.id_level
@@ -788,6 +818,19 @@ CREATE OR REPLACE VIEW business.view_process_control_inner_join
     bvo.id_user,
     bvo.id_area,
     bvo.id_position,
+    cvu.id_person,
+    cvu.id_type_user,
+    cvu.name_user,
+    cvu.password_user,
+    cvu.avatar_user,
+    cvu.status_user,
+    cvp.id_academic,
+    cvp.id_job,
+    cvp.dni_person,
+    cvp.name_person,
+    cvp.last_name_person,
+    cvp.address_person,
+    cvp.phone_person,
     bvp.id_process_type,
     bvp.id_flow_version,
     bvp.number_process,
@@ -816,6 +859,8 @@ CREATE OR REPLACE VIEW business.view_process_control_inner_join
     bvc.in_use
    FROM business.view_process_control bvpc
      JOIN business.view_official bvo ON bvpc.id_official = bvo.id_official
+     JOIN core.view_user cvu ON bvo.id_user = cvu.id_user
+     JOIN core.view_person cvp ON cvu.id_person = cvp.id_person
      JOIN business.view_process bvp ON bvpc.id_process = bvp.id_process
      JOIN business.view_task bvt ON bvpc.id_task = bvt.id_task
      JOIN business.view_level bvl ON bvpc.id_level = bvl.id_level
@@ -842,6 +887,19 @@ CREATE OR REPLACE VIEW business.view_process_comment_inner_join
     bvo.id_user,
     bvo.id_area,
     bvo.id_position,
+    cvu.id_person,
+    cvu.id_type_user,
+    cvu.name_user,
+    cvu.password_user,
+    cvu.avatar_user,
+    cvu.status_user,
+    cvp.id_academic,
+    cvp.id_job,
+    cvp.dni_person,
+    cvp.name_person,
+    cvp.last_name_person,
+    cvp.address_person,
+    cvp.phone_person,
     bvp.id_process_type,
     bvp.id_flow_version,
     bvp.number_process,
@@ -859,6 +917,8 @@ CREATE OR REPLACE VIEW business.view_process_comment_inner_join
     bvl.description_level
    FROM business.view_process_comment bvpc
      JOIN business.view_official bvo ON bvpc.id_official = bvo.id_official
+     JOIN core.view_user cvu ON bvo.id_user = cvu.id_user
+     JOIN core.view_person cvp ON cvu.id_person = cvp.id_person
      JOIN business.view_process bvp ON bvpc.id_process = bvp.id_process
      JOIN business.view_task bvt ON bvpc.id_task = bvt.id_task
      JOIN business.view_level bvl ON bvpc.id_level = bvl.id_level
@@ -867,4 +927,3 @@ CREATE OR REPLACE VIEW business.view_process_comment_inner_join
 
 ALTER TABLE business.view_process_comment_inner_join
     OWNER TO postgres;
-

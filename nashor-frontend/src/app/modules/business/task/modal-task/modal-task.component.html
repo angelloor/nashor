@@ -143,6 +143,61 @@
                     Reasigna la tarea a un comapañero</div>
             </a>
         </div>
+        <!-- processComment -->
+        <button class="group inline-flex items-center mt-4 mb-4 -ml-4 py-2 px-4 rounded cursor-pointer"
+            [disabled]="task.type_status_task != 'progress'" (click)="addProcessComment()">
+            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+            <span class="ml-2 font-medium text-secondary group-hover:underline">Añadir comentario</span>
+        </button>
+        <div class="space-y-4" *ngIf="processComment.length > 0">
+            <ng-container
+                *ngFor="let elementComment of formArrayProcessComments.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                <div class="relative flex">
+                    <button mat-icon-button *ngIf="processComment.length > 0"
+                        [matTooltip]="formArrayProcessComments.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessComments.getRawValue()[i].official.user.person.last_name_person">
+                        <span class="relative">
+                            <img class="w-7 h-7 rounded-full"
+                                *ngIf="formArrayProcessComments.getRawValue()[i].official.user.avatar_user"
+                                [src]="_urlPathAvatar + formArrayProcessComments.getRawValue()[i].official.user.avatar_user">
+                        </span>
+                    </button>
+                    <div class="angel-mat-no-subscript flex-auto w-full ml-2">
+                        <mat-form-field class="angel-mat-no-subscript flex-auto w-full">
+                            <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" maxlength="250"
+                                cdkAutosizeMinRows="3" cdkAutosizeMaxRows="30"
+                                [formControl]="getFromControl(formArrayProcessComments, i, 'value_process_comment')"
+                                [placeholder]="'Ingrese el comentario'" [spellcheck]="true"></textarea>
+                        </mat-form-field>
+                        <div class="mt-2 text-sm">{{formArrayProcessComments.getRawValue()[i].date_process_comment |
+                            date:'medium'}}
+                        </div>
+                    </div>
+                    <ng-container>
+                        <div *ngIf="formArrayProcessComments.getRawValue()[i].isOwner"
+                            class="flex items-center flex-col w-10 pl-2 self-center pb-6">
+                            <button *ngIf="!formArrayProcessComments.getRawValue()[i].editMode" class="w-8 h-8 min-h-8"
+                                [disabled]="task.type_status_task != 'progress'" mat-icon-button
+                                (click)="editProcessComment(i, true)" matTooltip="Editar">
+                                <mat-icon class="icon-size-5" [svgIcon]="'mat_solid:edit'">
+                                </mat-icon>
+                            </button>
+                            <button *ngIf="formArrayProcessComments.getRawValue()[i].editMode" class="w-8 h-8 min-h-8"
+                                [disabled]="task.type_status_task != 'progress'" mat-icon-button
+                                (click)="saveProcessComment(i)" matTooltip="Guardar">
+                                <mat-icon class="icon-size-5" [svgIcon]="'mat_outline:save'">
+                                </mat-icon>
+                            </button>
+                            <button *ngIf="formArrayProcessComments.getRawValue()[i].editMode" class="w-8 h-8 min-h-8"
+                                [disabled]="task.type_status_task != 'progress'" mat-icon-button
+                                (click)="deleteProcessComment(i)" matTooltip="Eliminar">
+                                <mat-icon class="icon-size-5" [svgIcon]="'mat_solid:delete_outline'">
+                                </mat-icon>
+                            </button>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </div>
 
     </form>
 </div>
