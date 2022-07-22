@@ -1486,6 +1486,7 @@ ALTER FUNCTION business.dml_template_control_update_control_properties_modified(
 
 CREATE OR REPLACE FUNCTION business.dml_template_control_update_positions(
 	id_user_ numeric,
+	_id_template numeric,
 	_template_control json)
     RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
     LANGUAGE 'plpgsql'
@@ -1511,7 +1512,7 @@ BEGIN
 	IF (_UPDATE_ORDINAL_POSITION) THEN
 		_UPDATE_LAST_CHANGE = (select * from business.dml_template_update_last_change(id_user_, _ID_TEMPLATE));
 	
-		RETURN QUERY select * from business.view_template_control_inner_join bvtcij order by bvtcij.ordinal_position asc;
+		RETURN QUERY select * from business.view_template_control_inner_join bvtcij where bvtcij.id_template = _id_template order by bvtcij.ordinal_position asc;
 	ELSE
 		_EXCEPTION = 'Ocurrió un error al actualizar positions';
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';

@@ -201,6 +201,7 @@ export class TemplateDetailsComponent implements OnInit {
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((_templateControl: TemplateControl[]) => {
             this.templateControl = _templateControl;
+            console.log(_templateControl);
             /**
              * Set controls
              */
@@ -449,15 +450,15 @@ export class TemplateDetailsComponent implements OnInit {
         this._layoutService.setOpenModal(false);
       });
   }
-  /**
-   * addExistingControl
-   */
-  addExistingControl() {
-    this._modalExistingControlService.openExistingControl(
-      this.data.user.id_user,
-      this.template.id_template
-    );
-  }
+  // /**
+  //  * addExistingControl
+  //  */
+  // addExistingControl() {
+  //   this._modalExistingControlService.openExistingControl(
+  //     this.data.user.id_user,
+  //     this.template.id_template
+  //   );
+  // }
   /**
    * Card dropped
    *
@@ -473,7 +474,7 @@ export class TemplateDetailsComponent implements OnInit {
     );
 
     this._templateControlService
-      .updatePositions(id_user, event.container.data)
+      .updatePositions(id_user, this.template.id_template, event.container.data)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_templateControls: TemplateControl[]) => {

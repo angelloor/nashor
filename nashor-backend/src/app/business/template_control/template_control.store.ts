@@ -171,7 +171,9 @@ export const dml_template_control_update_positions = (
 	return new Promise<TemplateControl[]>(async (resolve, reject) => {
 		const query = `select * from business.dml_template_control_update_positions(${
 			template_control.id_user_
-		},'${JSON.stringify(template_control.template_control)}')`;
+		}, ${template_control.template.id_template}, '${JSON.stringify(
+			template_control.template_control
+		)}')`;
 
 		// console.log(query);
 

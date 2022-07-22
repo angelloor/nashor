@@ -90,7 +90,6 @@ export class ProcessControlService {
                * check the response body to match with the type
                */
               const _processControl: ProcessControl = response.body;
-              console.log(_processControl);
               /**
                * Update the processControl in the store
                */
@@ -253,7 +252,6 @@ export class ProcessControlService {
                * check the response body to match with the type
                */
               const _processControl: ProcessControl = response.body;
-              console.log(_processControl);
               /**
                * Find the index of the updated processControl
                */
@@ -261,7 +259,6 @@ export class ProcessControlService {
                 (item) =>
                   item.id_process_control == processControl.id_process_control
               );
-              console.log(index);
               /**
                * Update the processControl
                */
@@ -304,7 +301,6 @@ export class ProcessControlService {
                 const index = processControls.findIndex(
                   (item) => item.id_process_control == id_process_control
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

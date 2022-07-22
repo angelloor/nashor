@@ -55,7 +55,8 @@ export const validation = (
 						if (
 							url == '/create' ||
 							url == '/createWithNewControl' ||
-							url == '/update'
+							url == '/update' ||
+							url == '/updatePositions'
 						) {
 							attributeValidate(
 								'id_template',
@@ -334,6 +335,7 @@ export const validation = (
 							} else if (url == '/updatePositions') {
 								/** set required attributes for action */
 								_template_control.id_user_ = template_control.id_user_;
+								_template_control.template = template_control.template;
 								_template_control.template_control =
 									template_control.template_control;
 								await _template_control

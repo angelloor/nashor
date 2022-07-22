@@ -93,6 +93,7 @@
                                 </div>
                             </ng-container>
                             <!-- Items -->
+                            <div class="text-2xl mb-4">Controls</div>
                             <!-- Controls -->
                             <ng-container *ngFor="let _templateControl of templateControl; trackBy: trackByFn">
                                 <div cdkDrag
@@ -275,12 +276,12 @@
                                 <span class="ml-2 font-medium text-secondary group-hover:underline">Añadir
                                     nuevo control</span>
                             </div>
-                            <div class="group inline-flex items-center mt-2 -ml-4 py-2 px-4 rounded cursor-pointer"
+                            <!-- <div class="group inline-flex items-center mt-2 -ml-4 py-2 px-4 rounded cursor-pointer"
                                 (click)="addExistingControl()">
                                 <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
                                 <span class="ml-2 font-medium text-secondary group-hover:underline">Añadir
                                     control existente</span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

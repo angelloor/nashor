@@ -219,12 +219,19 @@ export class TemplateControlService {
    */
   updatePositions(
     id_user_: string,
+    id_template: string,
     templateControl: TemplateControl[]
   ): Observable<TemplateControl[]> {
     return this._httpClient
       .patch(
         this._url + '/updatePositions',
-        { id_user_: parseInt(id_user_), template_control: templateControl },
+        {
+          id_user_: parseInt(id_user_),
+          template: {
+            id_template: parseInt(id_template),
+          },
+          template_control: templateControl,
+        },
         {
           headers: this._headers,
         }
@@ -234,6 +241,7 @@ export class TemplateControlService {
           /**
            * Update the templateControls
            */
+          console.log(response.body);
           this._templateControls.next(response.body);
 
           return of(response.body);

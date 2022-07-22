@@ -81,7 +81,7 @@ export const view_control_by_company_query_read = (control: Control) => {
 
 export const view_control_by_level_and_company_read = (control: Control) => {
 	return new Promise<Control[]>(async (resolve, reject) => {
-		const query = `select * from business.view_control_inner_join_bvt_bvtc_bvc bvcij where bvcij.id_level = ${control.form_name_control} and bvcij.id_company = ${control.company}`;
+		const query = `select * from business.view_control_inner_join_bvt_bvtc_bvc bvcij where bvcij.id_level = ${control.form_name_control} and bvcij.id_company = ${control.company} and bvcij.required_control = true `;
 
 		// console.log(query);
 
