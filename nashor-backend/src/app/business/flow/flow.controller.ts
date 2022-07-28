@@ -54,6 +54,42 @@ export const validation = (flow: Flow, url: string, token: string) => {
 						});
 					}
 
+					if (url == '/update') {
+						attributeValidate(
+							'acronym_flow',
+							flow.acronym_flow,
+							'string',
+							20
+						).catch((err) => {
+							validationStatus = true;
+							reject(err);
+						});
+					}
+
+					if (url == '/update') {
+						attributeValidate(
+							'acronym_task',
+							flow.acronym_task,
+							'string',
+							20
+						).catch((err) => {
+							validationStatus = true;
+							reject(err);
+						});
+					}
+
+					if (url == '/update') {
+						attributeValidate(
+							'sequential_flow',
+							flow.sequential_flow,
+							'number',
+							10
+						).catch((err) => {
+							validationStatus = true;
+							reject(err);
+						});
+					}
+
 					/**
 					 * Validation company
 					 */
@@ -62,22 +98,6 @@ export const validation = (flow: Flow, url: string, token: string) => {
 						attributeValidate(
 							'id_company',
 							flow.company.id_company,
-							'number',
-							5
-						).catch((err) => {
-							validationStatus = true;
-							reject(err);
-						});
-					}
-
-					/**
-					 * Validation processType
-					 */
-
-					if (url == '/create' || url == '/update') {
-						attributeValidate(
-							'id_process_type',
-							flow.process_type.id_process_type,
 							'number',
 							5
 						).catch((err) => {
@@ -101,7 +121,6 @@ export const validation = (flow: Flow, url: string, token: string) => {
 							/** set required attributes for action */
 							_flow.id_user_ = flow.id_user_;
 							_flow.company = flow.company;
-							_flow.process_type = flow.process_type;
 							await _flow
 								.create()
 								.then((_flow: Flow) => {
@@ -115,8 +134,8 @@ export const validation = (flow: Flow, url: string, token: string) => {
 							_flow.name_flow = flow.name_flow;
 							await _flow
 								.queryRead()
-								.then((_flows: Flow[]) => {
-									resolve(_flows);
+								.then((_processTypes: Flow[]) => {
+									resolve(_processTypes);
 								})
 								.catch((error: any) => {
 									reject(error);
@@ -142,30 +161,6 @@ export const validation = (flow: Flow, url: string, token: string) => {
 									description: _messages[11].description.replace(
 										'name_entity',
 										'company'
-									),
-								});
-							}
-						} else if (url.substring(0, 23) == '/byProcessTypeQueryRead') {
-							const id_process_type: any = flow.process_type;
-
-							if (id_process_type >= 1) {
-								/** set required attributes for action */
-								_flow.process_type = flow.process_type;
-								_flow.name_flow = flow.name_flow;
-								await _flow
-									.byProcessTypeQueryRead()
-									.then((_flows: Flow[]) => {
-										resolve(_flows);
-									})
-									.catch((error: any) => {
-										reject(error);
-									});
-							} else {
-								reject({
-									..._messages[11],
-									description: _messages[11].description.replace(
-										'name_entity',
-										'process_type'
 									),
 								});
 							}
@@ -197,9 +192,11 @@ export const validation = (flow: Flow, url: string, token: string) => {
 							_flow.id_user_ = flow.id_user_;
 							_flow.id_flow = flow.id_flow;
 							_flow.company = flow.company;
-							_flow.process_type = flow.process_type;
 							_flow.name_flow = flow.name_flow;
 							_flow.description_flow = flow.description_flow;
+							_flow.acronym_flow = flow.acronym_flow;
+							_flow.acronym_task = flow.acronym_task;
+							_flow.sequential_flow = flow.sequential_flow;
 							await _flow
 								.update()
 								.then((_flow: Flow) => {

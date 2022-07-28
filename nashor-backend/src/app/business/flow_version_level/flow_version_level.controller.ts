@@ -83,18 +83,6 @@ export const validation = (
 						}
 
 						if (url == '/update') {
-							attributeValidate(
-								'id_control',
-								flow_version_level.id_control,
-								'string',
-								5
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
-						if (url == '/update') {
 							validationTypeOperator(
 								'operator',
 								flow_version_level.operator!
@@ -212,6 +200,32 @@ export const validation = (
 										flow_version_level.flow_version;
 									await _flow_version_level
 										.byFlowVersionRead()
+										.then((_flow_version_levels: FlowVersionLevel[]) => {
+											resolve(_flow_version_levels);
+										})
+										.catch((error: any) => {
+											reject(error);
+										});
+								} else {
+									reject({
+										..._messages[11],
+										description: _messages[11].description.replace(
+											'name_entity',
+											'flow_version'
+										),
+									});
+								}
+							} else if (
+								url.substring(0, 36) == '/byFlowVersionExcludeConditionalRead'
+							) {
+								const id_flow_version: any = flow_version_level.flow_version;
+
+								if (id_flow_version >= 1) {
+									/** set required attributes for action */
+									_flow_version_level.flow_version =
+										flow_version_level.flow_version;
+									await _flow_version_level
+										.byFlowVersionExcludeConditionalRead()
 										.then((_flow_version_levels: FlowVersionLevel[]) => {
 											resolve(_flow_version_levels);
 										})

@@ -9,6 +9,7 @@ import {
 	dml_task_create,
 	dml_task_delete,
 	dml_task_reasign,
+	dml_task_send,
 	dml_task_update,
 	view_task_by_level_query_read,
 	view_task_by_official_query_read,
@@ -24,6 +25,7 @@ export class Task {
 	public process: Process;
 	public official: Official;
 	public level: Level;
+	public number_task?: string;
 	public creation_date_task?: string;
 	public type_status_task?: TYPE_STATUS_TASK;
 	public type_action_task?: TYPE_ACTION_TASK;
@@ -36,6 +38,7 @@ export class Task {
 		process: Process = _process,
 		official: Official = _official,
 		level: Level = _level,
+		number_task: string = '',
 		creation_date_task: string = '',
 		type_status_task: TYPE_STATUS_TASK = 'progress',
 		type_action_task: TYPE_ACTION_TASK = 'dispatched',
@@ -47,6 +50,7 @@ export class Task {
 		this.process = process;
 		this.official = official;
 		this.level = level;
+		this.number_task = number_task;
 		this.creation_date_task = creation_date_task;
 		this.type_status_task = type_status_task;
 		this.type_action_task = type_action_task;
@@ -87,6 +91,13 @@ export class Task {
 	}
 	get _level() {
 		return this.level;
+	}
+
+	set _number_task(number_task: string) {
+		this.number_task = number_task;
+	}
+	get _number_task() {
+		return this.number_task!;
 	}
 
 	set _creation_date_task(creation_date_task: string) {
@@ -261,6 +272,23 @@ export class Task {
 		});
 	}
 
+	send() {
+		return new Promise<Task>(async (resolve, reject) => {
+			await dml_task_send(this)
+				.then((tasks: Task[]) => {
+					/**
+					 * Mutate response
+					 */
+					const _tasks = this.mutateResponse(tasks);
+
+					resolve(_tasks[0]);
+				})
+				.catch((error: any) => {
+					reject(error);
+				});
+		});
+	}
+
 	delete() {
 		return new Promise<boolean>(async (resolve, reject) => {
 			await dml_task_delete(this)
@@ -286,9 +314,23 @@ export class Task {
 				...item,
 				process: {
 					id_process: item.id_process,
-					process_type: { id_process_type: item.id_process_type },
+					flow: { id_flow: item.id_flow },
 					official: { id_official: item.id_official },
-					flow_version: { id_flow_version: item.id_flow_version },
+					flow_version: {
+						id_flow_version: item.id_flow_version,
+						flow: {
+							id_flow: item.id_flow,
+							company: { id_company: item.id_company },
+							name_flow: item.name_flow,
+							description_flow: item.description_flow,
+							acronym_flow: item.acronym_flow,
+							acronym_task: item.acronym_task,
+							sequential_flow: item.sequential_flow,
+						},
+						number_flow_version: item.number_flow_version,
+						status_flow_version: item.status_flow_version,
+						creation_date_flow_version: item.creation_date_flow_version,
+					},
 					number_process: item.number_process,
 					date_process: item.date_process,
 					generated_task: item.generated_task,
@@ -320,7 +362,7 @@ export class Task {
 			 */
 
 			delete _task.id_process;
-			delete _task.id_process_type;
+			delete _task.id_flow;
 			delete _task.id_official;
 			delete _task.id_flow_version;
 			delete _task.number_process;
@@ -340,6 +382,15 @@ export class Task {
 			delete _task.name_level;
 			delete _task.description_level;
 
+			delete _task.number_flow_version;
+			delete _task.status_flow_version;
+			delete _task.creation_date_flow_version;
+			delete _task.name_flow;
+			delete _task.description_flow;
+			delete _task.acronym_flow;
+			delete _task.acronym_task;
+			delete _task.sequential_flow;
+
 			_tasks.push(_task);
 		});
 
@@ -357,7 +408,7 @@ export interface TYPE_STATUS_TASK_ENUM {
 	value_type: TYPE_STATUS_TASK;
 }
 
-export const _typeStatus: TYPE_STATUS_TASK_ENUM[] = [
+export const _typeStatusTask: TYPE_STATUS_TASK_ENUM[] = [
 	{
 		name_type: 'En progeso',
 		value_type: 'progress',
@@ -373,11 +424,12 @@ export const validationTypeStatusTask = (
 	value: string | TYPE_STATUS_TASK
 ) => {
 	return new Promise<Boolean>((resolve, reject) => {
-		const typeStatus = _typeStatus.find(
-			(typeStatus: TYPE_STATUS_TASK_ENUM) => typeStatus.value_type == value
+		const typeStatusTask = _typeStatusTask.find(
+			(typeStatusTask: TYPE_STATUS_TASK_ENUM) =>
+				typeStatusTask.value_type == value
 		);
 
-		if (!typeStatus) {
+		if (!typeStatusTask) {
 			reject({
 				..._messages[7],
 				description: _messages[7].description
@@ -395,21 +447,25 @@ export const validationTypeStatusTask = (
 /**
  * Type Enum TYPE_ACTION_TASK
  */
-export type TYPE_ACTION_TASK = 'dispatched' | 'reassigned';
+export type TYPE_ACTION_TASK = 'received' | 'reassigned' | 'dispatched';
 
 export interface TYPE_ACTION_TASK_ENUM {
 	name_type: string;
 	value_type: TYPE_ACTION_TASK;
 }
 
-export const _typeAction: TYPE_ACTION_TASK_ENUM[] = [
+export const _typeActionTask: TYPE_ACTION_TASK_ENUM[] = [
 	{
-		name_type: 'Enviado',
-		value_type: 'dispatched',
+		name_type: 'Recibido',
+		value_type: 'received',
 	},
 	{
 		name_type: 'Reasignado',
 		value_type: 'reassigned',
+	},
+	{
+		name_type: 'Enviado',
+		value_type: 'dispatched',
 	},
 ];
 
@@ -418,11 +474,12 @@ export const validationTypeActionTask = (
 	value: string | TYPE_ACTION_TASK
 ) => {
 	return new Promise<Boolean>((resolve, reject) => {
-		const typeAction = _typeAction.find(
-			(typeAction: TYPE_ACTION_TASK_ENUM) => typeAction.value_type == value
+		const typeActionTask = _typeActionTask.find(
+			(typeActionTask: TYPE_ACTION_TASK_ENUM) =>
+				typeActionTask.value_type == value
 		);
 
-		if (!typeAction) {
+		if (!typeActionTask) {
 			reject({
 				..._messages[7],
 				description: _messages[7].description

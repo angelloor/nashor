@@ -59,7 +59,7 @@ CREATE TYPE business."TYPE_STATUS_TASK" AS ENUM
 /* Type: TYPE_ACTION_TASK                                       */
 /*==============================================================*/
 CREATE TYPE business."TYPE_ACTION_TASK" AS ENUM
-    ('dispatched', 'reassigned');
+    ('received', 'reassigned', 'dispatched');
 
 /*==============================================================*/
 /* Type: TYPE_ELEMENT                                           */

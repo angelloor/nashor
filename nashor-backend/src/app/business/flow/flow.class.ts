@@ -1,13 +1,10 @@
 import { Company } from '../../core/company/company.class';
 import { _company } from '../../core/company/company.data';
-import { ProcessType } from '../process_type/process_type.class';
-import { _processType } from '../process_type/process_type.data';
 import {
 	dml_flow_create,
 	dml_flow_delete,
 	dml_flow_update,
 	view_flow_by_company_query_read,
-	view_flow_by_process_type_query_read,
 	view_flow_query_read,
 	view_flow_specific_read,
 } from './flow.store';
@@ -17,26 +14,32 @@ export class Flow {
 	public id_user_?: number;
 	public id_flow: number;
 	public company: Company;
-	public process_type: ProcessType;
 	public name_flow?: string;
 	public description_flow?: string;
+	public acronym_flow?: string;
+	public acronym_task?: string;
+	public sequential_flow?: number;
 	public deleted_flow?: boolean;
 	/** Constructor */
 	constructor(
 		id_user_: number = 0,
 		id_flow: number = 0,
 		company: Company = _company,
-		process_type: ProcessType = _processType,
 		name_flow: string = '',
 		description_flow: string = '',
+		acronym_flow: string = '',
+		acronym_task: string = '',
+		sequential_flow: number = 0,
 		deleted_flow: boolean = false
 	) {
 		this.id_user_ = id_user_;
 		this.id_flow = id_flow;
 		this.company = company;
-		this.process_type = process_type;
 		this.name_flow = name_flow;
 		this.description_flow = description_flow;
+		this.acronym_flow = acronym_flow;
+		this.acronym_task = acronym_task;
+		this.sequential_flow = sequential_flow;
 		this.deleted_flow = deleted_flow;
 	}
 	/** Setters and Getters */
@@ -61,13 +64,6 @@ export class Flow {
 		return this.company;
 	}
 
-	set _process_type(process_type: ProcessType) {
-		this.process_type = process_type;
-	}
-	get _process_type() {
-		return this.process_type;
-	}
-
 	set _name_flow(name_flow: string) {
 		this.name_flow = name_flow;
 	}
@@ -80,6 +76,27 @@ export class Flow {
 	}
 	get _description_flow() {
 		return this.description_flow!;
+	}
+
+	set _acronym_flow(acronym_flow: string) {
+		this.acronym_flow = acronym_flow;
+	}
+	get _acronym_flow() {
+		return this.acronym_flow!;
+	}
+
+	set _acronym_task(acronym_task: string) {
+		this.acronym_task = acronym_task;
+	}
+	get _acronym_task() {
+		return this.acronym_task!;
+	}
+
+	set _sequential_flow(sequential_flow: number) {
+		this.sequential_flow = sequential_flow;
+	}
+	get _sequential_flow() {
+		return this.sequential_flow!;
 	}
 
 	set _deleted_flow(deleted_flow: boolean) {
@@ -127,23 +144,6 @@ export class Flow {
 	byCompanyQueryRead() {
 		return new Promise<Flow[]>(async (resolve, reject) => {
 			await view_flow_by_company_query_read(this)
-				.then((flows: Flow[]) => {
-					/**
-					 * Mutate response
-					 */
-					const _flows = this.mutateResponse(flows);
-
-					resolve(_flows);
-				})
-				.catch((error: any) => {
-					reject(error);
-				});
-		});
-	}
-
-	byProcessTypeQueryRead() {
-		return new Promise<Flow[]>(async (resolve, reject) => {
-			await view_flow_by_process_type_query_read(this)
 				.then((flows: Flow[]) => {
 					/**
 					 * Mutate response
@@ -223,14 +223,6 @@ export class Flow {
 					address_company: item.address_company,
 					status_company: item.status_company,
 				},
-				process_type: {
-					id_process_type: item.id_process_type,
-					company: { id_company: item.id_company },
-					name_process_type: item.name_process_type,
-					description_process_type: item.description_process_type,
-					acronym_process_type: item.acronym_process_type,
-					sequential_process_type: item.sequential_process_type,
-				},
 				/**
 				 * Generate structure of second level the entity (is important add the ids of entity)
 				 * similar the return of read
@@ -246,12 +238,6 @@ export class Flow {
 			delete _flow.acronym_company;
 			delete _flow.address_company;
 			delete _flow.status_company;
-			delete _flow.id_process_type;
-			delete _flow.id_company;
-			delete _flow.name_process_type;
-			delete _flow.description_process_type;
-			delete _flow.acronym_process_type;
-			delete _flow.sequential_process_type;
 
 			_flows.push(_flow);
 		});

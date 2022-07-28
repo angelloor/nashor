@@ -50,6 +50,29 @@ export const view_flow_version_level_by_flow_version_read = (
 	});
 };
 
+export const view_flow_version_level_by_flow_version_exclude_conditional_read =
+	(flow_version_level: FlowVersionLevel) => {
+		return new Promise<FlowVersionLevel[]>(async (resolve, reject) => {
+			const query = `select * from business.view_flow_version_level_inner_join bvfvlij where bvfvlij.id_flow_version = ${flow_version_level.flow_version} and bvfvlij.type_element = 'level' order by bvfvlij.position_level asc`;
+
+			// console.log(query);
+
+			try {
+				const response = await clientANGELPostgreSQL.query(query);
+				resolve(response.rows);
+			} catch (error: any) {
+				if (error.detail == '_database') {
+					reject({
+						..._messages[3],
+						description: error.toString().slice(7),
+					});
+				} else {
+					reject(error.toString());
+				}
+			}
+		});
+	};
+
 export const view_flow_version_level_by_level_read = (
 	flow_version_level: FlowVersionLevel
 ) => {

@@ -319,7 +319,6 @@ export class ProcessItem {
 				},
 				process: {
 					id_process: item.id_process,
-					process_type: { id_process_type: item.id_process_type },
 					official: { id_official: item.id_official },
 					flow_version: { id_flow_version: item.id_flow_version },
 					number_process: item.number_process,
@@ -332,6 +331,7 @@ export class ProcessItem {
 					process: { id_process: item.id_process },
 					official: { id_official: item.id_official },
 					level: { id_level: item.id_level },
+					number_task: item.number_task,
 					creation_date_task: item.creation_date_task,
 					type_status_task: item.type_status_task,
 					type_action_task: item.type_action_task,
@@ -369,7 +369,6 @@ export class ProcessItem {
 			delete _processItem.id_area;
 			delete _processItem.id_position;
 			delete _processItem.id_process;
-			delete _processItem.id_process_type;
 			delete _processItem.id_official;
 			delete _processItem.id_flow_version;
 			delete _processItem.number_process;
@@ -380,6 +379,7 @@ export class ProcessItem {
 			delete _processItem.id_process;
 			delete _processItem.id_official;
 			delete _processItem.id_level;
+			delete _processItem.number_task;
 			delete _processItem.creation_date_task;
 			delete _processItem.type_status_task;
 			delete _processItem.type_action_task;

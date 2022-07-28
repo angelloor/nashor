@@ -241,7 +241,6 @@ export class TemplateControlService {
           /**
            * Update the templateControls
            */
-          console.log(response.body);
           this._templateControls.next(response.body);
 
           return of(response.body);
@@ -268,6 +267,7 @@ export class TemplateControlService {
                * check the response body to match with the type
                */
               const _templateControl: TemplateControl = response.body;
+
               /**
                * Find the index of the updated templateControl
                */

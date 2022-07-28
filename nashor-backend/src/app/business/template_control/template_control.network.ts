@@ -26,8 +26,7 @@ routerTemplateControl.post(
 				error(res, err);
 			});
 	}
-	
-// );
+);
 
 routerTemplateControl.get(
 	'/byTemplateRead/:template',

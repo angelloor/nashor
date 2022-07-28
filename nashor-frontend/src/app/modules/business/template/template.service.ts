@@ -236,6 +236,33 @@ export class TemplateService {
     );
   }
   /**
+   * update
+   * @param template
+   */
+  byUpdate(template: Template): Observable<any> {
+    return this.templates$.pipe(
+      take(1),
+      switchMap((templates) => {
+        /**
+         * Find the index of the updated template
+         */
+        const index = templates.findIndex(
+          (item) => item.id_template == template.id_template
+        );
+        /**
+         * Update the template
+         */
+        templates[index] = template;
+        /**
+         * Update the templates
+         */
+        this._templates.next(templates);
+
+        return of(template);
+      })
+    );
+  }
+  /**
    * delete
    * @param id_user_
    * @param id_template

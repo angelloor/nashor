@@ -29,19 +29,14 @@
                         (click)="openModalVersion()">
                         Versiones
                     </button>
-                    <button mat-stroked-button [matTooltip]="'Cerrar'" class="ml-2" [routerLink]="['../']">
+                    <button mat-stroked-button class="ml-auto" [matTooltip]="'Cerrar'" class="ml-2"
+                        [routerLink]="['../']">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:x'"></mat-icon>
                         <span class="ml-1">Cerrar</span>
                     </button>
                 </div>
                 <div class="flex flex-col mt-4 pt-6 space-y-8">
-                    <!-- id_process_type -->
-                    <ng-container *ngIf="flow.process_type.id_process_type">
-                        <div class="flex sm:items-center">
-                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
-                            <div class="ml-6 leading-6">{{selectedProcessType.name_process_type}}</div>
-                        </div>
-                    </ng-container> <!-- name_flow -->
+                    <!-- name_flow -->
                     <ng-container *ngIf="flow.name_flow">
                         <div class="flex sm:items-center">
                             <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
@@ -52,6 +47,25 @@
                         <div class="flex sm:items-center">
                             <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
                             <div class="ml-6 leading-6">{{flow.description_flow}}</div>
+                        </div>
+                    </ng-container> <!-- acronym_flow -->
+                    <ng-container *ngIf="flow.acronym_flow">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{flow.acronym_flow}}</div>
+                        </div>
+                    </ng-container>
+                    <!-- acronym_task -->
+                    <ng-container *ngIf="flow.acronym_task">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{flow.acronym_task}}</div>
+                        </div>
+                    </ng-container> <!-- sequential_flow -->
+                    <ng-container *ngIf="flow.sequential_flow">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{flow.sequential_flow}}</div>
                         </div>
                     </ng-container>
                 </div>
@@ -107,10 +121,6 @@
                         [showIcon]="false" [type]="alert.type" [@shake]="alert.type === 'error'">
                         <!-- MessageAPI if alert is actived for the component -->
                         {{alert.message}}
-                        <!-- id_process_type -->
-                        <mat-error *ngIf="flowForm.get('id_process_type')?.hasError('required')">
-                            • Seleccione id_process_type
-                        </mat-error>
                         <!-- name_flow -->
                         <mat-error *ngIf="flowForm.get('name_flow')?.hasError('required')">
                             • Ingrese name_flow
@@ -119,24 +129,20 @@
                         <mat-error *ngIf="flowForm.get('description_flow')?.hasError('required')">
                             • Ingrese description_flow
                         </mat-error>
+                        <!-- acronym_flow -->
+                        <mat-error *ngIf="flowForm.get('acronym_flow')?.hasError('required')">
+                            • Ingrese acronym_flow
+                        </mat-error>
+                        <!-- acronym_task -->
+                        <mat-error *ngIf="flowForm.get('acronym_task')?.hasError('required')">
+                            • Ingrese acronym_task
+                        </mat-error>
                     </angel-alert>
                     <!-- Alert -->
-                    <!-- id_process_type -->
+                    <!-- name_flow -->
                     <div class="mt-8">
                         <mat-form-field class="angel-mat-no-subscript w-full">
-                            <mat-label>ProcessType</mat-label>
-                            <mat-select [formControlName]="'id_process_type'"
-                                [value]="selectedProcessType.id_process_type">
-                                <ng-container *ngFor="let element of listProcessType">
-                                    <mat-option [value]="element.id_process_type">
-                                        {{element.name_process_type}}</mat-option>
-                                </ng-container>
-                            </mat-select>
-                        </mat-form-field>
-                    </div><!-- name_flow -->
-                    <div class="mt-8">
-                        <mat-form-field class="angel-mat-no-subscript w-full">
-                            <mat-label>nameFlow</mat-label>
+                            <mat-label>flow</mat-label>
                             <mat-icon matPrefix class="hidden sm:flex icon-size-5"
                                 [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
                             <input matInput maxlength="100" [formControlName]="'name_flow'" [placeholder]="'name_flow'"
@@ -151,8 +157,25 @@
                             <input matInput maxlength="250" [formControlName]="'description_flow'"
                                 [placeholder]="'description_flow'" [spellcheck]="false">
                         </mat-form-field>
+                    </div> <!-- acronym_flow -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>acronymFlow</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput maxlength="20" [formControlName]="'acronym_flow'"
+                                [placeholder]="'acronym_flow'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div> <!-- acronym_task -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>acronymTask</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput maxlength="20" [formControlName]="'acronym_task'"
+                                [placeholder]="'acronym_task'" [spellcheck]="false">
+                        </mat-form-field>
                     </div>
-
                 </form>
             </div>
         </div>

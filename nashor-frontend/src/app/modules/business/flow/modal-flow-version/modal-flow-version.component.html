@@ -71,14 +71,16 @@
             </div>
             <!-- Versiones -->
             <!-- Alert -->
-            <angel-alert class="mt-6" *ngIf="showAlert || flowVersions.length == 0" [appearance]="'outline'"
-                [showIcon]="false" [type]="alert.type" [@shake]="alert.type === 'error'">
-                <!-- Message if alert is actived for the component -->
-                {{alert.message}}
-                <mat-error *ngIf="flowVersions.length == 0">
-                    • No hay versiones
-                </mat-error>
-            </angel-alert>
+            <div *ngIf="flowVersions$ | async as _flowVersions">
+                <angel-alert class="mt-6" *ngIf="_flowVersions.length == 0" [appearance]="'outline'" [showIcon]="false"
+                    [type]="alert.type" [@shake]="alert.type === 'error'">
+                    <!-- Message if alert is actived for the component -->
+                    {{alert.message}}
+                    <mat-error *ngIf="_flowVersions.length == 0">
+                        • No hay versiones
+                    </mat-error>
+                </angel-alert>
+            </div>
             <!-- Alert -->
         </div>
     </form>

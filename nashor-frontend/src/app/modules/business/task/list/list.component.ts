@@ -19,6 +19,9 @@ import { AppInitialData, MessageAPI } from 'app/core/app/app.type';
 import { AuthService } from 'app/core/auth/auth.service';
 import { LayoutService } from 'app/layout/layout.service';
 import { NotificationService } from 'app/shared/notification/notification.service';
+import { LocalDatePipe } from 'app/shared/pipes/local-date.pipe';
+import { GlobalUtils } from 'app/utils/GlobalUtils';
+import { FullDate } from 'app/utils/utils.types';
 import { fromEvent, merge, Observable, Subject, timer } from 'rxjs';
 import {
   filter,
@@ -44,6 +47,7 @@ import {
 @Component({
   selector: 'task-list',
   templateUrl: './list.component.html',
+  providers: [LocalDatePipe],
 })
 export class TaskListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
@@ -105,7 +109,9 @@ export class TaskListComponent implements OnInit {
     private _notificationService: NotificationService,
     private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _localDatePipe: LocalDatePipe,
+    private _globalUtils: GlobalUtils
   ) {}
 
   ngOnInit(): void {
@@ -168,6 +174,7 @@ export class TaskListComponent implements OnInit {
     this._taskService.tasks$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((tasks: Task[]) => {
+        console.log(tasks);
         /**
          * Update the counts
          */
@@ -425,6 +432,18 @@ export class TaskListComponent implements OnInit {
         }
         this._layoutService.setOpenModal(false);
       });
+  }
+  /**
+   * @param time
+   */
+  parseTime(time: string) {
+    let date: string = '';
+    if (time != ' ') {
+      const dateTimeNow: FullDate = this._globalUtils.getFullDate(time);
+      const dateString: string = `${dateTimeNow.fullYear}-${dateTimeNow.month}-${dateTimeNow.day}T${dateTimeNow.hours}:${dateTimeNow.minutes}:${dateTimeNow.seconds}`;
+      date = this._localDatePipe.transform(dateString, 'medium');
+    }
+    return date;
   }
   /**
    * getTypeStatusTaskEnum

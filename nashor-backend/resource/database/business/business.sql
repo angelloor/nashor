@@ -6,11 +6,10 @@ update dev.ddl_config dc set haved_handler_attribute = 'name_level_profile' wher
 update dev.ddl_config dc set haved_handler_attribute = 'name_documentation_profile' where dc.table_name = 'documentation_profile';
 update dev.ddl_config dc set haved_handler_attribute = 'name_attached' where dc.table_name = 'attached';
 update dev.ddl_config dc set haved_handler_attribute = 'number_process' where dc.table_name = 'process';
-update dev.ddl_config dc set haved_handler_attribute = 'name_process_type' where dc.table_name = 'process_type';
+update dev.ddl_config dc set haved_handler_attribute = 'name_flow' where dc.table_name = 'flow';
 update dev.ddl_config dc set haved_handler_attribute = 'name_template' where dc.table_name = 'template';
 update dev.ddl_config dc set haved_handler_attribute = 'form_name_control' where dc.table_name = 'control';
 update dev.ddl_config dc set haved_handler_attribute = 'name_item' where dc.table_name = 'item';
-update dev.ddl_config dc set haved_handler_attribute = 'name_flow' where dc.table_name = 'flow';
 update dev.ddl_config dc set haved_handler_attribute = 'name_item_category' where dc.table_name = 'item_category';
 update dev.ddl_config dc set haved_handler_attribute = 'name_level_status' where dc.table_name = 'level_status';
 update dev.ddl_config dc set haved_handler_attribute = 'name_level' where dc.table_name = 'level';

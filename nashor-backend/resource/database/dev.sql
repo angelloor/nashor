@@ -10,3 +10,13 @@
 
 select * from dev.utils_get_columns_alias('core', 'academic')
 select * from dev.utils_get_columns_type('core', 'academic')
+
+
+
+
+
+
+
+select * from business.view_task
+delete from business.task t where t.id_task = 3
+update business.task set type_status_task = 'progress', type_action_task = 'received' where id_task = 2

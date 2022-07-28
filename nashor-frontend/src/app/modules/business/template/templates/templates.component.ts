@@ -13,6 +13,7 @@ import { LayoutService } from 'app/layout/layout.service';
 import { NotificationService } from 'app/shared/notification/notification.service';
 import moment from 'moment';
 import { Observable, Subject, takeUntil } from 'rxjs';
+import { ModalTemplatePreviewService } from '../modal-template-preview/modal-template-preview.service';
 import { TemplateService } from '../template.service';
 import { Template } from '../template.types';
 
@@ -48,7 +49,8 @@ export class TemplatesComponent implements OnInit {
     private _notificationService: NotificationService,
     private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _modalTemplatePreviewService: ModalTemplatePreviewService
   ) {}
 
   // -----------------------------------------------------------------------------------------------------
@@ -154,40 +156,15 @@ export class TemplatesComponent implements OnInit {
   // -----------------------------------------------------------------------------------------------------
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
-
-  /**
-   * Go to Plantilla
-   * @param id_template
-   */
-  goToEntity(id_template: string): void {
-    /**
-     * Get the current activated route
-     */
-    let route = this._activatedRoute;
-    while (route.firstChild) {
-      route = route.firstChild;
-    }
-    /**
-     * Go to Plantilla
-     */
-    this._router.navigate(['./', id_template], {
-      relativeTo: route,
-    });
-    /**
-     * Mark for check
-     */
-    this._changeDetectorRef.markForCheck();
-  }
-
   /**
    * Create Plantilla
    */
   createTemplate(): void {
     this._angelConfirmationService
       .open({
-        title: 'Añadir plantilla',
+        title: 'Añadir template',
         message:
-          '¿Estás seguro de que deseas añadir una nueva plantilla? ¡Esta acción no se puede deshacer!',
+          '¿Estás seguro de que deseas añadir una nueva template? ¡Esta acción no se puede deshacer!',
       })
       .afterClosed()
       .pipe(takeUntil(this._unsubscribeAll))
@@ -196,7 +173,7 @@ export class TemplatesComponent implements OnInit {
           const id_user_ = this.data.user.id_user;
           const id_company = this.data.user.company.id_company;
           /**
-           * Create the plantilla
+           * Create the template
            */
           this._templateService
             .create(id_user_, id_company)
@@ -208,9 +185,9 @@ export class TemplatesComponent implements OnInit {
                     'Plantilla agregada correctamente'
                   );
                   /**
-                   * Go to new plantilla
+                   * Go to new template
                    */
-                  this.goToEntity(_template.id_template);
+                  this.openModalTemplatePreview(_template.id_template);
                 } else {
                   this._notificationService.error(
                     '¡Error interno!, consulte al administrador.'
@@ -238,6 +215,17 @@ export class TemplatesComponent implements OnInit {
    */
   formatDateAsRelative(date: string): string {
     return moment(date, moment.ISO_8601).locale('es').fromNow();
+  }
+  /**
+   * openModalTemplatePreview
+   */
+  openModalTemplatePreview(id_template: string): void {
+    const editMode: boolean = true;
+
+    this._modalTemplatePreviewService.openModalTemplatePreview(
+      id_template,
+      editMode
+    );
   }
   /**
    * Track by function for ngFor loops

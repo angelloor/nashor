@@ -12,7 +12,7 @@ import {
   switchMap,
   take,
   tap,
-  throwError,
+  throwError
 } from 'rxjs';
 import { session, sessions } from './session.data';
 import { Session } from './session.types';

@@ -1,4 +1,7 @@
-import { AngelConfirmationService } from '@angel/services/confirmation';
+import {
+  ActionAngelConfirmation,
+  AngelConfirmationService,
+} from '@angel/services/confirmation';
 import { AngelMediaWatcherService } from '@angel/services/media-watcher';
 import { DOCUMENT } from '@angular/common';
 import {
@@ -25,7 +28,6 @@ import {
   takeWhile,
   tap,
 } from 'rxjs/operators';
-import { ModalSelectProcessTypeService } from '../../process-type/modal-select-process-type/modal-select-process-type.service';
 import { FlowService } from '../flow.service';
 import { Flow } from '../flow.types';
 
@@ -37,7 +39,6 @@ export class FlowListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer!: MatDrawer;
   count: number = 0;
   flows$!: Observable<Flow[]>;
-  id_company: string = '';
 
   openMatDrawer: boolean = false;
 
@@ -76,8 +77,7 @@ export class FlowListComponent implements OnInit {
     private _notificationService: NotificationService,
     private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
-    private _authService: AuthService,
-    private _modalSelectProcessTypeService: ModalSelectProcessTypeService
+    private _authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -107,17 +107,16 @@ export class FlowListComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
-      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Get the flows
      */
     this.flows$ = this._flowService.flows$;
     /**
-     *  byCompanyQueryRead *
+     *  queryRead *
      */
     this._flowService
-      .byCompanyQueryRead(this.id_company, '*')
+      .queryRead('*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((flows: Flow[]) => {
         /**
@@ -154,10 +153,7 @@ export class FlowListComponent implements OnInit {
           /**
            * Search
            */
-          return this._flowService.byCompanyQueryRead(
-            this.id_company,
-            query.toLowerCase()
-          );
+          return this._flowService.queryRead(query.toLowerCase());
         })
       )
       .subscribe();
@@ -346,25 +342,30 @@ export class FlowListComponent implements OnInit {
    * createFlow
    */
   createFlow(): void {
-    this._modalSelectProcessTypeService
-      .openModalSelectProcessType()
+    this._angelConfirmationService
+      .open({
+        title: 'Añadir flujo',
+        message:
+          '¿Estás seguro de que deseas añadir una nueva flujo? ¡Esta acción no se puede deshacer!',
+      })
       .afterClosed()
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((id_process_type: string) => {
-        if (id_process_type) {
+      .subscribe((confirm: ActionAngelConfirmation) => {
+        if (confirm === 'confirmed') {
           const id_user_ = this.data.user.id_user;
           const id_company = this.data.user.company.id_company;
           /**
            * Create the flow
            */
           this._flowService
-            .create(id_user_, id_company, id_process_type)
+            .create(id_user_, id_company)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_flow: Flow) => {
+                console.log(_flow);
                 if (_flow) {
                   this._notificationService.success(
-                    'Flujo agregada correctamente'
+                    'flujo agregada correctamente'
                   );
                   /**
                    * Go to new flow
@@ -377,6 +378,7 @@ export class FlowListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
+                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

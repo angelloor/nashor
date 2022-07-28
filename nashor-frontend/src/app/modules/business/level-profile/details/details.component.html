@@ -149,7 +149,7 @@
                                 *ngFor="let official of formArrayOfficials.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
                                 <div class="relative flex">
                                     <mat-form-field class="angel-mat-no-subscript w-full">
-                                        <mat-label *ngIf="first">Officials</mat-label>
+                                        <mat-label *ngIf="first">Funcionarios</mat-label>
                                         <mat-select [formControl]="getFromControl(formArrayOfficials, i, 'id_official')"
                                             (selectionChange)="updateOfficialField(i)">
                                             <mat-option *ngFor="let official of categoriesOfficial; trackBy: trackByFn"

@@ -106,22 +106,6 @@ export const validation = (process: Process, url: string, token: string) => {
 						}
 
 						/**
-						 * Validation processType
-						 */
-
-						if (url == '/create' || url == '/update') {
-							attributeValidate(
-								'id_process_type',
-								process.process_type.id_process_type,
-								'number',
-								5
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
-						/**
 						 * Validation official
 						 */
 
@@ -141,7 +125,7 @@ export const validation = (process: Process, url: string, token: string) => {
 						 * Validation flowVersion
 						 */
 
-						if (url == '/update') {
+						if (url == '/update' || url == '/create') {
 							attributeValidate(
 								'id_flow_version',
 								process.flow_version.id_flow_version,
@@ -167,7 +151,7 @@ export const validation = (process: Process, url: string, token: string) => {
 							if (url == '/create') {
 								/** set required attributes for action */
 								_process.id_user_ = process.id_user_;
-								_process.process_type = process.process_type;
+								_process.flow_version = process.flow_version;
 								await _process
 									.create()
 									.then((_process: Process) => {
@@ -187,30 +171,6 @@ export const validation = (process: Process, url: string, token: string) => {
 									.catch((error: any) => {
 										reject(error);
 									});
-							} else if (url.substring(0, 23) == '/byProcessTypeQueryRead') {
-								const id_process_type: any = process.process_type;
-
-								if (id_process_type >= 1) {
-									/** set required attributes for action */
-									_process.process_type = process.process_type;
-									_process.number_process = process.number_process;
-									await _process
-										.byProcessTypeQueryRead()
-										.then((_processs: Process[]) => {
-											resolve(_processs);
-										})
-										.catch((error: any) => {
-											reject(error);
-										});
-								} else {
-									reject({
-										..._messages[11],
-										description: _messages[11].description.replace(
-											'name_entity',
-											'process_type'
-										),
-									});
-								}
 							} else if (url.substring(0, 20) == '/byOfficialQueryRead') {
 								const id_official: any = process.official;
 
@@ -286,7 +246,6 @@ export const validation = (process: Process, url: string, token: string) => {
 								/** set required attributes for action */
 								_process.id_user_ = process.id_user_;
 								_process.id_process = process.id_process;
-								_process.process_type = process.process_type;
 								_process.official = process.official;
 								_process.flow_version = process.flow_version;
 								_process.number_process = process.number_process;

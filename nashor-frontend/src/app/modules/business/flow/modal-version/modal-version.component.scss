@@ -1,12 +1,24 @@
+.header-modal {
+  position: fixed;
+  left: 2.5vw;
+  right: 2.5vw;
+  z-index: 20;
+}
+
 .container-drag {
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
+  width: 1000vw;
+  min-width: 1000vw;
+  max-width: 5000vw;
+
+  height: 1000vh;
+  min-height: 1000vh;
+  max-height: 5000vh;
 }
 
 .container-box-drag {
   width: auto;
-  max-width: 250px;
+  min-width: 200px;
+  max-width: 500px;
   height: auto;
   min-height: 50px;
   align-items: center;
@@ -29,7 +41,9 @@
 }
 
 .box-drag {
-  width: 150px;
+  width: auto;
+  min-width: 200px;
+  max-width: 500px;
   height: auto;
   min-height: 50px;
   display: flex;
@@ -72,7 +86,9 @@
 }
 
 .box-drag-rombo {
-  width: 150px;
+  width: auto;
+  min-width: 200px;
+  max-width: 500px;
   height: auto;
   min-height: 50px;
   display: flex;

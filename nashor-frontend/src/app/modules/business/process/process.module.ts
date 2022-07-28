@@ -8,6 +8,7 @@ import { MatRippleModule, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -24,6 +25,7 @@ import * as moment from 'moment';
 import { ContainerModalProcessComponent } from './container-modal-process/container-modal-process.component';
 import { ProcessDetailsComponent } from './details/details.component';
 import { ProcessListComponent } from './list/list.component';
+import { ModalProcessRouteComponent } from './modal-process-route/modal-process-route.component';
 import { ModalProcessComponent } from './modal-process/modal-process.component';
 import { ModalSelectProcessComponent } from './modal-select-process/modal-select-process.component';
 import { ProcessComponent } from './process.component';
@@ -37,10 +39,12 @@ import { processRoutes } from './process.routing';
     ModalSelectProcessComponent,
     ModalProcessComponent,
     ContainerModalProcessComponent,
+    ModalProcessRouteComponent,
   ],
   imports: [
     RouterModule.forChild(processRoutes),
     MatButtonModule,
+    MatExpansionModule,
     MatCheckboxModule,
     MatDatepickerModule,
     MatDividerModule,

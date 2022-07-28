@@ -26,19 +26,6 @@ routerProcess.get('/queryRead/:number_process', async (req: any, res: any) => {
 });
 
 routerProcess.get(
-	'/byProcessTypeQueryRead/:process_type/:number_process',
-	async (req: any, res: any) => {
-		await validation(req.params, req.url, req.headers.token)
-			.then((processs: Process[]) => {
-				res.status(200).send(processs);
-			})
-			.catch((err: MessageAPI | any) => {
-				error(res, err);
-			});
-	}
-);
-
-routerProcess.get(
 	'/byOfficialQueryRead/:official/:number_process',
 	async (req: any, res: any) => {
 		await validation(req.params, req.url, req.headers.token)

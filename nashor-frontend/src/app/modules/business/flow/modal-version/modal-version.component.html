@@ -1,13 +1,15 @@
-<div class="relative flex flex-col w-full h-full">
+<div class="relative flex flex-col w-auto h-auto">
 
     <!-- Header -->
-    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+    <div
+        class="header-modal flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
         <div class="text-lg">Versión {{flowVersion.number_flow_version}}</div>
-        <button mat-icon-button [matMenuTriggerFor]="addActions" [tabIndex]="-1" class="ml-auto"
+        <button mat-icon-button *ngIf="editMode" [matMenuTriggerFor]="addActions" [tabIndex]="-1" class="ml-auto"
             [matTooltip]="'Nuevo elemento'">
             <mat-icon class="text-current" [svgIcon]="'heroicons_outline:plus'"></mat-icon>
         </button>
-        <button mat-icon-button (click)="resetFlowVersionLevel()" [tabIndex]="-1" [matTooltip]="'Restablecer'">
+        <button mat-icon-button *ngIf="editMode" (click)="resetFlowVersionLevel()" [tabIndex]="-1"
+            [matTooltip]="'Restablecer'">
             <mat-icon class="text-current" [svgIcon]="'heroicons_outline:lightning-bolt'"></mat-icon>
         </button>
         <button mat-icon-button (click)="closeModalVersion()" [tabIndex]="-1" [matTooltip]="'Cerrar'">
@@ -32,6 +34,10 @@
                 <mat-icon [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
                 <span>Editar</span>
             </button>
+            <button mat-menu-item (click)="openModalTemplatePreview()" *ngIf="type_element === 'level'">
+                <mat-icon [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                <span>Editar template</span>
+            </button>
             <button mat-menu-item (click)="openModalEditPositionLevelFather()" *ngIf="position_level != 1">
                 <mat-icon [svgIcon]="'heroicons_solid:credit-card'">
                 </mat-icon>
@@ -50,8 +56,8 @@
                 *ngIf="getValueFlowVersionLevel(i).type_element === 'level'" (cdkDragEnded)="dragEnded($event, i)"
                 [cdkDragFreeDragPosition]="{x: getValueFlowVersionLevel(i).x, y: getValueFlowVersionLevel(i).y}">
                 <!-- Opciones -->
-                <button mat-mini-fab color="primary" class="mr-2" [matTooltip]="'Opciones'" (click)="setIndex(i)"
-                    [matMenuTriggerFor]="levelActions">
+                <button mat-mini-fab *ngIf="editMode" color="primary" class="mr-2" [matTooltip]="'Opciones'"
+                    (click)="setIndex(i)" [matMenuTriggerFor]="levelActions">
                     <mat-icon>filter_list</mat-icon>
                 </button>
                 <!-- Title -->
@@ -60,7 +66,7 @@
                     <div class="box-drag-selector bg-primary-600">
                         <p>{{getValueFlowVersionLevel(i).position_level}}</p>
                     </div>
-                    <div>{{getValueFlowVersionLevel(i).name_level}}</div>
+                    <div class="mr-2">{{getValueFlowVersionLevel(i).name_level}}</div>
                 </div>
                 <!-- Selector -->
                 <div class="box-drag-selector bg-primary-600"
@@ -74,8 +80,8 @@
                 *ngIf="getValueFlowVersionLevel(i).type_element === 'conditional'" (cdkDragEnded)="dragEnded($event, i)"
                 [cdkDragFreeDragPosition]="{x: getValueFlowVersionLevel(i).x, y: getValueFlowVersionLevel(i).y}">
                 <!-- Opciones -->
-                <button mat-mini-fab color="primary" class="mr-2" [matTooltip]="'Opciones'" (click)="setIndex(i)"
-                    [matMenuTriggerFor]="levelActions">
+                <button mat-mini-fab *ngIf="editMode" color="primary" class="mr-2" [matTooltip]="'Opciones'"
+                    (click)="setIndex(i)" [matMenuTriggerFor]="levelActions">
                     <mat-icon>filter_list</mat-icon>
                 </button>
                 <!-- Title -->
@@ -84,7 +90,8 @@
                     <div class="box-drag-selector bg-primary-600">
                         <p>{{getValueFlowVersionLevel(i).position_level}}</p>
                     </div>
-                    <div>{{getValueFlowVersionLevel(i).id_control}} {{getValueFlowVersionLevel(i).operator}}
+                    <div class="mr-2">{{getValueFlowVersionLevel(i).id_control}}
+                        {{getValueFlowVersionLevel(i).operator}}
                         {{getValueFlowVersionLevel(i).value_against}}
                     </div>
                 </div>

@@ -688,25 +688,11 @@ BEGIN
 				]
 			},
 			{
-				"id": "business.template",
-				"title": "Plantilla",
-				"type": "basic",
-				"icon": "heroicons_outline:template",
-				"link": "/business/template"
-			},
-			{
 				"id": "business.bpm",
 				"title": "BPM",
 				"type": "collapsable",
 				"icon": "heroicons_outline:cube-transparent",
 				"children": [
-					{
-						"id": "business.process-type",
-						"title": "Tipos de proceso",
-						"type": "basic",
-						"icon": "mat_outline:category",
-						"link": "/business/process-type"
-					},
 					{
 						"id": "business.level-status",
 						"title": "Estado del nivel",
@@ -720,6 +706,13 @@ BEGIN
 						"type": "basic",
 						"icon": "heroicons_outline:user-group",
 						"link": "/business/level-profile"
+					},
+						{
+						"id": "business.template",
+						"title": "Plantilla",
+						"type": "basic",
+						"icon": "heroicons_outline:template",
+						"link": "/business/template"
 					},
 					{
 						"id": "business.level",
@@ -931,25 +924,11 @@ BEGIN
 				]
 			},
 			{
-				"id": "business.template",
-				"title": "Plantilla",
-				"type": "basic",
-				"icon": "heroicons_outline:template",
-				"link": "/business/template"
-			},
-			{
 				"id": "business.bpm",
 				"title": "BPM",
 				"type": "collapsable",
 				"icon": "heroicons_outline:cube-transparent",
 				"children": [
-					{
-						"id": "business.process-type",
-						"title": "Tipos de proceso",
-						"type": "basic",
-						"icon": "mat_outline:category",
-						"link": "/business/process-type"
-					},
 					{
 						"id": "business.level-status",
 						"title": "Estado del nivel",
@@ -963,6 +942,13 @@ BEGIN
 						"type": "basic",
 						"icon": "heroicons_outline:user-group",
 						"link": "/business/level-profile"
+					},
+						{
+						"id": "business.template",
+						"title": "Plantilla",
+						"type": "basic",
+						"icon": "heroicons_outline:template",
+						"link": "/business/template"
 					},
 					{
 						"id": "business.level",

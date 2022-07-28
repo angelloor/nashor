@@ -15,11 +15,6 @@ import { AppInitialData, MessageAPI } from 'app/core/app/app.type';
 import { LayoutService } from 'app/layout/layout.service';
 import { NotificationService } from 'app/shared/notification/notification.service';
 import { filter, fromEvent, merge, Subject, takeUntil } from 'rxjs';
-import { processType } from '../../process-type/process-type.data';
-import { ProcessTypeService } from '../../process-type/process-type.service';
-import { ProcessType } from '../../process-type/process-type.types';
-import { FlowVersionService } from '../flow-version/flow-version.service';
-import { FlowVersion } from '../flow-version/flow-version.types';
 import { FlowService } from '../flow.service';
 import { Flow } from '../flow.types';
 import { FlowListComponent } from '../list/list.component';
@@ -31,11 +26,6 @@ import { ModalFlowVersionService } from '../modal-flow-version/modal-flow-versio
   animations: angelAnimations,
 })
 export class FlowDetailsComponent implements OnInit {
-  listProcessType: ProcessType[] = [];
-  selectedProcessType: ProcessType = processType;
-  flowVersions!: FlowVersion[];
-  id_company: string = '';
-
   nameEntity: string = 'Flujo';
   private data!: AppInitialData;
 
@@ -79,9 +69,7 @@ export class FlowDetailsComponent implements OnInit {
     private _notificationService: NotificationService,
     private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
-    private _processTypeService: ProcessTypeService,
-    private _modalFlowVersionService: ModalFlowVersionService,
-    private _flowVersionService: FlowVersionService
+    private _modalFlowVersionService: ModalFlowVersionService
   ) {}
 
   /** ----------------------------------------------------------------------------------------------------- */
@@ -108,7 +96,6 @@ export class FlowDetailsComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
-      this.id_company = this.data.user.company.id_company;
     });
     /**
      * Open the drawer
@@ -119,10 +106,12 @@ export class FlowDetailsComponent implements OnInit {
      */
     this.flowForm = this._formBuilder.group({
       id_flow: [''],
-      id_company: ['', [Validators.required]],
-      id_process_type: ['', [Validators.required]],
+      id_company: [''],
       name_flow: ['', [Validators.required, Validators.maxLength(100)]],
       description_flow: ['', [Validators.required, Validators.maxLength(250)]],
+      acronym_flow: ['', [Validators.required, Validators.maxLength(20)]],
+      acronym_task: ['', [Validators.required, Validators.maxLength(20)]],
+      sequential_flow: [''],
     });
     /**
      * Get the flows
@@ -151,38 +140,6 @@ export class FlowDetailsComponent implements OnInit {
          */
         this.flow = flow;
 
-        // ProcessType
-        this._processTypeService
-          .byCompanyQueryRead(this.id_company, '*')
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((process_types: ProcessType[]) => {
-            this.listProcessType = process_types;
-
-            this.selectedProcessType = this.listProcessType.find(
-              (item) =>
-                item.id_process_type ==
-                this.flow.process_type.id_process_type.toString()
-            )!;
-          });
-
-        this._flowVersionService
-          .byFlowRead(this.flow.id_flow)
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe();
-
-        this._flowVersionService.flowVersions$
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((_flowVersions: FlowVersion[]) => {
-            this.flowVersions = _flowVersions;
-            /**
-             * Disabled or enabled control
-             */
-            if (this.flowVersions.length > 0) {
-              this.flowForm.get('id_process_type')?.disable();
-            } else {
-              this.flowForm.get('id_process_type')?.enable();
-            }
-          });
         /**
          * Patch values to the form
          */
@@ -233,7 +190,6 @@ export class FlowDetailsComponent implements OnInit {
     this.flowForm.patchValue({
       ...this.flow,
       id_company: this.flow.company.id_company,
-      id_process_type: this.flow.process_type.id_process_type,
     });
   }
   /**
@@ -300,9 +256,7 @@ export class FlowDetailsComponent implements OnInit {
       company: {
         id_company: parseInt(flow.id_company),
       },
-      process_type: {
-        id_process_type: parseInt(flow.id_process_type),
-      },
+      sequential_flow: parseInt(flow.sequential_flow),
     };
     /**
      * Update
@@ -313,9 +267,7 @@ export class FlowDetailsComponent implements OnInit {
       .subscribe({
         next: (_flow: Flow) => {
           if (_flow) {
-            this._notificationService.success(
-              'Flujo actualizada correctamente'
-            );
+            this._notificationService.success('flow actualizada correctamente');
             /**
              * Toggle the edit mode off
              */
@@ -343,9 +295,9 @@ export class FlowDetailsComponent implements OnInit {
   deleteFlow(): void {
     this._angelConfirmationService
       .open({
-        title: 'Eliminar flujo',
+        title: 'Eliminar flow',
         message:
-          '¿Estás seguro de que deseas eliminar esta flujo? ¡Esta acción no se puede deshacer!',
+          '¿Estás seguro de que deseas eliminar esta flow? ¡Esta acción no se puede deshacer!',
       })
       .afterClosed()
       .pipe(takeUntil(this._unsubscribeAll))
@@ -382,7 +334,7 @@ export class FlowDetailsComponent implements OnInit {
                    * Return if the flow wasn't deleted...
                    */
                   this._notificationService.success(
-                    'Flujo eliminada correctamente'
+                    'flow eliminada correctamente'
                   );
                   /**
                    * Get the current activated route

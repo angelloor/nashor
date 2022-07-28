@@ -299,6 +299,10 @@ export class ModalEditFlowVersionLevelComponent implements OnInit {
              * Toggle the edit mode off
              */
             this.toggleEditMode(false);
+            /**
+             * Close modal
+             */
+            this.closeModalEditFlowVersionLevel();
           } else {
             this._notificationService.error(
               '¡Error interno!, consulte al administrador.'

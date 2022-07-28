@@ -7,7 +7,7 @@
                 [ngStyle]="{'background': selectedLevelStatus.color_level_status, 'padding': '3px', 'border-radius': '25px', 'width': '25px', 'height': '25px'}">
             </div>
         </div>
-        <div class="text-lg mr-auto ml-4">{{task.process.number_process}}</div>
+        <div class="text-lg mr-auto ml-4">{{task.number_task}}</div>
         <button mat-icon-button (click)="closeModalTask()" [tabIndex]="-1">
             <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
         </button>
@@ -33,19 +33,19 @@
                         <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
                         </mat-icon>
                         <input matInput [value]="task.process.number_process" readonly
-                            [matTooltip]="task.process.number_process">
+                            [matTooltip]="'Creado: '+parseTime(task.process.date_process)">
                     </mat-form-field>
                 </div>
             </div>
             <div class="flex flex-col w-2/4 pl-3">
-                <!-- process_type -->
+                <!-- flow -->
                 <div>
                     <mat-form-field class="angel-mat-no-subscript w-full">
-                        <mat-label>process_type</mat-label>
+                        <mat-label>flow</mat-label>
                         <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:timeline'">
                         </mat-icon>
-                        <input matInput [value]="selectedProcessType.name_process_type" readonly
-                            [matTooltip]="selectedProcessType.description_process_type">
+                        <input matInput [value]="selectedFlow.name_flow" readonly
+                            [matTooltip]="selectedFlow.description_flow">
                     </mat-form-field>
                 </div>
             </div>
@@ -53,14 +53,14 @@
 
         <div class="flex flex-auto mt-8">
             <div class="flex flex-col w-2/4 pr-3">
-                <!-- type_status_task -->
+                <!-- level_profile -->
                 <div>
                     <mat-form-field class="angel-mat-no-subscript w-full">
-                        <mat-label>type_status_task</mat-label>
-                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
+                        <mat-label>level_profile</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:timeline'">
                         </mat-icon>
-                        <input matInput [value]="getTypeStatusTaskEnum(task.type_status_task).name_type" readonly
-                            [matTooltip]="getTypeStatusTaskEnum(task.type_status_task).name_type">
+                        <input matInput [value]="selectedLevelProfile.name_level_profile" readonly
+                            [matTooltip]="selectedLevelProfile.description_level_profile">
                     </mat-form-field>
                 </div>
             </div>
@@ -80,32 +80,28 @@
 
         <div class="flex flex-auto mt-8">
             <div class="flex flex-col w-2/4 pr-3">
+                <!-- type_status_task -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>type_status_task</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
+                        </mat-icon>
+                        <input matInput [value]="getTypeStatusTaskEnum(task.type_status_task).name_type" readonly>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex flex-col w-2/4 pl-3">
                 <!-- name_level -->
                 <div>
                     <mat-form-field class="angel-mat-no-subscript w-full">
                         <mat-label>name_level</mat-label>
                         <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
                         </mat-icon>
-                        <input matInput [value]="task.level.name_level" readonly
-                            [matTooltip]="task.level.description_level">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="flex flex-col w-2/4 pl-3">
-                <!-- level_profile -->
-                <div>
-                    <mat-form-field class="angel-mat-no-subscript w-full">
-                        <mat-label>level_profile</mat-label>
-                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:timeline'">
-                        </mat-icon>
-                        <input matInput [value]="selectedLevelProfile.name_level_profile" readonly
-                            [matTooltip]="selectedLevelProfile.description_level_profile">
+                        <input matInput [value]="task.level.name_level" readonly>
                     </mat-form-field>
                 </div>
             </div>
         </div>
-
-
         <div class="flex flex-auto mt-8">
             <div class="flex flex-col w-full">
                 <div>

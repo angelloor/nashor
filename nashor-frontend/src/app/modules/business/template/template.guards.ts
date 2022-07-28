@@ -6,16 +6,16 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { TemplateDetailsComponent } from './details/details.component';
+import { ModalTemplatePreviewComponent } from './modal-template-preview/modal-template-preview.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CanDeactivateTemplateDetails
-  implements CanDeactivate<TemplateDetailsComponent>
+  implements CanDeactivate<ModalTemplatePreviewComponent>
 {
   canDeactivate(
-    component: TemplateDetailsComponent,
+    component: ModalTemplatePreviewComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot

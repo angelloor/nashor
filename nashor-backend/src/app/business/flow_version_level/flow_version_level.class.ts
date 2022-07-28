@@ -8,6 +8,7 @@ import {
 	dml_flow_version_level_delete,
 	dml_flow_version_level_reset,
 	dml_flow_version_level_update,
+	view_flow_version_level_by_flow_version_exclude_conditional_read,
 	view_flow_version_level_by_flow_version_read,
 	view_flow_version_level_by_level_read,
 	view_flow_version_level_specific_read,
@@ -171,6 +172,25 @@ export class FlowVersionLevel {
 	byFlowVersionRead() {
 		return new Promise<FlowVersionLevel[]>(async (resolve, reject) => {
 			await view_flow_version_level_by_flow_version_read(this)
+				.then((flowVersionLevels: FlowVersionLevel[]) => {
+					/**
+					 * Mutate response
+					 */
+					const _flowVersionLevels = this.mutateResponse(flowVersionLevels);
+
+					resolve(_flowVersionLevels);
+				})
+				.catch((error: any) => {
+					reject(error);
+				});
+		});
+	}
+
+	byFlowVersionExcludeConditionalRead() {
+		return new Promise<FlowVersionLevel[]>(async (resolve, reject) => {
+			await view_flow_version_level_by_flow_version_exclude_conditional_read(
+				this
+			)
 				.then((flowVersionLevels: FlowVersionLevel[]) => {
 					/**
 					 * Mutate response

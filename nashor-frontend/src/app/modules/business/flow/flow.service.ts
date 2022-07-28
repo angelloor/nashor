@@ -44,11 +44,7 @@ export class FlowService {
   /**
    * create
    */
-  create(
-    id_user_: string,
-    id_company: string,
-    id_process_type: string
-  ): Observable<any> {
+  create(id_user_: string, id_company: string): Observable<any> {
     return this._flows.pipe(
       take(1),
       switchMap((flows) =>
@@ -59,9 +55,6 @@ export class FlowService {
               id_user_: parseInt(id_user_),
               company: {
                 id_company: parseInt(id_company),
-              },
-              process_type: {
-                id_process_type: parseInt(id_process_type),
               },
             },
             {
@@ -111,30 +104,6 @@ export class FlowService {
     return this._httpClient
       .get<Flow[]>(
         this._url + `/byCompanyQueryRead/${id_company}/${query ? query : '*'}`
-      )
-      .pipe(
-        tap((flows: Flow[]) => {
-          if (flows) {
-            this._flows.next(flows);
-          } else {
-            this._flows.next([]);
-          }
-        })
-      );
-  }
-  /**
-   * byProcessTypeQueryRead
-   * @param id_process_type
-   * @param query
-   */
-  byProcessTypeQueryRead(
-    id_process_type: string,
-    query: string
-  ): Observable<Flow[]> {
-    return this._httpClient
-      .get<Flow[]>(
-        this._url +
-          `/byProcessTypeQueryRead/${id_process_type}/${query ? query : '*'}`
       )
       .pipe(
         tap((flows: Flow[]) => {

@@ -1,8 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Store } from '@ngrx/store';
-import { AppInitialData } from 'app/core/app/app.type';
 import { Subject, takeUntil } from 'rxjs';
 import { FlowService } from '../flow.service';
 import { Flow } from '../flow.types';
@@ -14,16 +12,13 @@ import { ModalSelectFlowService } from './modal-select-flow.service';
 })
 export class ModalSelectFlowComponent implements OnInit {
   id_flow: string = '';
-  id_company: string = '';
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
-  private data!: AppInitialData;
 
   listFlow: Flow[] = [];
   selectFlowForm!: FormGroup;
 
   constructor(
-    private _store: Store<{ global: AppInitialData }>,
     @Inject(MAT_DIALOG_DATA) public _data: any,
     private _formBuilder: FormBuilder,
     private _flowService: FlowService,
@@ -32,17 +27,10 @@ export class ModalSelectFlowComponent implements OnInit {
 
   ngOnInit(): void {
     /**
-     * Subscribe to user changes of state
-     */
-    this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
-      this.data = state.global;
-      this.id_company = this.data.user.company.id_company;
-    });
-    /**
      * get the list of flow
      */
     this._flowService
-      .byCompanyQueryRead(this.id_company, '*')
+      .queryRead('*')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((_flows: Flow[]) => {
         this.listFlow = _flows;

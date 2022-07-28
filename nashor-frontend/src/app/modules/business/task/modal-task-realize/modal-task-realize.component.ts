@@ -1,5 +1,9 @@
 import { angelAnimations } from '@angel/animations';
 import { AngelAlertType } from '@angel/components/alert';
+import {
+  ActionAngelConfirmation,
+  AngelConfirmationService,
+} from '@angel/services/confirmation';
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import {
   FormArray,
@@ -41,6 +45,7 @@ import { ProcessControlService } from '../components/process-control/process-con
 import { ProcessControl } from '../components/process-control/process-control.types';
 import { ProcessItemService } from '../components/process-item/process-item.service';
 import { ProcessItem } from '../components/process-item/process-item.types';
+import { TaskService } from '../task.service';
 import { Task } from '../task.types';
 import { ModalTaskRealizeService } from './modal-task-realize.service';
 
@@ -114,7 +119,9 @@ export class ModalTaskRealizeComponent implements OnInit {
     private _processItemService: ProcessItemService,
     private _processControlService: ProcessControlService,
     private _processAttachedService: ProcessAttachedService,
-    private _notificationService: NotificationService
+    private _notificationService: NotificationService,
+    private _taskService: TaskService,
+    private _angelConfirmationService: AngelConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -146,6 +153,9 @@ export class ModalTaskRealizeComponent implements OnInit {
       processControls: this._formBuilder.array([]),
       processAttacheds: this._formBuilder.array([]),
     });
+    (this.taskRealizeForm.get('processItems') as FormArray).clear();
+    (this.taskRealizeForm.get('processControls') as FormArray).clear();
+    (this.taskRealizeForm.get('processAttacheds') as FormArray).clear();
     /**
      * isOpenModal
      */
@@ -571,9 +581,17 @@ export class ModalTaskRealizeComponent implements OnInit {
                             attached: _processAttached
                               ? _processAttached.attached
                               : '',
-                            file_name: _processAttached
-                              ? _processAttached.file_name
-                              : '',
+                            file_name: [
+                              _processAttached.file_name != ' ' &&
+                              _processAttached.file_name != null &&
+                              _processAttached.file_name != undefined
+                                ? _processAttached.file_name
+                                : '',
+                              _documentationProfileAttached.attached
+                                .required_attached
+                                ? Validators.required
+                                : Validators.min(0),
+                            ],
                             length_mb: _processAttached
                               ? _processAttached.length_mb
                               : '',
@@ -839,6 +857,81 @@ export class ModalTaskRealizeComponent implements OnInit {
     this._modalTaskRealizeService.closeModalTaskRealize();
   }
   /**
+   * sendTask the task
+   */
+  sendTask(): void {
+    this._angelConfirmationService
+      .open({
+        title: 'Enviar tarea',
+        message:
+          '¿Estás seguro de que deseas enviar la tarea? ¡Esta acción no se puede deshacer!',
+      })
+      .afterClosed()
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((confirm: ActionAngelConfirmation) => {
+        if (confirm) {
+          /**
+           * Get the task
+           */
+          const id_user_ = this.data.user.id_user;
+          let task: any = cloneDeep(this.task);
+          /**
+           * Delete whitespace (trim() the atributes type string)
+           */
+          task = {
+            ...task,
+            id_user_: parseInt(id_user_),
+            id_task: parseInt(task.id_task),
+            process: {
+              id_process: parseInt(task.process.id_process),
+            },
+            official: {
+              id_official: parseInt(task.official.id_official),
+            },
+            level: {
+              id_level: parseInt(task.level.id_level),
+            },
+          };
+          /**
+           * Update
+           */
+          this._taskService
+            .send(task)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe({
+              next: (_task: Task) => {
+                if (_task) {
+                  this._notificationService.success(
+                    'Tarea enviada correctamente'
+                  );
+
+                  console.log(_task);
+
+                  this.task = _task;
+                  /**
+                   * closeModalTaskRealize
+                   */
+                  this.closeModalTaskRealize();
+                } else {
+                  this._notificationService.error(
+                    '¡Error interno!, consulte al administrador.'
+                  );
+                }
+              },
+              error: (error: { error: MessageAPI }) => {
+                this._notificationService.error(
+                  !error.error
+                    ? '¡Error interno!, consulte al administrador.'
+                    : !error.error.description
+                    ? '¡Error interno!, consulte al administrador.'
+                    : error.error.description
+                );
+              },
+            });
+        }
+      });
+  }
+  /**
    * createProcessItem
    */
   createProcessItem() {
@@ -1008,8 +1101,6 @@ export class ModalTaskRealizeComponent implements OnInit {
     if (type_control === 'checkBox') {
       let value_process_control: string = processControl.value_process_control;
       let checkeds: string[] = [];
-
-      console.log(value_process_control);
 
       if (
         value_process_control != undefined &&

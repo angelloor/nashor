@@ -94,6 +94,16 @@ routerTask.patch('/reasign', async (req: any, res: any) => {
 		});
 });
 
+routerTask.patch('/send', async (req: any, res: any) => {
+	await validation(req.body, req.url, req.headers.token)
+		.then((task: Task) => {
+			success(res, task);
+		})
+		.catch((err: MessageAPI | any) => {
+			error(res, err);
+		});
+});
+
 routerTask.delete('/delete', async (req: any, res: any) => {
 	await validation(req.query, req.url, req.headers.token)
 		.then((response: boolean) => {

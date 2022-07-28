@@ -9,7 +9,7 @@ import {
   switchMap,
   take,
   tap,
-  throwError,
+  throwError
 } from 'rxjs';
 import { flowVersion, flowVersions } from './flow-version.data';
 import { FlowVersion } from './flow-version.types';

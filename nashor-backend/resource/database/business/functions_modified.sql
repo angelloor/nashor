@@ -14,7 +14,7 @@ DECLARE
 	_EXCEPTION TEXT DEFAULT 'Internal Error';
 BEGIN
 	-- Verificar si la version del flujo se encuentra en uso
-	_COUNT = (select count(*) from business.view_process bvp  where bvp.id_flow_version = 1 and bvp.finalized_process = false);
+	_COUNT = (select count(*) from business.view_process bvp  where bvp.id_flow_version = _id_flow_version and bvp.finalized_process = false);
 	
 	IF (_COUNT >= 1) THEN
 		RETURN true;
@@ -944,12 +944,113 @@ $BODY$;
 ALTER FUNCTION business.dml_item_update_modified(numeric, numeric, numeric, numeric, character varying, character varying, character varying, boolean)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_control_create_modified(numeric, numeric)
--- DROP FUNCTION IF EXISTS business.dml_control_create_modified(numeric, numeric);
+-- FUNCTION: business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_control_create(
+	id_user_ numeric,
+	_id_company numeric,
+	_type_control business."TYPE_CONTROL",
+	_title_control character varying,
+	_form_name_control character varying,
+	_initial_value_control character varying,
+	_required_control boolean,
+	_min_length_control numeric,
+	_max_length_control numeric,
+	_placeholder_control character varying,
+	_spell_check_control boolean,
+	_options_control json,
+	_in_use boolean,
+	_deleted_control boolean,
+	_id_template numeric)
+    RETURNS numeric
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+	_RESPONSE BOOLEAN DEFAULT false;
+	_COUNT NUMERIC;
+	_COUNT_ATT NUMERIC;
+	_COUNT_EXTERNALS_IDS NUMERIC;
+	_RETURNING NUMERIC;
+	_CURRENT_ID NUMERIC;
+	_X RECORD;
+	_SAVE_LOG BOOLEAN DEFAULT false;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN 
+	-- company
+	_COUNT_EXTERNALS_IDS = (select count(*) from core.view_company v where v.id_company = _id_company);
+		
+	IF (_COUNT_EXTERNALS_IDS = 0) THEN
+		_EXCEPTION = 'El id '||_id_company||' de la tabla company no se encuentra registrado';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+			
+	_CURRENT_ID = (select nextval('business.serial_control')-1);
+	_COUNT = (select count(*) from business.view_control t where t.id_control = _CURRENT_ID);
+	
+	IF (_COUNT = 0) THEN
+		_COUNT_ATT = (select count(*) from business.view_template_control bvtc
+			inner join business.view_control bvc on bvtc.id_control = bvc.id_control
+			where bvc.form_name_control = _form_name_control and bvtc.id_template = _id_template);
+			
+		IF (_COUNT_ATT = 0) THEN 
+			FOR _X IN INSERT INTO business.control(id_control, id_company, type_control, title_control, form_name_control, initial_value_control, required_control, min_length_control, max_length_control, placeholder_control, spell_check_control, options_control, in_use, deleted_control) VALUES (_CURRENT_ID, $2 ,$3 ,$4 ,$5 ,$6 ,$7 ,$8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14) RETURNING id_control LOOP
+				_RETURNING = _X.id_control;
+			END LOOP;
+			
+			IF (_RETURNING >= 1) THEN
+				_SAVE_LOG = (select cvuij.save_log from core.view_user_inner_join_cvc_cvs cvuij
+					where cvuij.id_user = id_user_);
+
+				IF (_SAVE_LOG) THEN
+					_RESPONSE = (select * from core.dml_system_event_create(id_user_,'control',_CURRENT_ID,'CREATE', now()::timestamp, false));
+					
+					IF (_RESPONSE != true) THEN
+						_EXCEPTION = 'Ocurrió un error al registrar el evento del sistema';
+						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+					ELSE
+						RETURN _CURRENT_ID;
+					END IF;
+				ELSE 
+					RETURN _CURRENT_ID;
+				END IF;
+			ELSE
+				_EXCEPTION = 'Ocurrió un error al insertar el registro';
+				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+			END IF;
+		ELSE
+			_EXCEPTION = 'Ya existe un registro con el form_name_control '||_form_name_control||'';
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+	ELSE
+		_EXCEPTION = 'El registro con id '||_CURRENT_ID||' ya se encuentra registrado en la tabla control';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_CURRENT_ID >= 1) THEN
+			EXECUTE 'select setval(''business.serial_control'', '||_CURRENT_ID||')';
+		END IF;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_control_create -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_control_create_modified(numeric, numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_control_create_modified(numeric, numeric, numeric);
 
 CREATE OR REPLACE FUNCTION business.dml_control_create_modified(
 	id_user_ numeric,
-	_id_company numeric)
+	_id_company numeric,
+	_id_template numeric)
     RETURNS TABLE(id_control numeric, id_company numeric, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, deleted_control boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
     LANGUAGE 'plpgsql'
     COST 100
@@ -961,7 +1062,20 @@ DECLARE
 	_ID_CONTROL NUMERIC;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
-	_ID_CONTROL = (select * from business.dml_control_create(id_user_, _ID_COMPANY, 'input', 'Nuevo control', 'form_control', '', false, 1, 1, '', false, '[]', false, false));
+	_ID_CONTROL = (select * from business.dml_control_create(id_user_, _ID_COMPANY, 'input', 'Nuevo control', 'form_control', '', false, 1, 1, '', false, '[
+	  {
+		"name": "One",
+		"value": "one"
+	  },
+	  {
+		"name": "Two",
+		"value": "two"
+	  },
+	  {
+		"name": "Three",
+		"value": "three"
+	  }
+	]', false, false, _id_template));
 	
 	IF (_ID_CONTROL >= 1) THEN
 		RETURN QUERY select * from business.view_control_inner_join bvcij 
@@ -980,7 +1094,110 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_control_create_modified(numeric, numeric)
+ALTER FUNCTION business.dml_control_create_modified(numeric, numeric, numeric)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_control_update(numeric, numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_control_update(numeric, numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_control_update(
+	id_user_ numeric,
+	_id_control numeric,
+	_id_company numeric,
+	_type_control business."TYPE_CONTROL",
+	_title_control character varying,
+	_form_name_control character varying,
+	_initial_value_control character varying,
+	_required_control boolean,
+	_min_length_control numeric,
+	_max_length_control numeric,
+	_placeholder_control character varying,
+	_spell_check_control boolean,
+	_options_control json,
+	_in_use boolean,
+	_deleted_control boolean,
+	_id_template numeric)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+	_RESPONSE boolean DEFAULT false;
+	_COUNT NUMERIC;
+	_COUNT_ATT NUMERIC;
+	_COUNT_DELETED NUMERIC;
+	_COUNT_EXTERNALS_IDS NUMERIC;
+	_RETURNING NUMERIC;
+	_X RECORD;
+	_SAVE_LOG BOOLEAN DEFAULT false;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN 
+	-- company
+	_COUNT_EXTERNALS_IDS = (select count(*) from core.view_company v where v.id_company = _id_company);
+		
+	IF (_COUNT_EXTERNALS_IDS = 0) THEN
+		_EXCEPTION = 'El id '||_id_company||' de la tabla company no se encuentra registrado';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+			
+	_COUNT = (select count(*) from business.view_control t where t.id_control = _id_control);
+	
+	IF (_COUNT = 1) THEN
+		_COUNT_DELETED = (select count(*) from business.view_control t where t.id_control = _id_control and deleted_control = true); 
+		IF (_COUNT_DELETED = 0) THEN
+			_COUNT_ATT = (select count(*) from business.view_template_control bvtc
+				inner join business.view_control bvc on bvtc.id_control = bvc.id_control
+				where bvc.form_name_control = _form_name_control and bvtc.id_template = _id_template and bvtc.id_control != _id_control);
+			
+			IF (_COUNT_ATT = 0) THEN 
+				FOR _X IN UPDATE business.control SET id_company=$3, type_control=$4, title_control=$5, form_name_control=$6, initial_value_control=$7, required_control=$8, min_length_control=$9, max_length_control=$10, placeholder_control=$11, spell_check_control=$12, options_control=$13, in_use=$14, deleted_control=$15 WHERE id_control=$2 RETURNING id_control LOOP
+					_RETURNING = _X.id_control;
+				END LOOP;
+				
+				IF (_RETURNING >= 1) THEN
+					_SAVE_LOG = (select cvuij.save_log from core.view_user_inner_join_cvc_cvs cvuij
+						where cvuij.id_user = id_user_);
+
+					IF (_SAVE_LOG) THEN
+						_RESPONSE = (select * from core.dml_system_event_create(id_user_,'control',_id_control,'UPDATE', now()::timestamp, false));
+						
+						IF (_RESPONSE != true) THEN
+							_EXCEPTION = 'Ocurrió un error al registrar el evento del sistema';
+							RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+						ELSE
+							RETURN _RESPONSE;
+						END IF;
+					ELSE
+						RETURN true;
+					END IF;
+				ELSE
+					_EXCEPTION = 'Ocurrió un error al actualizar el registro';
+					RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+				END IF;
+			ELSE
+				_EXCEPTION = 'Ya existe un registro con el form_name_control '||_form_name_control||'';
+				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+			END IF;
+		ELSE 
+			_EXCEPTION = 'EL registro se encuentra eliminado';
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+	ELSE
+		_EXCEPTION = 'El registro con id '||_id_control||' no se encuentra registrado en la tabla control';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_control_update -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_control_update(numeric, numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_control_update_modified(numeric, numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean)
@@ -1148,11 +1365,14 @@ CREATE OR REPLACE FUNCTION business.dml_template_update_modified(
 AS $BODY$
 DECLARE
  	_UPDATE_TEMPLATE BOOLEAN;
+ 	_UPDATE_LAST_CHANGE BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
  	_UPDATE_TEMPLATE = (select * from business.dml_template_update(id_user_, _id_template, _id_company, _id_documentation_profile, _plugin_item_process, _plugin_attached_process, _name_template, _description_template, _status_template, _last_change, _in_use, _deleted_template));
 
  	IF (_UPDATE_TEMPLATE) THEN
+		_UPDATE_LAST_CHANGE = (select * from business.dml_template_update_last_change(id_user_, _id_template));
+
 		RETURN QUERY select * from business.view_template_inner_join bvtij 
 			where bvtij.id_template = _id_template;
 	ELSE
@@ -1272,7 +1492,7 @@ CREATE OR REPLACE FUNCTION business.dml_template_control_create_with_new_control
 	id_user_ numeric,
 	_id_template numeric)
     RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
-	LANGUAGE 'plpgsql'
+    LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
     ROWS 1000
@@ -1292,10 +1512,10 @@ BEGIN
 	IF (_ORDINAL_POSITION IS NULL) THEN
 		_ORDINAL_POSITION = 0;
 	END IF;
-	
+		
 	-- Get the id company _ID_COMPANY
 	_ID_COMPANY = (select vu.id_company from core.view_user vu where vu.id_user = id_user_); 
-	_ID_CONTROL = (select newControl.id_control from (select * from business.dml_control_create_modified(id_user_,_ID_COMPANY)) as newControl);
+	_ID_CONTROL = (select newControl.id_control from (select * from business.dml_control_create_modified(id_user_,_ID_COMPANY,_id_template)) as newControl);
 	
 	IF (_ID_CONTROL >= 1) THEN
 		_ID_TEMPLATE_CONTROL = (select * from business.dml_template_control_create(id_user_, _id_template, _ID_CONTROL, _ORDINAL_POSITION + 1));
@@ -1438,7 +1658,7 @@ CREATE OR REPLACE FUNCTION business.dml_template_control_update_control_properti
 	_in_use boolean,
 	_deleted_control boolean)
     RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
-	LANGUAGE 'plpgsql'
+    LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
     ROWS 1000
@@ -1450,7 +1670,7 @@ DECLARE
 	_UPDATE_LAST_CHANGE BOOLEAN;
 	_EXCEPTION TEXT DEFAULT 'Internal Error';
 BEGIN
- 	_UPDATE_CONTROL = (select * from business.dml_control_update(id_user_, _id_control, _id_company, _type_control, _title_control, _form_name_control, _initial_value_control, _required_control, _min_length_control, _max_length_control, _placeholder_control, _spell_check_control, _options_control, _in_use, _deleted_control));
+ 	_UPDATE_CONTROL = (select * from business.dml_control_update(id_user_, _id_control, _id_company, _type_control, _title_control, _form_name_control, _initial_value_control, _required_control, _min_length_control, _max_length_control, _placeholder_control, _spell_check_control, _options_control, _in_use, _deleted_control, _id_template));
  	
 	IF (_UPDATE_CONTROL) THEN
 		_UPDATE_TEMPLATE_CONTROL = (select * from business.dml_template_control_update(id_user_, _id_template_control, _id_template, _id_control, _ordinal_position));
@@ -1528,7 +1748,7 @@ END;
 			 
 $BODY$;
 
-ALTER FUNCTION business.dml_template_control_update_positions(numeric, json)
+ALTER FUNCTION business.dml_template_control_update_positions(numeric, numeric, json)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_template_control_delete(numeric, numeric)
@@ -1609,6 +1829,59 @@ $BODY$;
 ALTER FUNCTION business.dml_template_control_delete(numeric, numeric)
     OWNER TO postgres;
 
+-- FUNCTION: business.dml_template_control_delete_modified(numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_template_control_delete_modified(numeric, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_template_control_delete_modified(
+	id_user_ numeric,
+	_id_template_control numeric)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+	_ID_CONTROL NUMERIC;
+	_ID_TEMPLATE NUMERIC;
+ 	_COUNT_DELETE_CONTROL BOOLEAN;
+ 	_COUNT_DELETE BOOLEAN;
+ 	_UPDATE_LAST_CHANGE BOOLEAN;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+	_ID_CONTROL = (select bvtc.id_control from business.view_template_control bvtc where bvtc.id_template_control = _id_template_control);
+	_ID_TEMPLATE = (select bvtc.id_template from business.view_template_control bvtc where bvtc.id_template_control = _id_template_control);
+	
+	_COUNT_DELETE = (select * from business.dml_template_control_delete(id_user_, _id_template_control));
+	
+	IF (_COUNT_DELETE) THEN
+		_COUNT_DELETE_CONTROL = (select * from business.dml_control_delete(id_user_, _ID_CONTROL));
+		
+		IF (_COUNT_DELETE_CONTROL) THEN
+			_UPDATE_LAST_CHANGE = (select * from business.dml_template_update_last_change(id_user_, _ID_TEMPLATE));
+
+			RETURN true;
+		ELSE
+			_EXCEPTION = 'Ocurrió un error al eliminar control';
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al eliminar template_control';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_template_control_delete -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+			 
+$BODY$;
+
+ALTER FUNCTION business.dml_template_control_delete_modified(numeric, numeric)
+    OWNER TO postgres;
+
 -- FUNCTION: business.dml_template_control_update_ordinal_position(numeric, numeric, numeric)
 -- DROP FUNCTION IF EXISTS business.dml_template_control_update_ordinal_position(numeric, numeric, numeric);
 
@@ -1650,13 +1923,13 @@ $BODY$;
 ALTER FUNCTION business.dml_template_control_update_ordinal_position(numeric, numeric, numeric)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_process_type_create_modified(numeric, numeric)
--- DROP FUNCTION IF EXISTS business.dml_process_type_create_modified(numeric, numeric);
+-- FUNCTION: business.dml_flow_create_modified(numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_flow_create_modified(numeric, numeric);
 
-CREATE OR REPLACE FUNCTION business.dml_process_type_create_modified(
+CREATE OR REPLACE FUNCTION business.dml_flow_create_modified(
 	id_user_ numeric,
 	_id_company numeric)
-    RETURNS TABLE(id_process_type numeric, id_company numeric, name_process_type character varying, description_process_type character varying, acronym_process_type character varying, sequential_process_type numeric, deleted_process_type boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
+    RETURNS TABLE(id_flow numeric, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric, deleted_flow boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -1664,46 +1937,47 @@ CREATE OR REPLACE FUNCTION business.dml_process_type_create_modified(
 
 AS $BODY$
 DECLARE
-	_ID_PROCESS_TYPE NUMERIC;
+	_ID_FLOW NUMERIC;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
-	_ID_PROCESS_TYPE = (select business.dml_process_type_create(id_user_, _id_company, 'Nuevo tipo de proceso', '', '', 1, false));
+	_ID_FLOW = (select business.dml_flow_create(id_user_, _id_company, 'Nuevo flujo', '', '', '', 1, false));
 	
-	IF (_ID_PROCESS_TYPE >= 1) THEN
-		EXECUTE 'CREATE SEQUENCE IF NOT EXISTS business.serial_process_type_id_'||_ID_PROCESS_TYPE||' INCREMENT 1 MINVALUE  1 MAXVALUE 9999999999 START 2 CACHE 1';
+	IF (_ID_FLOW >= 1) THEN
+		EXECUTE 'CREATE SEQUENCE IF NOT EXISTS business.serial_flow_id_'||_ID_FLOW||' INCREMENT 1 MINVALUE  1 MAXVALUE 9999999999 START 1 CACHE 1';
 	
-		RETURN QUERY select * from business.view_process_type_inner_join bvptij 
-			where bvptij.id_process_type = _ID_PROCESS_TYPE;
+		RETURN QUERY select * from business.view_flow_inner_join bvptij 
+			where bvptij.id_flow = _ID_FLOW;
 	ELSE
-		_EXCEPTION = 'Ocurrió un error al ingresar process_type';
+		_EXCEPTION = 'Ocurrió un error al ingresar flow';
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 	END IF;
 	exception when others then 
 		-- RAISE NOTICE '%', SQLERRM;
 		IF (_EXCEPTION = 'Internal Error') THEN
-			RAISE EXCEPTION '%', 'dml_process_type_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+			RAISE EXCEPTION '%', 'dml_flow_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
 		ELSE
 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 		END IF;
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_process_type_create_modified(numeric, numeric)
+ALTER FUNCTION business.dml_flow_create_modified(numeric, numeric)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_process_type_update_modified(numeric, numeric, numeric, character varying, character varying, character varying, numeric, boolean)
--- DROP FUNCTION IF EXISTS business.dml_process_type_update_modified(numeric, numeric, numeric, character varying, character varying, character varying, numeric, boolean);
+-- FUNCTION: business.dml_flow_update_modified(numeric, numeric, numeric, character varying, character varying, character varying, numeric, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_flow_update_modified(numeric, numeric, numeric, character varying, character varying, character varying, numeric, boolean);
 
-CREATE OR REPLACE FUNCTION business.dml_process_type_update_modified(
+CREATE OR REPLACE FUNCTION business.dml_flow_update_modified(
 	id_user_ numeric,
-	_id_process_type numeric,
+	_id_flow numeric,
 	_id_company numeric,
-	_name_process_type character varying,
-	_description_process_type character varying,
-	_acronym_process_type character varying,
-	_sequential_process_type numeric,
-	_deleted_process_type boolean)
-    RETURNS TABLE(id_process_type numeric, id_company numeric, name_process_type character varying, description_process_type character varying, acronym_process_type character varying, sequential_process_type numeric, deleted_process_type boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
+	_name_flow character varying,
+	_description_flow character varying,
+	_acronym_flow character varying,
+	_acronym_task character varying,
+	_sequential_flow numeric,
+	_deleted_flow boolean)
+    RETURNS TABLE(id_flow numeric, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric, deleted_flow boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -1711,37 +1985,109 @@ CREATE OR REPLACE FUNCTION business.dml_process_type_update_modified(
 
 AS $BODY$
 DECLARE
- 	_UPDATE_PROCESS_TYPE BOOLEAN;
+ 	_UPDATE_FLOW BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
- 	_UPDATE_PROCESS_TYPE = (select * from business.dml_process_type_update(id_user_, _id_process_type, _id_company, _name_process_type, _description_process_type, _acronym_process_type, _sequential_process_type, _deleted_process_type));
+ 	_UPDATE_FLOW = (select * from business.dml_flow_update(id_user_, _id_flow, _id_company, _name_flow, _description_flow, _acronym_flow, _acronym_task, _sequential_flow, _deleted_flow));
 
- 	IF (_UPDATE_PROCESS_TYPE) THEN
-		RETURN QUERY select * from business.view_process_type_inner_join bvptij 
-			where bvptij.id_process_type = _id_process_type;
+ 	IF (_UPDATE_FLOW) THEN
+		RETURN QUERY select * from business.view_flow_inner_join bvptij 
+			where bvptij.id_flow = _id_flow;
 	ELSE
-		_EXCEPTION = 'Ocurrió un error al actualizar process_type';
+		_EXCEPTION = 'Ocurrió un error al actualizar flow';
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 	END IF;
 	exception when others then 
 		-- RAISE NOTICE '%', SQLERRM;
 		IF (_EXCEPTION = 'Internal Error') THEN
-			RAISE EXCEPTION '%', 'dml_process_type_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+			RAISE EXCEPTION '%', 'dml_flow_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
 		ELSE
 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 		END IF;
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_process_type_update_modified(numeric, numeric, numeric, character varying, character varying, character varying, numeric, boolean)
+ALTER FUNCTION business.dml_flow_update_modified(numeric, numeric, numeric, character varying, character varying, character varying, character varying, numeric, boolean)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_process_type_delete_modified(numeric, numeric)
--- DROP FUNCTION IF EXISTS business.dml_process_type_delete_modified(numeric, numeric);
+-- FUNCTION: business.dml_flow_update_sequential(numeric, numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_flow_update_sequential(numeric, numeric, numeric);
 
-CREATE OR REPLACE FUNCTION business.dml_process_type_delete_modified(
+CREATE OR REPLACE FUNCTION business.dml_flow_update_sequential(
 	id_user_ numeric,
-	_id_process_type numeric)
+	_id_flow numeric,
+	_sequential_flow numeric)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+	_RESPONSE boolean DEFAULT false;
+	_COUNT NUMERIC;
+	_COUNT_ATT NUMERIC;
+	_COUNT_DELETED NUMERIC;
+	_RETURNING NUMERIC;
+	_X RECORD;
+	_SAVE_LOG BOOLEAN DEFAULT false;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN 
+	_COUNT = (select count(*) from business.view_flow t where t.id_flow = _id_flow);
+	
+	IF (_COUNT = 1) THEN
+		_COUNT_DELETED = (select count(*) from business.view_flow t where t.id_flow = _id_flow and deleted_flow = true); 
+		IF (_COUNT_DELETED = 0) THEN
+			FOR _X IN UPDATE business.flow SET sequential_flow = _sequential_flow WHERE id_flow = _id_flow RETURNING id_flow LOOP
+				_RETURNING = _X.id_flow;
+			END LOOP;
+				
+			IF (_RETURNING >= 1) THEN
+				_SAVE_LOG = (select cvuij.save_log from core.view_user_inner_join_cvc_cvs cvuij
+					where cvuij.id_user = id_user_);
+
+				IF (_SAVE_LOG) THEN
+					_RESPONSE = (select * from core.dml_system_event_create(id_user_,'flow',_id_flow,'UPDATE', now()::timestamp, false));
+						
+					IF (_RESPONSE != true) THEN
+						_EXCEPTION = 'Ocurrió un error al registrar el evento del sistema';
+						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+					ELSE
+						RETURN _RESPONSE;
+					END IF;
+				ELSE
+					RETURN true;
+				END IF;
+			ELSE
+				_EXCEPTION = 'Ocurrió un error al actualizar el registro';
+				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+			END IF;
+		ELSE 
+			_EXCEPTION = 'EL registro se encuentra eliminado';
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+	ELSE
+		_EXCEPTION = 'El registro con id '||_id_flow||' no se encuentra registrado en la tabla flow';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_flow_update -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_flow_update_sequential(numeric, numeric, numeric)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_flow_delete_modified(numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_flow_delete_modified(numeric, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_flow_delete_modified(
+	id_user_ numeric,
+	_id_flow numeric)
     RETURNS boolean
     LANGUAGE 'plpgsql'
     COST 100
@@ -1751,26 +2097,26 @@ DECLARE
  	_COUNT_DELETE BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
-	_COUNT_DELETE = (select * from business.dml_process_type_delete(id_user_, _id_process_type));
+	_COUNT_DELETE = (select * from business.dml_flow_delete(id_user_, _id_flow));
 		
 	IF (_COUNT_DELETE) THEN
-		EXECUTE 'DROP SEQUENCE IF EXISTS business.serial_process_type_id_'||_id_process_type||'';
+		EXECUTE 'DROP SEQUENCE IF EXISTS business.serial_flow_id_'||_id_flow||'';
 		RETURN true;
 	ELSE
-		_EXCEPTION = 'Ocurrió un error al eliminar process_type';
+		_EXCEPTION = 'Ocurrió un error al eliminar flow';
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 	END IF;
 	exception when others then 
 		-- RAISE NOTICE '%', SQLERRM;
 		IF (_EXCEPTION = 'Internal Error') THEN
-			RAISE EXCEPTION '%', 'dml_process_type_delete_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+			RAISE EXCEPTION '%', 'dml_flow_delete_modified -> '||SQLERRM||'' USING DETAIL = '_database';
 		ELSE
 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 		END IF;
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_process_type_delete_modified(numeric, numeric)
+ALTER FUNCTION business.dml_flow_delete_modified(numeric, numeric)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_level_status_create_modified(numeric, numeric)
@@ -2167,98 +2513,13 @@ $BODY$;
 
 ALTER FUNCTION business.dml_level_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, character varying, character varying, boolean)
     OWNER TO postgres;
-
--- FUNCTION: business.dml_flow_create_modified(numeric, numeric, numeric)
--- DROP FUNCTION IF EXISTS business.dml_flow_create_modified(numeric, numeric, numeric);
-
-CREATE OR REPLACE FUNCTION business.dml_flow_create_modified(
-	id_user_ numeric,
-	_id_company numeric,
-	_id_process_type numeric)
-    RETURNS TABLE(id_flow numeric, id_company numeric, id_process_type numeric, name_flow character varying, description_flow character varying, deleted_flow boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_process_type character varying, description_process_type character varying, acronym_process_type character varying, sequential_process_type numeric) 
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-    ROWS 1000
-
-AS $BODY$
-DECLARE
-	_ID_FLOW NUMERIC;
-	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
-BEGIN
-	_ID_FLOW = (select * from business.dml_flow_create(id_user_, _id_company, _id_process_type, 'Nuevo flujo', '', false));
-	
-	IF (_ID_FLOW >= 1) THEN
-		RETURN QUERY select * from business.view_flow_inner_join bvfij 
-			where bvfij.id_flow = _ID_FLOW;
-	ELSE
-		_EXCEPTION = 'Ocurrió un error al ingresar flow';
-		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-	END IF;
-	exception when others then 
-		-- RAISE NOTICE '%', SQLERRM;
-		IF (_EXCEPTION = 'Internal Error') THEN
-			RAISE EXCEPTION '%', 'dml_flow_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
-		ELSE
-			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-		END IF;
-END;
-$BODY$;
-
-ALTER FUNCTION business.dml_flow_create_modified(numeric, numeric, numeric)
-    OWNER TO postgres;
-
--- FUNCTION: business.dml_flow_update_modified(numeric, numeric, numeric, numeric, character varying, character varying, boolean)
--- DROP FUNCTION IF EXISTS business.dml_flow_update_modified(numeric, numeric, numeric, numeric, character varying, character varying, boolean);
-
-CREATE OR REPLACE FUNCTION business.dml_flow_update_modified(
-	id_user_ numeric,
-	_id_flow numeric,
-	_id_company numeric,
-	_id_process_type numeric,
-	_name_flow character varying,
-	_description_flow character varying,
-	_deleted_flow boolean)
-    RETURNS TABLE(id_flow numeric, id_company numeric, id_process_type numeric, name_flow character varying, description_flow character varying, deleted_flow boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_process_type character varying, description_process_type character varying, acronym_process_type character varying, sequential_process_type numeric) 
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-    ROWS 1000
-
-AS $BODY$
-DECLARE
- 	_UPDATE_FLOW BOOLEAN;
-	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
-BEGIN
- 	_UPDATE_FLOW = (select * from business.dml_flow_update(id_user_, _id_flow, _id_company, _id_process_type, _name_flow, _description_flow, _deleted_flow));
-
- 	IF (_UPDATE_FLOW) THEN
-		RETURN QUERY select * from business.view_flow_inner_join bvfij 
-			where bvfij.id_flow = _id_flow;
-	ELSE
-		_EXCEPTION = 'Ocurrió un error al actualizar flow';
-		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-	END IF;
-	exception when others then 
-		-- RAISE NOTICE '%', SQLERRM;
-		IF (_EXCEPTION = 'Internal Error') THEN
-			RAISE EXCEPTION '%', 'dml_flow_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
-		ELSE
-			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-		END IF;
-END;
-$BODY$;
-
-ALTER FUNCTION business.dml_flow_update_modified(numeric, numeric, numeric, numeric, character varying, character varying, boolean)
-    OWNER TO postgres;
-
 -- FUNCTION: business.dml_flow_version_create_modified(numeric, numeric)
 -- DROP FUNCTION IF EXISTS business.dml_flow_version_create_modified(numeric, numeric);
 
 CREATE OR REPLACE FUNCTION business.dml_flow_version_create_modified(
 	id_user_ numeric,
 	_id_flow numeric)
-    RETURNS TABLE(id_flow_version numeric, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, deleted_flow_version boolean, id_company numeric, id_process_type numeric, name_flow character varying, description_flow character varying) 
+    RETURNS TABLE(id_flow_version numeric, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, deleted_flow_version boolean, id_company numeric, name_flow character varying, description_flow character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -2313,7 +2574,7 @@ CREATE OR REPLACE FUNCTION business.dml_flow_version_update_modified(
 	_status_flow_version boolean,
 	_creation_date_flow_version timestamp without time zone,
 	_deleted_flow_version boolean)
-    RETURNS TABLE(id_flow_version numeric, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, deleted_flow_version boolean, id_company numeric, id_process_type numeric, name_flow character varying, description_flow character varying) 
+    RETURNS TABLE(id_flow_version numeric, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, deleted_flow_version boolean, id_company numeric, name_flow character varying, description_flow character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -2460,6 +2721,9 @@ DECLARE
 	_ID_LEVEL NUMERIC;
 	_LAST_POSITION_LEVEL NUMERIC;
 	_ID_FLOW_VERSION_LEVEL NUMERIC;
+	_X RECORD;
+	_POSITION_X NUMERIC DEFAULT 50;
+	_POSITION_Y NUMERIC DEFAULT 120;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
 	-- validation_flow_version
@@ -2481,8 +2745,13 @@ BEGIN
 		IF (_LAST_POSITION_LEVEL IS NULL) THEN
 			_LAST_POSITION_LEVEL = 0;
 		END IF;
+		
+		FOR _X IN select bvfvl.x, bvfvl.y from business.view_flow_version_level bvfvl where bvfvl.id_flow_version = _id_flow_version limit 1 LOOP
+			_POSITION_X = _X.x + 50;
+			_POSITION_Y = _X.y + 80;
+		END LOOP;
 	
-		_ID_FLOW_VERSION_LEVEL = (select * from business.dml_flow_version_level_create(id_user_, _id_flow_version, _ID_LEVEL, _LAST_POSITION_LEVEL + 1, 0, _type_element, '', '==', '', false, 25, 25));
+		_ID_FLOW_VERSION_LEVEL = (select * from business.dml_flow_version_level_create(id_user_, _id_flow_version, _ID_LEVEL, _LAST_POSITION_LEVEL + 1, 0, _type_element, '', '==', '', false, _POSITION_X, _POSITION_Y));
 	
 		IF (_ID_FLOW_VERSION_LEVEL >= 1) THEN
 			RETURN QUERY select * from business.view_flow_version_level_inner_join bvfvlij 
@@ -2697,8 +2966,8 @@ ALTER FUNCTION business.dml_flow_version_level_reset(numeric, numeric)
 
 CREATE OR REPLACE FUNCTION business.dml_process_create_modified(
 	id_user_ numeric,
-	_id_process_type numeric)
-    RETURNS TABLE(id_process numeric, id_process_type numeric, id_official numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, deleted_process boolean, name_process_type character varying, description_process_type character varying, acronym_process_type character varying, sequential_process_type numeric, id_user numeric, id_area numeric, id_position numeric, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone) 
+	_id_flow numeric)
+    RETURNS TABLE(id_process numeric, id_official numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, deleted_process boolean, id_user numeric, id_area numeric, id_position numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_flow numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -2710,10 +2979,15 @@ DECLARE
 	_ID_FLOW_VERSION NUMERIC;
 	_ID_FLOW_VERSION_LEVEL NUMERIC;
 	_ACRONYM_COMPANY CHARACTER VARYING;
-	_ACRONYM_PROCESS_TYPE CHARACTER VARYING;
-	_SERIAL_PROCESS_TYPE NUMERIC;
+	_ACRONYM_FLOW CHARACTER VARYING;
+	_SERIAL_FLOW NUMERIC;
 	_NUMBER_PROCESS CHARACTER VARYING;
+	_ACRONYM_TASK CHARACTER VARYING;
+	_NUMBER_TASK CHARACTER VARYING;
 	_ID_PROCESS NUMERIC;
+	_STATUS_UPDATE_SEQUENCE BOOLEAN;
+	_ID_LEVEL NUMERIC;
+	_ID_TASK NUMERIC;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
 	_ID_OFFICIAL = (select bvo.id_official from business.view_official bvo where bvo.id_user = id_user_);
@@ -2723,16 +2997,14 @@ BEGIN
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 	END IF;
 	
-	_ID_FLOW_VERSION = (select bvfv.id_flow_version from business.view_flow_version bvfv inner join business.view_flow bvf on bvfv.id_flow = bvf.id_flow inner join business.view_process_type bvpt on bvf.id_process_type = bvpt.id_process_type where bvpt.id_process_type = _id_process_type and bvfv.status_flow_version = true);
-	
+	_ID_FLOW_VERSION = (select bvfv.id_flow_version from business.view_flow_version bvfv inner join business.view_flow bvf on bvfv.id_flow = bvf.id_flow inner join business.view_flow bvpt on bvf.id_flow = bvpt.id_flow where bvpt.id_flow = _id_flow and bvfv.status_flow_version = true limit 1);
+
 	IF (_ID_FLOW_VERSION IS NULL) THEN
 		_EXCEPTION = 'El flujo del tipo de proceso no tiene una version activa';
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 	END IF;
 	
 	_ID_FLOW_VERSION_LEVEL = (select count(*) from business.view_flow_version_level bvfvl where bvfvl.id_flow_version = _ID_FLOW_VERSION);
-	
-	RAISE NOTICE '%', _ID_FLOW_VERSION_LEVEL;
 	
 	IF (_ID_FLOW_VERSION_LEVEL = 0) THEN
 		_EXCEPTION = 'La version del flujo no tiene niveles asignados';
@@ -2742,24 +3014,46 @@ BEGIN
 	-- _ACRONYM_COMPANY
 	_ACRONYM_COMPANY = (select cvc.acronym_company from core.view_user cvu inner join core.view_company cvc on cvu.id_company = cvc.id_company where cvu.id_user = id_user_);
 	RAISE NOTICE '%',_ACRONYM_COMPANY;
-	-- _ACRONYM_PROCESS_TYPE
-	_ACRONYM_PROCESS_TYPE = (select bvpt.acronym_process_type from business.view_process_type bvpt where bvpt.id_process_type = _id_process_type);
-	RAISE NOTICE '%',_ACRONYM_PROCESS_TYPE;
+	-- _ACRONYM_FLOW
+	_ACRONYM_FLOW = (select bvpt.acronym_flow from business.view_flow bvpt where bvpt.id_flow = _id_flow);
+	RAISE NOTICE '%',_ACRONYM_FLOW;
 	
-	_SERIAL_PROCESS_TYPE =  (select nextval('business.serial_process_type_id_'||_id_process_type||'')-1);
-	IF (_SERIAL_PROCESS_TYPE >= 1) THEN
-		_NUMBER_PROCESS = ''||UPPER(_ACRONYM_COMPANY)||'-'||UPPER(_ACRONYM_PROCESS_TYPE)||'-'||_SERIAL_PROCESS_TYPE||'';
-		_ID_PROCESS = (select business.dml_process_create(id_user_, _id_process_type, _ID_OFFICIAL, _ID_FLOW_VERSION, _NUMBER_PROCESS, now()::timestamp, false, false, false));
+	_SERIAL_FLOW =  (select nextval('business.serial_flow_id_'||_id_flow||'')-1);
+	IF (_SERIAL_FLOW >= 1) THEN
+		_NUMBER_PROCESS = ''||UPPER(_ACRONYM_COMPANY)||'-'||UPPER(_ACRONYM_FLOW)||'-'||_SERIAL_FLOW||'';
+		_ID_PROCESS = (select business.dml_process_create(id_user_, _ID_OFFICIAL, _ID_FLOW_VERSION, _NUMBER_PROCESS, now()::timestamp, true, false, false));
+	RAISE NOTICE '%',_ID_PROCESS;
 		
-		IF (_ID_PROCESS >= 1) THEN
-			RETURN QUERY select * from business.view_process_inner_join bvpij 
-			where bvpij.id_process = _ID_PROCESS;
+		-- UPDATE SEQUENCE
+		_STATUS_UPDATE_SEQUENCE = (select * from business.dml_flow_update_sequential(id_user_, _id_flow, _SERIAL_FLOW));
+		
+		IF (_STATUS_UPDATE_SEQUENCE) THEN
+			IF (_ID_PROCESS >= 1) THEN
+				 -- GENERATE TASK
+				_ID_LEVEL = (select bvfvl.id_level from business.view_flow_version_level bvfvl where bvfvl.id_flow_version = _ID_FLOW_VERSION order by bvfvl.position_level asc limit 1);
+				
+				_ACRONYM_TASK = (select bvpt.acronym_task from business.view_flow bvpt where bvpt.id_flow = _id_flow);
+
+				_NUMBER_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
+				_ID_TASK = (select * from business.dml_task_create(id_user_, _ID_PROCESS, _ID_OFFICIAL, _ID_LEVEL, _NUMBER_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
+				
+				IF (_ID_TASK >= 1) THEN
+					RETURN QUERY select * from business.view_process_inner_join bvpij 
+						where bvpij.id_process = _ID_PROCESS;
+				ELSE
+					_EXCEPTION = 'Ocurrió un error al generar la tarea';
+					RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+				END IF;
+			ELSE
+				_EXCEPTION = 'Ocurrió un error al ingresar process';
+				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+			END IF;
 		ELSE
-			_EXCEPTION = 'Ocurrió un error al ingresar process';
+			_EXCEPTION = 'Ocurrió un error al actualizar sequential_flow';
 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 		END IF;
 	ELSE 
-		_EXCEPTION = 'No se encontro el secuencial de process_type';
+		_EXCEPTION = 'No se encontro el secuencial de flow';
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 	END IF;
 	exception when others then 
@@ -2775,13 +3069,12 @@ $BODY$;
 ALTER FUNCTION business.dml_process_create_modified(numeric, numeric)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_process_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean, boolean, boolean)
--- DROP FUNCTION IF EXISTS business.dml_process_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean, boolean, boolean);
+-- FUNCTION: business.dml_process_update_modified(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean, boolean, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_process_update_modified(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean, boolean, boolean);
 
 CREATE OR REPLACE FUNCTION business.dml_process_update_modified(
 	id_user_ numeric,
 	_id_process numeric,
-	_id_process_type numeric,
 	_id_official numeric,
 	_id_flow_version numeric,
 	_number_process character varying,
@@ -2789,7 +3082,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_update_modified(
 	_generated_task boolean,
 	_finalized_process boolean,
 	_deleted_process boolean)
-    RETURNS TABLE(id_process numeric, id_process_type numeric, id_official numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, deleted_process boolean, name_process_type character varying, description_process_type character varying, acronym_process_type character varying, sequential_process_type numeric, id_user numeric, id_area numeric, id_position numeric, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone) 
+    RETURNS TABLE(id_process numeric, id_official numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, deleted_process boolean, id_user numeric, id_area numeric, id_position numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_flow numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -2798,33 +3091,13 @@ CREATE OR REPLACE FUNCTION business.dml_process_update_modified(
 AS $BODY$
 DECLARE
  	_UPDATE_PROCESS BOOLEAN;
-	_ID_LEVEL NUMERIC;
-	_ID_TASK NUMERIC;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
-	_ID_LEVEL = (select bvfvl.id_level from business.view_flow_version_level bvfvl where bvfvl.id_flow_version = _id_flow_version order by bvfvl.position_level asc limit 1);
-	
-	IF (_ID_LEVEL IS null) THEN
-		_EXCEPTION = 'La version del proceso no tiene niveles asignados';
-		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-	END IF; 	
-	
- 	--_UPDATE_PROCESS = (select business.dml_process_update(id_user_, _id_process, _id_process_type, (select bvp.id_official from business.view_process bvp where bvp.id_process = _id_process), _id_flow_version, _number_process, _date_process, _generated_task, _finalized_process, _deleted_process));
- 	_UPDATE_PROCESS = (select * from business.dml_process_update(id_user_, _id_process, _id_process_type, _id_official, _id_flow_version, _number_process, _date_process, _generated_task, _finalized_process, _deleted_process));
+ 	_UPDATE_PROCESS = (select * from business.dml_process_update(id_user_, _id_process, _id_official, _id_flow_version, _number_process, _date_process, _generated_task, _finalized_process, _deleted_process));
  	
 	IF (_UPDATE_PROCESS) THEN
- 		-- Generate task
-		_ID_LEVEL = (select bvfvl.id_level from business.view_flow_version_level bvfvl where bvfvl.id_flow_version = _id_flow_version order by bvfvl.position_level asc limit 1);
-		
-		_ID_TASK = (select * from business.dml_task_create(id_user_, _id_process, _id_official, _ID_LEVEL, now()::timestamp, 'progress', 'dispatched', now()::timestamp, false));
-		
-		IF (_ID_TASK) THEN
-			RETURN QUERY select * from business.view_process_inner_join bvpij 
-				where bvpij.id_process = _id_process;
-		ELSE
-			_EXCEPTION = 'Ocurrió un error al generar la tarea';
-			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-		END IF;
+		RETURN QUERY select * from business.view_process_inner_join bvpij 
+			where bvpij.id_process = _id_process;
 	ELSE
 		_EXCEPTION = 'Ocurrió un error al actualizar process';
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
@@ -2839,7 +3112,116 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_process_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean, boolean, boolean)
+ALTER FUNCTION business.dml_process_update_modified(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean, boolean, boolean)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_task_create(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_task_create(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean);
+
+CREATE OR REPLACE FUNCTION business.dml_task_create(
+	id_user_ numeric,
+	_id_process numeric,
+	_id_official numeric,
+	_id_level numeric,
+	_number_task character varying,
+	_creation_date_task timestamp without time zone,
+	_type_status_task business."TYPE_STATUS_TASK",
+	_type_action_task business."TYPE_ACTION_TASK",
+	_action_date_task timestamp without time zone,
+	_deleted_task boolean)
+    RETURNS numeric
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+	_RESPONSE BOOLEAN DEFAULT false;
+	_COUNT NUMERIC;
+	_COUNT_ATT NUMERIC;
+	_COUNT_EXTERNALS_IDS NUMERIC;
+	_RETURNING NUMERIC;
+	_CURRENT_ID NUMERIC;
+	_X RECORD;
+	_SAVE_LOG BOOLEAN DEFAULT false;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN 
+	-- process
+	_COUNT_EXTERNALS_IDS = (select count(*) from business.view_process v where v.id_process = _id_process);
+		
+	IF (_COUNT_EXTERNALS_IDS = 0) THEN
+		_EXCEPTION = 'El id '||_id_process||' de la tabla process no se encuentra registrado';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+			 
+	-- official
+	_COUNT_EXTERNALS_IDS = (select count(*) from business.view_official v where v.id_official = _id_official);
+		
+	IF (_COUNT_EXTERNALS_IDS = 0) THEN
+		_EXCEPTION = 'El id '||_id_official||' de la tabla official no se encuentra registrado';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+			 
+	-- level
+	_COUNT_EXTERNALS_IDS = (select count(*) from business.view_level v where v.id_level = _id_level);
+		
+	IF (_COUNT_EXTERNALS_IDS = 0) THEN
+		_EXCEPTION = 'El id '||_id_level||' de la tabla level no se encuentra registrado';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+			
+	_CURRENT_ID = (select nextval('business.serial_task')-1);
+	_COUNT = (select count(*) from business.view_task t where t.id_task = _CURRENT_ID);
+	
+	IF (_COUNT = 0) THEN
+		_COUNT_ATT = (select count(*) from business.view_task t where t.id_task = _CURRENT_ID);
+	
+		IF (_COUNT_ATT = 0) THEN 
+			FOR _X IN INSERT INTO business.task(id_task, id_process, id_official, id_level, number_task, creation_date_task, type_status_task, type_action_task, action_date_task, deleted_task) VALUES (_CURRENT_ID, $2, $3, $4, ''||_number_task||''||_CURRENT_ID||'', $6, $7, $8, $9, $10) RETURNING id_task LOOP
+				_RETURNING = _X.id_task;
+			END LOOP;
+			
+			IF (_RETURNING >= 1) THEN
+				_SAVE_LOG = (select cvuij.save_log from core.view_user_inner_join_cvc_cvs cvuij
+					where cvuij.id_user = id_user_);
+
+				IF (_SAVE_LOG) THEN
+					_RESPONSE = (select * from core.dml_system_event_create(id_user_,'task',_CURRENT_ID,'CREATE', now()::timestamp, false));
+					
+					IF (_RESPONSE != true) THEN
+						_EXCEPTION = 'Ocurrió un error al registrar el evento del sistema';
+						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+					ELSE
+						RETURN _CURRENT_ID;
+					END IF;
+				ELSE 
+					RETURN _CURRENT_ID;
+				END IF;
+			ELSE
+				_EXCEPTION = 'Ocurrió un error al insertar el registro';
+				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+			END IF;
+		ELSE
+			_EXCEPTION = 'Ya existe un registro con el id_task '||_id_task||'';
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+	ELSE
+		_EXCEPTION = 'El registro con id '||_CURRENT_ID||' ya se encuentra registrado en la tabla task';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_CURRENT_ID >= 1) THEN
+			EXECUTE 'select setval(''business.serial_task'', '||_CURRENT_ID||')';
+		END IF;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_task_create -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_task_create(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_task_create_modified(numeric, numeric, numeric, numeric)
@@ -2850,7 +3232,7 @@ CREATE OR REPLACE FUNCTION business.dml_task_create_modified(
 	_id_process numeric,
 	_id_official numeric,
 	_id_level numeric)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, deleted_task boolean, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying,creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -2859,9 +3241,21 @@ CREATE OR REPLACE FUNCTION business.dml_task_create_modified(
 AS $BODY$
 DECLARE
 	_ID_TASK NUMERIC;
+	_NUMBER_PROCESS CHARACTER VARYING;
+	_ACRONYM_TASK CHARACTER VARYING;
+	_NUMBER_TASK CHARACTER VARYING;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
-	_ID_TASK = (select * from business.dml_task_create(id_user_, _id_process, _id_official, _id_level, now()::timestamp, 'progress', 'dispatched', now()::timestamp, false));
+	_NUMBER_PROCESS = (select bvp.number_process from business.view_process bvp where bvp.id_process = _id_process);
+	
+	_ACRONYM_TASK = (select bvf.acronym_task from business.view_process bvp
+		inner join business.view_flow_version bvfv on bvp.id_flow_version = bvfv.id_flow_version
+		inner join business.view_flow bvf on bvfv.id_flow = bvf.id_flow
+		where bvp.id_process = _id_process);
+	
+	_NUMBER_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
+
+	_ID_TASK = (select * from business.dml_task_create(id_user_, _id_process, _id_official, _id_level, _NUMBER_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
 	
 	IF (_ID_TASK >= 1) THEN
 		RETURN QUERY select * from business.view_task_inner_join bvtij 
@@ -2883,8 +3277,8 @@ $BODY$;
 ALTER FUNCTION business.dml_task_create_modified(numeric, numeric, numeric, numeric)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp with time zone, boolean)
--- DROP FUNCTION IF EXISTS business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp with time zone, boolean);
+-- FUNCTION: business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean);
 
 CREATE OR REPLACE FUNCTION business.dml_task_update_modified(
 	id_user_ numeric,
@@ -2892,12 +3286,13 @@ CREATE OR REPLACE FUNCTION business.dml_task_update_modified(
 	_id_process numeric,
 	_id_official numeric,
 	_id_level numeric,
+	_number_task character varying,
 	_creation_date_task timestamp without time zone,
 	_type_status_task business."TYPE_STATUS_TASK",
 	_type_action_task business."TYPE_ACTION_TASK",
-	_action_date_task timestamp with time zone,
+	_action_date_task timestamp without time zone,
 	_deleted_task boolean)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, deleted_task boolean, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -2908,7 +3303,7 @@ DECLARE
  	_UPDATE_TASK BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
- 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _id_official, _id_level, _creation_date_task, _type_status_task, _type_action_task, _action_date_task, _deleted_task));
+ 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _id_official, _id_level, _number_task, _creation_date_task, _type_status_task, _type_action_task, _action_date_task, _deleted_task));
 
  	IF (_UPDATE_TASK) THEN
 		RETURN QUERY select * from business.view_task_inner_join bvtij 
@@ -2927,11 +3322,11 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp with time zone, boolean)
+ALTER FUNCTION business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp with time zone, boolean)
--- DROP FUNCTION IF EXISTS business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp with time zone, boolean);
+-- FUNCTION: business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean);
 
 CREATE OR REPLACE FUNCTION business.dml_task_reasign(
 	id_user_ numeric,
@@ -2939,12 +3334,13 @@ CREATE OR REPLACE FUNCTION business.dml_task_reasign(
 	_id_process numeric,
 	_id_official numeric,
 	_id_level numeric,
+	_number_task character varying,
 	_creation_date_task timestamp without time zone,
 	_type_status_task business."TYPE_STATUS_TASK",
 	_type_action_task business."TYPE_ACTION_TASK",
-	_action_date_task timestamp with time zone,
+	_action_date_task timestamp without time zone,
 	_deleted_task boolean)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, deleted_task boolean, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -2955,15 +3351,27 @@ DECLARE
 	_ID_OFFICIAL_PRIMARY NUMERIC;
  	_UPDATE_TASK BOOLEAN;
 	_ID_NEW_TASK NUMERIC;
+	_NUMBER_PROCESS CHARACTER VARYING;
+	_ACRONYM_TASK CHARACTER VARYING;
+	_NUMBER_TASK_NEW_TASK CHARACTER VARYING;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
 	_ID_OFFICIAL_PRIMARY = (select bvt.id_official from business.view_task bvt where bvt.id_task = _id_task);
 
- 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _ID_OFFICIAL_PRIMARY, _id_level, _creation_date_task, 'finished', 'reassigned', now()::timestamp, _deleted_task));
+ 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _ID_OFFICIAL_PRIMARY, _id_level, _number_task, _creation_date_task, 'finished', 'reassigned', now()::timestamp, _deleted_task));
 
  	IF (_UPDATE_TASK) THEN
 		-- Generate task
-		_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _id_official, _ID_LEVEL, now()::timestamp, 'progress', 'dispatched', now()::timestamp, false));
+		_NUMBER_PROCESS = (select bvp.number_process from business.view_process bvp where bvp.id_process = _id_process);
+		
+		_ACRONYM_TASK = (select bvf.acronym_task from business.view_process bvp
+			inner join business.view_flow_version bvfv on bvp.id_flow_version = bvfv.id_flow_version
+			inner join business.view_flow bvf on bvfv.id_flow = bvf.id_flow
+			where bvp.id_process = _id_process);
+
+		_NUMBER_TASK_NEW_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
+
+		_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _id_official, _ID_LEVEL, _NUMBER_TASK_NEW_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
 		
 		IF (_ID_NEW_TASK >= 1) THEN
 			RETURN QUERY select * from business.view_task_inner_join bvtij 
@@ -2986,7 +3394,144 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp with time zone, boolean)
+ALTER FUNCTION business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean);
+
+CREATE OR REPLACE FUNCTION business.dml_task_send(
+	id_user_ numeric,
+	_id_task numeric,
+	_id_process numeric,
+	_id_official numeric,
+	_id_level numeric,
+	_number_task character varying,
+	_creation_date_task timestamp without time zone,
+	_type_status_task business."TYPE_STATUS_TASK",
+	_type_action_task business."TYPE_ACTION_TASK",
+	_action_date_task timestamp without time zone,
+	_deleted_task boolean)
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+	_ID_OFFICIAL_PRIMARY NUMERIC;
+ 	_UPDATE_TASK BOOLEAN;
+	_POSITION_LEVEL_CURRENT_LEVEL NUMERIC;
+	
+	_POSITION_LEVEL_NEXT_LEVEL NUMERIC DEFAULT 0;
+	_TYPE_ELEMENT_NEXT_LEVEL business."TYPE_ELEMENT";
+	_ID_CONTROL_NEXT_LEVEL CHARACTER VARYING;
+	_OPERATOR_NEXT_LEVEL business."TYPE_OPERATOR";
+	_VALUE_AGAINST_NEXT_LEVEL CHARACTER VARYING;
+	_OPTION_TRUE_NEXT_LEVEL BOOLEAN;
+	_LEVEL_PROFILE_NEXT_LEVEL NUMERIC;
+	_OFFICIAL_NEXT_LEVEL NUMERIC;
+	
+	_NUMBER_PROCESS CHARACTER VARYING;
+	_ACRONYM_TASK CHARACTER VARYING;
+	_NUMBER_TASK_NEW_TASK CHARACTER VARYING;
+
+	_ID_NEW_TASK NUMERIC DEFAULT 0;
+	_X RECORD;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+	_ID_OFFICIAL_PRIMARY = (select bvt.id_official from business.view_task bvt where bvt.id_task = _id_task);
+
+ 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _ID_OFFICIAL_PRIMARY, _id_level, _number_task, _creation_date_task, 'finished', 'dispatched', now()::timestamp, _deleted_task));
+
+ 	IF (_UPDATE_TASK) THEN
+		-- Obtener la posicion del siguiente nivel
+		_POSITION_LEVEL_CURRENT_LEVEL = (select bvfvl.position_level from business.view_flow_version_level bvfvl where bvfvl.id_level = _id_level);
+		
+		FOR _X IN (select bvfvl.* from business.view_process bvp
+			inner join business.view_flow_version bvfv on bvp.id_flow_version = bvfv.id_flow_version
+			inner join business.view_flow_version_level bvfvl on bvfv.id_flow_version = bvfvl.id_flow_version
+			where bvp.id_process = _id_process order by bvfvl.position_level asc) LOOP
+			
+			IF (_X.position_level_father = _POSITION_LEVEL_CURRENT_LEVEL) THEN
+				_POSITION_LEVEL_NEXT_LEVEL = _X.position_level;
+				_TYPE_ELEMENT_NEXT_LEVEL = _X.type_element;
+				_ID_CONTROL_NEXT_LEVEL = _X.id_control;
+				_OPERATOR_NEXT_LEVEL = _X.operator;
+				_VALUE_AGAINST_NEXT_LEVEL = _X.value_against;
+				_OPTION_TRUE_NEXT_LEVEL = _X.option_true;
+			END IF;
+		END LOOP;
+		
+		IF (_POSITION_LEVEL_NEXT_LEVEL > 0) THEN
+			RAISE NOTICE '_POSITION_LEVEL_NEXT_LEVEL -> %', _POSITION_LEVEL_NEXT_LEVEL;
+			RAISE NOTICE '_TYPE_ELEMENT_NEXT_LEVEL -> %', _TYPE_ELEMENT_NEXT_LEVEL;
+			RAISE NOTICE '_ID_CONTROL_NEXT_LEVEL -> %', _ID_CONTROL_NEXT_LEVEL;
+			RAISE NOTICE '_OPERATOR_NEXT_LEVEL -> %', _OPERATOR_NEXT_LEVEL;
+			RAISE NOTICE '_VALUE_AGAINST_NEXT_LEVEL -> %', _VALUE_AGAINST_NEXT_LEVEL;
+			RAISE NOTICE '_OPTION_TRUE_NEXT_LEVEL -> %', _OPTION_TRUE_NEXT_LEVEL;
+			
+			IF (_TYPE_ELEMENT_NEXT_LEVEL = 'level') THEN
+				-- IS LEVEL
+				-- Obtener el perfil del nivel de acuerdo al nivel
+				_LEVEL_PROFILE_NEXT_LEVEL = (select bvl.id_level_profile from business.view_level bvl where bvl.id_level = _POSITION_LEVEL_NEXT_LEVEL);
+				
+				RAISE NOTICE '%', _LEVEL_PROFILE_NEXT_LEVEL;
+				
+				-- Obtener el funcionario de acuerdo al perfil del nivel (Se selecciona el funcionario que tenga menos tareas)								
+				_OFFICIAL_NEXT_LEVEL =  (select bvlpoij.id_official from business.view_level_profile_official_inner_join bvlpoij where bvlpoij.id_level_profile = _LEVEL_PROFILE_NEXT_LEVEL order by bvlpoij.number_task asc limit 1);
+				RAISE NOTICE '%', _OFFICIAL_NEXT_LEVEL;
+				
+				
+				IF (_OFFICIAL_NEXT_LEVEL > 0) THEN
+					_NUMBER_PROCESS = (select bvp.number_process from business.view_process bvp where bvp.id_process = _id_process);
+					
+					_ACRONYM_TASK = (select bvf.acronym_task from business.view_process bvp
+						inner join business.view_flow_version bvfv on bvp.id_flow_version = bvfv.id_flow_version
+						inner join business.view_flow bvf on bvfv.id_flow = bvf.id_flow
+						where bvp.id_process = _id_process);
+						
+					_NUMBER_TASK_NEW_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
+					
+					_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _OFFICIAL_NEXT_LEVEL, _POSITION_LEVEL_NEXT_LEVEL, _NUMBER_TASK_NEW_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
+		
+					IF (_ID_NEW_TASK > 0) THEN
+						RETURN QUERY select * from business.view_task_inner_join bvtij 
+							where bvtij.id_task = _id_task;
+					ELSE
+						_EXCEPTION = 'Ocurrió un error al generar la tarea';
+						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+					END IF;
+				ELSE
+					_EXCEPTION = 'El siguiente nivel no tiene funcionarios registrados en su perfil del nivel';
+					RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+				END IF;
+			ELSE
+				-- IS CONDITIONAL
+				_EXCEPTION = 'IS CONDITIONAL';
+				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+			END IF;
+		ELSE
+			_EXCEPTION = 'El nivel actual no tiene niveles siguientes enlazados';
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al actualizar task';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_task_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_process_item_create_modified(numeric, numeric, numeric, numeric, numeric)
@@ -2998,7 +3543,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_item_create_modified(
 	_id_process numeric,
 	_id_task numeric,
 	_id_level numeric)
-    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, amount_process_item numeric, features_process_item character varying, entry_date_process_item timestamp without time zone, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying, cpc_item character varying) 
+    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, amount_process_item numeric, features_process_item character varying, entry_date_process_item timestamp without time zone, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying, cpc_item character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3059,7 +3604,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_item_update_modified(
 	_amount_process_item numeric,
 	_features_process_item character varying,
 	_entry_date_process_item timestamp without time zone)
-    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, amount_process_item numeric, features_process_item character varying, entry_date_process_item timestamp without time zone, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying, cpc_item character varying) 
+    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, amount_process_item numeric, features_process_item character varying, entry_date_process_item timestamp without time zone, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying, cpc_item character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3107,7 +3652,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_attached_create_modified(
 	_extension character varying,
 	_server_path character varying,
 	_alfresco_path character varying)
-    RETURNS TABLE(id_process_attached numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_attached numeric, file_name character varying, length_mb character varying, extension character varying, server_path character varying, alfresco_path character varying, upload_date timestamp without time zone, deleted_process_attached boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, name_attached character varying, description_attached character varying, length_mb_attached numeric, required_attached boolean) 
+    RETURNS TABLE(id_process_attached numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_attached numeric, file_name character varying, length_mb character varying, extension character varying, server_path character varying, alfresco_path character varying, upload_date timestamp without time zone, deleted_process_attached boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, name_attached character varying, description_attached character varying, length_mb_attached numeric, required_attached boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3158,7 +3703,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_attached_update_modified(
 	_alfresco_path character varying,
 	_upload_date timestamp without time zone,
 	_deleted_process_attached boolean)
-    RETURNS TABLE(id_process_attached numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_attached numeric, file_name character varying, length_mb character varying, extension character varying, server_path character varying, alfresco_path character varying, upload_date timestamp without time zone, deleted_process_attached boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, name_attached character varying, description_attached character varying, length_mb_attached numeric, required_attached boolean) 
+    RETURNS TABLE(id_process_attached numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_attached numeric, file_name character varying, length_mb character varying, extension character varying, server_path character varying, alfresco_path character varying, upload_date timestamp without time zone, deleted_process_attached boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, name_attached character varying, description_attached character varying, length_mb_attached numeric, required_attached boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3202,7 +3747,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_control_create_modified(
 	_id_level numeric,
 	_id_control numeric,
 	_value_process_control text)
-    RETURNS TABLE(id_process_control numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_control numeric, value_process_control text, last_change_process_control timestamp without time zone, deleted_process_control boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean) 
+    RETURNS TABLE(id_process_control numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_control numeric, value_process_control text, last_change_process_control timestamp without time zone, deleted_process_control boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3249,7 +3794,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_control_update_modified(
 	_value_process_control text,
 	_last_change_process_control timestamp without time zone,
 	_deleted_process_control boolean)
-    RETURNS TABLE(id_process_control numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_control numeric, value_process_control text, last_change_process_control timestamp without time zone, deleted_process_control boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean) 
+    RETURNS TABLE(id_process_control numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_control numeric, value_process_control text, last_change_process_control timestamp without time zone, deleted_process_control boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3291,7 +3836,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_comment_create_modified(
 	_id_process numeric,
 	_id_task numeric,
 	_id_level numeric)
-    RETURNS TABLE(id_process_comment numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, value_process_comment character varying, date_process_comment timestamp without time zone, deleted_process_comment boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
+    RETURNS TABLE(id_process_comment numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, value_process_comment character varying, date_process_comment timestamp without time zone, deleted_process_comment boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3337,7 +3882,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_comment_update_modified(
 	_value_process_comment character varying,
 	_date_process_comment timestamp without time zone,
 	_deleted_process_comment boolean)
-    RETURNS TABLE(id_process_comment numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, value_process_comment character varying, date_process_comment timestamp without time zone, deleted_process_comment boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_process_type numeric, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp with time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
+    RETURNS TABLE(id_process_comment numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, value_process_comment character varying, date_process_comment timestamp without time zone, deleted_process_comment boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE

@@ -4,9 +4,9 @@ import { Process } from './process.class';
 
 export const dml_process_create = (process: Process) => {
 	return new Promise<Process[]>(async (resolve, reject) => {
-		const query = `select * from business.dml_process_create_modified(${process.id_user_}, ${process.process_type.id_process_type})`;
+		const query = `select * from business.dml_process_create_modified(${process.id_user_}, ${process.flow_version.id_flow_version})`;
 
-		// console.log(query);
+		console.log(query);
 
 		try {
 			const response = await clientANGELPostgreSQL.query(query);
@@ -30,32 +30,6 @@ export const view_process_query_read = (process: Process) => {
 			process.number_process != '*'
 				? ` where lower(bvpij.number_process) LIKE '%${process.number_process}%'`
 				: ``
-		} order by bvpij.id_process desc`;
-
-		// console.log(query);
-
-		try {
-			const response = await clientANGELPostgreSQL.query(query);
-			resolve(response.rows);
-		} catch (error: any) {
-			if (error.detail == '_database') {
-				reject({
-					..._messages[3],
-					description: error.toString().slice(7),
-				});
-			} else {
-				reject(error.toString());
-			}
-		}
-	});
-};
-
-export const view_process_by_process_type_query_read = (process: Process) => {
-	return new Promise<Process[]>(async (resolve, reject) => {
-		const query = `select * from business.view_process_inner_join bvpij${
-			process.number_process != '*'
-				? ` where lower(bvpij.number_process) LIKE '%${process.number_process}%' and bvpij.id_process_type = ${process.process_type}`
-				: ` where bvpij.id_process_type = ${process.process_type}`
 		} order by bvpij.id_process desc`;
 
 		// console.log(query);
@@ -154,7 +128,6 @@ export const dml_process_update = (process: Process) => {
 	return new Promise<Process[]>(async (resolve, reject) => {
 		const query = `select * from business.dml_process_update_modified(${process.id_user_},
 			${process.id_process},
-			${process.process_type.id_process_type},
 			${process.official.id_official},
 			${process.flow_version.id_flow_version},
 			'${process.number_process}',

@@ -30,13 +30,7 @@
                     </button>
                 </div>
                 <div class="flex flex-col mt-4 pt-6 space-y-8">
-                    <!-- id_process_type -->
-                    <ng-container *ngIf="process.process_type.id_process_type">
-                        <div class="flex sm:items-center">
-                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
-                            <div class="ml-6 leading-6">{{selectedProcessType.name_process_type}}</div>
-                        </div>
-                    </ng-container> <!-- id_official -->
+                    <!-- id_official -->
                     <ng-container *ngIf="process.official.id_official">
                         <div class="flex sm:items-center">
                             <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
@@ -138,15 +132,14 @@
                         </mat-error>
                     </angel-alert>
                     <!-- Alert -->
-                    <!-- id_process_type -->
+                    <!-- id_flow -->
                     <div class="mt-8">
                         <mat-form-field class="angel-mat-no-subscript w-full">
-                            <mat-label>ProcessType</mat-label>
-                            <mat-select [formControlName]="'id_process_type'"
-                                [value]="selectedProcessType.id_process_type">
-                                <ng-container *ngFor="let element of listProcessType">
-                                    <mat-option [value]="element.id_process_type">
-                                        {{element.name_process_type}}</mat-option>
+                            <mat-label>Flow</mat-label>
+                            <mat-select [formControlName]="'id_flow'" [value]="selectedFlow.id_flow">
+                                <ng-container *ngFor="let element of listFlow">
+                                    <mat-option [value]="element.id_flow">
+                                        {{element.name_flow}}</mat-option>
                                 </ng-container>
                             </mat-select>
                         </mat-form-field>

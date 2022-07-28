@@ -165,6 +165,7 @@ export const dml_task_update = (task: Task) => {
 			${task.process.id_process},
 			${task.official.id_official},
 			${task.level.id_level},
+			'${task.number_task}',
 			'${task.creation_date_task}',
 			'${task.type_status_task}',
 			'${task.type_action_task}',
@@ -196,6 +197,7 @@ export const dml_task_reasign = (task: Task) => {
 			${task.process.id_process},
 			${task.official.id_official},
 			${task.level.id_level},
+			'${task.number_task}',
 			'${task.creation_date_task}',
 			'${task.type_status_task}',
 			'${task.type_action_task}',
@@ -203,6 +205,38 @@ export const dml_task_reasign = (task: Task) => {
 			${task.deleted_task})`;
 
 		// console.log(query);
+
+		try {
+			const response = await clientANGELPostgreSQL.query(query);
+			resolve(response.rows);
+		} catch (error: any) {
+			if (error.detail == '_database') {
+				reject({
+					..._messages[3],
+					description: error.toString().slice(7),
+				});
+			} else {
+				reject(error.toString());
+			}
+		}
+	});
+};
+
+export const dml_task_send = (task: Task) => {
+	return new Promise<Task[]>(async (resolve, reject) => {
+		const query = `select * from business.dml_task_send(${task.id_user_},
+			${task.id_task},
+			${task.process.id_process},
+			${task.official.id_official},
+			${task.level.id_level},
+			'${task.number_task}',
+			'${task.creation_date_task}',
+			'${task.type_status_task}',
+			'${task.type_action_task}',
+			'${task.action_date_task}',
+			${task.deleted_task})`;
+
+		console.log(query);
 
 		try {
 			const response = await clientANGELPostgreSQL.query(query);

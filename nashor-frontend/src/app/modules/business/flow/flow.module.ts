@@ -9,7 +9,6 @@ import { MatRippleModule, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -28,38 +27,37 @@ import { FlowDetailsComponent } from './details/details.component';
 import { FlowComponent } from './flow.component';
 import { flowRoutes } from './flow.routing';
 import { FlowListComponent } from './list/list.component';
+import { ModalEditFlowVersionLevelComponent } from './modal-edit-flow-version-level/modal-edit-flow-version-level.component';
+import { ModalEditPositionLevelFatherComponent } from './modal-edit-position-level-father/modal-edit-position-level-father.component';
 import { ModalFlowVersionComponent } from './modal-flow-version/modal-flow-version.component';
 import { ModalSelectFlowComponent } from './modal-select-flow/modal-select-flow.component';
 import { ModalVersionComponent } from './modal-version/modal-version.component';
-import { ModalEditPositionLevelFatherComponent } from './modal-edit-position-level-father/modal-edit-position-level-father.component';
-import { ModalEditFlowVersionLevelComponent } from './modal-edit-flow-version-level/modal-edit-flow-version-level.component';
 
 @NgModule({
   declarations: [
     FlowListComponent,
     FlowDetailsComponent,
     FlowComponent,
-    ModalSelectFlowComponent,
     ModalFlowVersionComponent,
-    ModalVersionComponent,
-    ModalEditPositionLevelFatherComponent,
+    ModalSelectFlowComponent,
     ModalEditFlowVersionLevelComponent,
+    ModalEditPositionLevelFatherComponent,
+    ModalVersionComponent,
   ],
   imports: [
     RouterModule.forChild(flowRoutes),
     MatButtonModule,
-    MatSlideToggleModule,
     MatCheckboxModule,
     MatDatepickerModule,
     MatDividerModule,
     DragDropModule,
-    MatExpansionModule,
-    MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatSlideToggleModule,
     MatMenuModule,
     MatMomentDateModule,
+    MatDialogModule,
     MatProgressBarModule,
     MatRadioModule,
     MatRippleModule,

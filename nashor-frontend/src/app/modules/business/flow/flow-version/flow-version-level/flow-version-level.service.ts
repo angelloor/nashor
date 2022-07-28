@@ -44,6 +44,12 @@ export class FlowVersionLevelService {
     this._flowVersionLevels.next(flow_version_levels);
   }
   /**
+   * Setter
+   */
+  set $flowVersionLevel(flow_version_level: FlowVersionLevel) {
+    this._flowVersionLevel.next(flow_version_level);
+  }
+  /**
    * Getter for _flowVersionLevels
    */
   get flowVersionLevels$(): Observable<FlowVersionLevel[]> {
@@ -102,6 +108,27 @@ export class FlowVersionLevelService {
     return this._httpClient
       .get<FlowVersionLevel[]>(
         this._url + `/byFlowVersionRead/${id_flow_version}`
+      )
+      .pipe(
+        tap((flowVersionLevels: FlowVersionLevel[]) => {
+          if (flowVersionLevels) {
+            this._flowVersionLevels.next(flowVersionLevels);
+          } else {
+            this._flowVersionLevels.next([]);
+          }
+        })
+      );
+  }
+  /**
+   * byFlowVersionExcludeConditionalRead
+   * @param id_flow_version
+   */
+  byFlowVersionExcludeConditionalRead(
+    id_flow_version: string
+  ): Observable<FlowVersionLevel[]> {
+    return this._httpClient
+      .get<FlowVersionLevel[]>(
+        this._url + `/byFlowVersionExcludeConditionalRead/${id_flow_version}`
       )
       .pipe(
         tap((flowVersionLevels: FlowVersionLevel[]) => {

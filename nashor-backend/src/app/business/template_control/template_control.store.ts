@@ -32,7 +32,7 @@ export const dml_template_control_create_with_new_control = (
 	return new Promise<TemplateControl[]>(async (resolve, reject) => {
 		const query = `select * from business.dml_template_control_create_with_new_control(${template_control.id_user_}, ${template_control.template.id_template})`;
 
-		// console.log(query);
+		console.log(query);
 
 		try {
 			const response = await clientANGELPostgreSQL.query(query);
@@ -197,9 +197,9 @@ export const dml_template_control_delete = (
 	template_control: TemplateControl
 ) => {
 	return new Promise<boolean>(async (resolve, reject) => {
-		const query = `select * from business.dml_template_control_delete(${template_control.id_user_},${template_control.id_template_control}) as result`;
+		const query = `select * from business.dml_template_control_delete_modified(${template_control.id_user_},${template_control.id_template_control}) as result`;
 
-		// console.log(query);
+		console.log(query);
 
 		try {
 			const response = await clientANGELPostgreSQL.query(query);

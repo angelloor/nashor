@@ -1,0 +1,80 @@
+<div class="relative flex flex-col w-full h-full">
+
+    <!-- Header -->
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg">Recorrido {{process.number_process}}</div>
+        <button mat-icon-button (click)="closeModalProcessRoute()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+    <!-- Process form -->
+    <form class="flex flex-col flex-auto px-6 py-6 sm:px-8 sm:pb-8 overflow-y-auto" [formGroup]="processRouteForm">
+        <div class="space-y-4">
+            <mat-accordion class="max-w-4xl mt-12">
+                <ng-container
+                    *ngFor="let elementoVersion of formArrayFlowVersionLevels.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                    <mat-expansion-panel (opened)="deployFlowVersionLevels(i)">
+                        <mat-expansion-panel-header [collapsedHeight]="'56px'">
+                            <mat-panel-title>
+                                <div class="background-level-status">
+                                    <div class="leading-5 truncate text-secondary"
+                                        [ngStyle]="{'background': formArrayFlowVersionLevels.getRawValue()[i].level_status ? formArrayFlowVersionLevels.getRawValue()[i].level_status.color_level_status : '#fffffF' , 'padding': '3px', 'border-radius': '25px', 'width': '15px', 'height': '15px'}">
+                                    </div>
+                                </div>
+                                {{formArrayFlowVersionLevels.getRawValue()[i].level.name_level}}
+                                <button mat-icon-button [tabIndex]="-1" class="ml-auto" [matTooltip]="'Ver template'">
+                                    <mat-icon class="text-current" [svgIcon]="'heroicons_outline:template'"></mat-icon>
+                                </button>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <div class="mt-6">
+                            <div class="flex flex-auto">
+                                <div class="flex flex-col w-2/4 pr-3">
+                                    <!-- description_level -->
+                                    <div>
+                                        <mat-form-field class="angel-mat-no-subscript w-full">
+                                            <mat-label>description_level</mat-label>
+                                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                                [svgIcon]="'mat_outline:account_tree'">
+                                            </mat-icon>
+                                            <input matInput
+                                                [value]="formArrayFlowVersionLevels.getRawValue()[i].level.description_level"
+                                                readonly>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col w-2/4 pl-3">
+                                    <!-- level_profile -->
+                                    <div>
+                                        <mat-form-field class="angel-mat-no-subscript w-full">
+                                            <mat-label>level_profile</mat-label>
+                                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                                [svgIcon]="'mat_outline:timeline'">
+                                            </mat-icon>
+                                            <input matInput
+                                                [value]="formArrayFlowVersionLevels.getRawValue()[i].level_profile != undefined ? formArrayFlowVersionLevels.getRawValue()[i].level_profile.name_level_profile : ''"
+                                                readonly
+                                                [matTooltip]="formArrayFlowVersionLevels.getRawValue()[i].level_profile != undefined ? formArrayFlowVersionLevels.getRawValue()[i].level_profile.description_level_profile : ''">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Route -->
+
+
+
+
+
+
+
+
+
+
+                            <!-- Route -->
+                        </div>
+                    </mat-expansion-panel>
+                </ng-container>
+            </mat-accordion>
+        </div>
+    </form>
+</div>

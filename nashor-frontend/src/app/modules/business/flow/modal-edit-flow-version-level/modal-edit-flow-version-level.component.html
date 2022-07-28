@@ -26,11 +26,6 @@
                             *ngIf="editMode" [matTooltip]="'Guardar'" (click)="updateFlowVersionLevel()">
                             Guardar
                         </button>
-                        <!-- Cancel -->
-                        <button mat-stroked-button class="ml-auto" [matTooltip]="'Cancelar'" *ngIf="editMode"
-                            (click)="toggleEditMode(false)">
-                            Cancelar
-                        </button>
                     </div>
                     <form [formGroup]="flowVersionLevelForm">
                         <!-- Alert -->

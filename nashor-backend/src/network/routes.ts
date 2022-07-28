@@ -19,7 +19,6 @@ import { routerProcessAttached } from '../app/business/process_attached/process_
 import { routerProcessComment } from '../app/business/process_comment/process_comment.network';
 import { routerProcessControl } from '../app/business/process_control/process_control.network';
 import { routerProcessItem } from '../app/business/process_item/process_item.network';
-import { routerProcessType } from '../app/business/process_type/process_type.network';
 import { routerTask } from '../app/business/task/task.network';
 import { routerTemplate } from '../app/business/template/template.network';
 import { routerTemplateControl } from '../app/business/template_control/template_control.network';
@@ -78,12 +77,11 @@ export const appRoutes = (app: any) => {
 	app.use('/app/business/control', routerControl);
 	app.use('/app/business/template', routerTemplate);
 	app.use('/app/business/template_control', routerTemplateControl);
-	app.use('/app/business/process_type', routerProcessType);
+	app.use('/app/business/flow', routerFlow);
 	app.use('/app/business/level_status', routerLevelStatus);
 	app.use('/app/business/level_profile', routerLevelProfile);
 	app.use('/app/business/level_profile_official', routerLevelProfileOfficial);
 	app.use('/app/business/level', routerLevel);
-	app.use('/app/business/flow', routerFlow);
 	app.use('/app/business/flow_version', routerFlowVersion);
 	app.use('/app/business/flow_version_level', routerFlowVersionLevel);
 	app.use('/app/business/process', routerProcess);

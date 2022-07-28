@@ -346,16 +346,18 @@
                             </ng-container>
                             <!-- Attacheds -->
                             <!-- Alert -->
-                            <angel-alert class="mt-8" *ngIf="taskRealizeForm.invalid || showAlert"
+                            <angel-alert class="mt-8"
+                                *ngIf="taskRealizeForm.invalid || showAlert || (template.plugin_item_process && listItem.length == 0)|| (template.plugin_item_process && formArrayProcessItems.controls.length == 0)"
                                 [appearance]="'outline'" [showIcon]="false" [type]="alert.type"
                                 [@shake]="alert.type === 'error'">
                                 <!-- Message if alert is actived for the component -->
                                 {{alert.message}}
                                 <!-- Items -->
-                                <mat-error *ngIf="listItem.length == 0">
+                                <mat-error *ngIf="template.plugin_item_process && listItem.length == 0">
                                     • No hay items registrados
                                 </mat-error>
-                                <mat-error *ngIf="processItem.length == 0">
+                                <mat-error
+                                    *ngIf="template.plugin_item_process && formArrayProcessItems.controls.length == 0">
                                     • Tiene que seleccionar al menos un item
                                 </mat-error>
                                 <!-- amount_process_item -->
@@ -478,10 +480,11 @@
             </div>
         </div>
 
-        <div class="flex items-center justify-center sm:justify-end py-2 space-x-3 ng-star-inserted br-10 pt-6">
+        <div class="flex items-center justify-center sm:justify-end py-2 space-x-3 ng-star-inserted br-10 pt-6"
+            *ngIf="task.type_status_task === 'progress' && task.type_action_task === 'received'">
             <!-- Send -->
-            <button class="order-first sm:order-last" mat-stroked-button [color]="'primary'"
-                [disabled]="taskRealizeForm.invalid">
+            <button class="order-first sm:order-last" mat-stroked-button [color]="'primary'" (click)="sendTask()"
+                [disabled]="(taskRealizeForm.invalid || (listItem.length == 0|| template.plugin_item_process && formArrayProcessItems.controls.length == 0))">
                 Enviar
             </button>
         </div>

@@ -289,7 +289,6 @@ export class ProcessComment {
 				},
 				process: {
 					id_process: item.id_process,
-					process_type: { id_process_type: item.id_process_type },
 					official: { id_official: item.id_official },
 					flow_version: { id_flow_version: item.id_flow_version },
 					number_process: item.number_process,
@@ -302,6 +301,7 @@ export class ProcessComment {
 					process: { id_process: item.id_process },
 					official: { id_official: item.id_official },
 					level: { id_level: item.id_level },
+					number_task: item.number_task,
 					creation_date_task: item.creation_date_task,
 					type_status_task: item.type_status_task,
 					type_action_task: item.type_action_task,
@@ -331,7 +331,6 @@ export class ProcessComment {
 			delete _processComment.id_area;
 			delete _processComment.id_position;
 			delete _processComment.id_process;
-			delete _processComment.id_process_type;
 			delete _processComment.id_official;
 			delete _processComment.id_flow_version;
 			delete _processComment.number_process;
@@ -342,6 +341,7 @@ export class ProcessComment {
 			delete _processComment.id_process;
 			delete _processComment.id_official;
 			delete _processComment.id_level;
+			delete _processComment.number_task;
 			delete _processComment.creation_date_task;
 			delete _processComment.type_status_task;
 			delete _processComment.type_action_task;

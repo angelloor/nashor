@@ -89,13 +89,10 @@ const businessRoutes: Route[] = [
       import('./template/template.module').then((m) => m.TemplateModule),
   },
   {
-    path: 'process-type',
+    path: 'flow',
     canActivate: [AuthGuard],
     canActivateChild: [AuthGuard],
-    loadChildren: () =>
-      import('./process-type/process-type.module').then(
-        (m) => m.ProcessTypeModule
-      ),
+    loadChildren: () => import('./flow/flow.module').then((m) => m.FlowModule),
   },
   {
     path: 'level-status',
@@ -121,12 +118,6 @@ const businessRoutes: Route[] = [
     canActivateChild: [AuthGuard],
     loadChildren: () =>
       import('./level/level.module').then((m) => m.LevelModule),
-  },
-  {
-    path: 'flow',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
-    loadChildren: () => import('./flow/flow.module').then((m) => m.FlowModule),
   },
   {
     path: 'process',

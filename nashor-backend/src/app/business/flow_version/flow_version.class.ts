@@ -180,7 +180,7 @@ export class FlowVersion {
 				flow: {
 					id_flow: item.id_flow,
 					company: { id_company: item.id_company },
-					process_type: { id_process_type: item.id_process_type },
+					flow: { id_flow: item.id_flow },
 					name_flow: item.name_flow,
 					description_flow: item.description_flow,
 				},
@@ -195,7 +195,7 @@ export class FlowVersion {
 
 			delete _flowVersion.id_flow;
 			delete _flowVersion.id_company;
-			delete _flowVersion.id_process_type;
+			delete _flowVersion.id_flow;
 			delete _flowVersion.name_flow;
 			delete _flowVersion.description_flow;
 

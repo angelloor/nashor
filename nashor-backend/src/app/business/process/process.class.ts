@@ -2,24 +2,20 @@ import { FlowVersion } from '../flow_version/flow_version.class';
 import { _flowVersion } from '../flow_version/flow_version.data';
 import { Official } from '../official/official.class';
 import { _official } from '../official/official.data';
-import { ProcessType } from '../process_type/process_type.class';
-import { _processType } from '../process_type/process_type.data';
 import {
 	dml_process_create,
 	dml_process_delete,
 	dml_process_update,
 	view_process_by_flow_version_query_read,
 	view_process_by_official_query_read,
-	view_process_by_process_type_query_read,
 	view_process_query_read,
-	view_process_specific_read,
+	view_process_specific_read
 } from './process.store';
 
 export class Process {
 	/** Attributes */
 	public id_user_?: number;
 	public id_process: number;
-	public process_type: ProcessType;
 	public official: Official;
 	public flow_version: FlowVersion;
 	public number_process?: string;
@@ -31,7 +27,6 @@ export class Process {
 	constructor(
 		id_user_: number = 0,
 		id_process: number = 0,
-		process_type: ProcessType = _processType,
 		official: Official = _official,
 		flow_version: FlowVersion = _flowVersion,
 		number_process: string = '',
@@ -42,7 +37,6 @@ export class Process {
 	) {
 		this.id_user_ = id_user_;
 		this.id_process = id_process;
-		this.process_type = process_type;
 		this.official = official;
 		this.flow_version = flow_version;
 		this.number_process = number_process;
@@ -64,13 +58,6 @@ export class Process {
 	}
 	get _id_process() {
 		return this.id_process;
-	}
-
-	set _process_type(process_type: ProcessType) {
-		this.process_type = process_type;
-	}
-	get _process_type() {
-		return this.process_type;
 	}
 
 	set _official(official: Official) {
@@ -143,23 +130,6 @@ export class Process {
 	queryRead() {
 		return new Promise<Process[]>(async (resolve, reject) => {
 			await view_process_query_read(this)
-				.then((processs: Process[]) => {
-					/**
-					 * Mutate response
-					 */
-					const _processs = this.mutateResponse(processs);
-
-					resolve(_processs);
-				})
-				.catch((error: any) => {
-					reject(error);
-				});
-		});
-	}
-
-	byProcessTypeQueryRead() {
-		return new Promise<Process[]>(async (resolve, reject) => {
-			await view_process_by_process_type_query_read(this)
 				.then((processs: Process[]) => {
 					/**
 					 * Mutate response
@@ -265,14 +235,6 @@ export class Process {
 		processs.map((item: any) => {
 			let _process: Process | any = {
 				...item,
-				process_type: {
-					id_process_type: item.id_process_type,
-					company: { id_company: item.id_company },
-					name_process_type: item.name_process_type,
-					description_process_type: item.description_process_type,
-					acronym_process_type: item.acronym_process_type,
-					sequential_process_type: item.sequential_process_type,
-				},
 				official: {
 					id_official: item.id_official,
 					company: { id_company: item.id_company },
@@ -282,7 +244,14 @@ export class Process {
 				},
 				flow_version: {
 					id_flow_version: item.id_flow_version,
-					flow: { id_flow: item.id_flow },
+					flow: {
+						id_flow: item.id_flow,
+						name_flow: item.name_flow,
+						description_flow: item.description_flow,
+						acronym_flow: item.acronym_flow,
+						acronym_task: item.acronym_task,
+						sequential_flow: item.sequential_flow,
+					},
 					number_flow_version: item.number_flow_version,
 					status_flow_version: item.status_flow_version,
 					creation_date_flow_version: item.creation_date_flow_version,
@@ -296,12 +265,7 @@ export class Process {
 			 * delete ids of principal object level
 			 */
 
-			delete _process.id_process_type;
 			delete _process.id_company;
-			delete _process.name_process_type;
-			delete _process.description_process_type;
-			delete _process.acronym_process_type;
-			delete _process.sequential_process_type;
 			delete _process.id_official;
 			delete _process.id_company;
 			delete _process.id_user;
@@ -309,6 +273,11 @@ export class Process {
 			delete _process.id_position;
 			delete _process.id_flow_version;
 			delete _process.id_flow;
+			delete _process.name_flow;
+			delete _process.description_flow;
+			delete _process.acronym_flow;
+			delete _process.acronym_task;
+			delete _process.sequential_flow;
 			delete _process.number_flow_version;
 			delete _process.status_flow_version;
 			delete _process.creation_date_flow_version;

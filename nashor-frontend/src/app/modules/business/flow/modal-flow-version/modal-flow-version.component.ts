@@ -18,7 +18,7 @@ import { AppInitialData, MessageAPI } from 'app/core/app/app.type';
 import { NotificationService } from 'app/shared/notification/notification.service';
 import { cloneDeep } from 'lodash';
 import moment from 'moment';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { ControlService } from '../../control/control.service';
 import { Control } from '../../control/control.types';
 import { LevelService } from '../../level/level.service';
@@ -40,6 +40,8 @@ export class ModalFlowVersionComponent implements OnInit {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private data!: AppInitialData;
   id_company: string = '';
+
+  flowVersions$!: Observable<FlowVersion[]>;
   /**
    * Alert
    */
@@ -58,7 +60,7 @@ export class ModalFlowVersionComponent implements OnInit {
   isSelectedAll: boolean = false;
 
   flowVersionForm!: FormGroup;
-  flowVersions!: FlowVersion[];
+  flowVersions: FlowVersion[] = [];
   flowVersion: FlowVersion = flowVersion;
 
   flowVersionLevels: FlowVersionLevel[] = [];
@@ -80,6 +82,8 @@ export class ModalFlowVersionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.id_flow = this._data.id_flow;
+
     /**
      * Subscribe to user changes of state
      */
@@ -87,7 +91,6 @@ export class ModalFlowVersionComponent implements OnInit {
       this.data = state.global;
       this.id_company = this.data.user.company.id_company;
     });
-    this.id_flow = this._data.id_flow;
     /**
      * Subscribe to user changes of state
      */
@@ -107,6 +110,15 @@ export class ModalFlowVersionComponent implements OnInit {
       .subscribe((_level: Level[]) => {
         this.categoriesLevel = _level;
       });
+
+    this.flowVersions$ = this._flowVersionService.flowVersions$;
+    /**
+     * Get the FlowVersions
+     */
+    this._flowVersionService
+      .byFlowRead(this.id_flow)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe();
 
     this._flowVersionService.flowVersions$
       .pipe(takeUntil(this._unsubscribeAll))
@@ -290,6 +302,7 @@ export class ModalFlowVersionComponent implements OnInit {
    * @param id_flow_version
    */
   openModalVersion(id_flow_version: string): void {
+    const editMode: boolean = true;
     this._controlService
       .byCompanyQueryRead(this.id_company, '*')
       .pipe(takeUntil(this._unsubscribeAll))
@@ -299,14 +312,13 @@ export class ModalFlowVersionComponent implements OnInit {
           .subscribe((_controls: Control[]) => {
             this.listControls = _controls;
           });
+        this._modalVersionService.openModalVersion(
+          id_flow_version,
+          this.listControls,
+          editMode
+        );
       });
-
-    this._modalVersionService.openModalVersion(
-      id_flow_version,
-      this.listControls
-    );
   }
-
   /**
    * createFlowVersion
    */

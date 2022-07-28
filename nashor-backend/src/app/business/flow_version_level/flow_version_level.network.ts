@@ -29,6 +29,19 @@ routerFlowVersionLevel.get(
 );
 
 routerFlowVersionLevel.get(
+	'/byFlowVersionExcludeConditionalRead/:flow_version',
+	async (req: any, res: any) => {
+		await validation(req.params, req.url, req.headers.token)
+			.then((flowVersionLevels: FlowVersionLevel[]) => {
+				res.status(200).send(flowVersionLevels);
+			})
+			.catch((err: MessageAPI | any) => {
+				error(res, err);
+			});
+	}
+);
+
+routerFlowVersionLevel.get(
 	'/byLevelRead/:level',
 	async (req: any, res: any) => {
 		await validation(req.params, req.url, req.headers.token)

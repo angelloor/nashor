@@ -20,7 +20,12 @@ export const validation = (task: Task, url: string, token: string) => {
 					/**
 					 * Capa de validaciones
 					 */
-					if (url == '/create' || url == '/update' || url == '/reasign') {
+					if (
+						url == '/create' ||
+						url == '/update' ||
+						url == '/reasign' ||
+						url == '/send'
+					) {
 						attributeValidate('id_user_', task.id_user_, 'number', 10).catch(
 							(err) => {
 								validationStatus = true;
@@ -29,7 +34,7 @@ export const validation = (task: Task, url: string, token: string) => {
 						);
 					}
 
-					if (url == '/update' || url == '/reasign') {
+					if (url == '/update' || url == '/reasign' || url == '/send') {
 						attributeValidate('id_task', task.id_task, 'number', 10).catch(
 							(err) => {
 								validationStatus = true;
@@ -38,7 +43,16 @@ export const validation = (task: Task, url: string, token: string) => {
 						);
 					}
 
-					if (url == '/update' || url == '/reasign') {
+					if (url == '/update' || url == '/reasign' || url == '/send') {
+						attributeValidate('id_task', task.number_task, 'string', 120).catch(
+							(err) => {
+								validationStatus = true;
+								reject(err);
+							}
+						);
+					}
+
+					if (url == '/update' || url == '/reasign' || url == '/send') {
 						attributeValidate(
 							'creation_date_task',
 							task.creation_date_task,
@@ -68,7 +82,7 @@ export const validation = (task: Task, url: string, token: string) => {
 							});
 					}
 
-					if (url == '/update' || url == '/reasign') {
+					if (url == '/update' || url == '/reasign' || url == '/send') {
 						validationTypeStatusTask(
 							'type_status_task',
 							task.type_status_task!
@@ -78,7 +92,7 @@ export const validation = (task: Task, url: string, token: string) => {
 						});
 					}
 
-					if (url == '/update' || url == '/reasign') {
+					if (url == '/update' || url == '/reasign' || url == '/send') {
 						validationTypeActionTask(
 							'type_action_task',
 							task.type_action_task!
@@ -88,7 +102,7 @@ export const validation = (task: Task, url: string, token: string) => {
 						});
 					}
 
-					if (url == '/update' || url == '/reasign') {
+					if (url == '/update' || url == '/reasign' || url == '/send') {
 						attributeValidate(
 							'action_date_task',
 							task.action_date_task,
@@ -122,7 +136,7 @@ export const validation = (task: Task, url: string, token: string) => {
 					 * Validation process
 					 */
 
-					if (url == '/update' || url == '/reasign') {
+					if (url == '/update' || url == '/reasign' || url == '/send') {
 						attributeValidate(
 							'id_process',
 							task.process.id_process,
@@ -138,7 +152,7 @@ export const validation = (task: Task, url: string, token: string) => {
 					 * Validation official
 					 */
 
-					if (url == '/update' || url == '/reasign') {
+					if (url == '/update' || url == '/reasign' || url == '/send') {
 						attributeValidate(
 							'id_official',
 							task.official.id_official,
@@ -154,7 +168,7 @@ export const validation = (task: Task, url: string, token: string) => {
 					 * Validation level
 					 */
 
-					if (url == '/update' || url == '/reasign') {
+					if (url == '/update' || url == '/reasign' || url == '/send') {
 						attributeValidate(
 							'id_level',
 							task.level.id_level,
@@ -304,6 +318,7 @@ export const validation = (task: Task, url: string, token: string) => {
 							_task.process = task.process;
 							_task.official = task.official;
 							_task.level = task.level;
+							_task.number_task = task.number_task;
 							_task.creation_date_task = task.creation_date_task;
 							_task.type_status_task = task.type_status_task;
 							_task.type_action_task = task.type_action_task;
@@ -323,12 +338,33 @@ export const validation = (task: Task, url: string, token: string) => {
 							_task.process = task.process;
 							_task.official = task.official;
 							_task.level = task.level;
+							_task.number_task = task.number_task;
 							_task.creation_date_task = task.creation_date_task;
 							_task.type_status_task = task.type_status_task;
 							_task.type_action_task = task.type_action_task;
 							_task.action_date_task = task.action_date_task;
 							await _task
 								.reasign()
+								.then((_task: Task) => {
+									resolve(_task);
+								})
+								.catch((error: any) => {
+									reject(error);
+								});
+						} else if (url == '/send') {
+							/** set required attributes for action */
+							_task.id_user_ = task.id_user_;
+							_task.id_task = task.id_task;
+							_task.process = task.process;
+							_task.official = task.official;
+							_task.level = task.level;
+							_task.number_task = task.number_task;
+							_task.creation_date_task = task.creation_date_task;
+							_task.type_status_task = task.type_status_task;
+							_task.type_action_task = task.type_action_task;
+							_task.action_date_task = task.action_date_task;
+							await _task
+								.send()
 								.then((_task: Task) => {
 									resolve(_task);
 								})

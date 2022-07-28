@@ -23,11 +23,9 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from 'app/shared/shared.module';
 import * as moment from 'moment';
 import { MaterialFileInputModule } from 'ngx-material-file-input';
-import { TemplateDetailsComponent } from './details/details.component';
-import { ModalExistingControlComponent } from './modal-existing-control/modal-existing-control.component';
 import { ModalSelectTemplateComponent } from './modal-select-template/modal-select-template.component';
+import { ModalTemplatePreviewComponent } from './modal-template-preview/modal-template-preview.component';
 import { ModalTemplateComponent } from './modal-template/modal-template.component';
-import { ModalTemplateControlDetailsComponent } from './template-control/modal-template-control/modal-template-control-details/modal-template-control-details.component';
 import { ModalTemplateControlComponent } from './template-control/modal-template-control/modal-template-control.component';
 import { TemplateComponent } from './template.component';
 import { templateRoutes } from './template.routing';
@@ -35,14 +33,12 @@ import { TemplatesComponent } from './templates/templates.component';
 
 @NgModule({
   declarations: [
-    TemplateDetailsComponent,
     TemplateComponent,
     ModalSelectTemplateComponent,
     TemplatesComponent,
     ModalTemplateComponent,
-    ModalExistingControlComponent,
     ModalTemplateControlComponent,
-    ModalTemplateControlDetailsComponent,
+    ModalTemplatePreviewComponent,
   ],
   imports: [
     RouterModule.forChild(templateRoutes),

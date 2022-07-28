@@ -11,11 +11,18 @@ import { AppInitialData, MessageAPI } from 'app/core/app/app.type';
 import { LayoutService } from 'app/layout/layout.service';
 import { NotificationService } from 'app/shared/notification/notification.service';
 import { Subject, takeUntil } from 'rxjs';
+import { ControlService } from '../../control/control.service';
+import { Control } from '../../control/control.types';
 import { FlowVersionLevelService } from '../../flow/flow-version/flow-version-level/flow-version-level.service';
 import { FlowVersionLevel } from '../../flow/flow-version/flow-version-level/flow-version-level.types';
+import { flow } from '../../flow/flow.data';
+import { FlowService } from '../../flow/flow.service';
+import { Flow } from '../../flow/flow.types';
+import { ModalVersionService } from '../../flow/modal-version/modal-version.service';
 import { LevelProfile } from '../../level-profile/level-profile.types';
 import { official } from '../../official/official.data';
 import { Official } from '../../official/official.types';
+import { ModalProcessRouteService } from '../modal-process-route/modal-process-route.service';
 import { ProcessService } from '../process.service';
 import { Process } from '../process.types';
 import { ModalProcessService } from './modal-process.service';
@@ -27,6 +34,11 @@ import { ModalProcessService } from './modal-process.service';
 export class ModalProcessComponent implements OnInit {
   nameEntity: string = 'Proceso';
   private data!: AppInitialData;
+
+  listFlow: Flow[] = [];
+  selectedFlow: Flow = flow;
+
+  id_company: string = '';
 
   process!: Process;
   processForm!: FormGroup;
@@ -45,6 +57,8 @@ export class ModalProcessComponent implements OnInit {
    */
   official: Official = official;
 
+  listControls: Control[] = [];
+
   /**
    * Constructor
    */
@@ -58,7 +72,11 @@ export class ModalProcessComponent implements OnInit {
     private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
     private _modalProcessService: ModalProcessService,
-    private _flowVersionLevelService: FlowVersionLevelService
+    private _flowVersionLevelService: FlowVersionLevelService,
+    private _modalVersionService: ModalVersionService,
+    private _controlService: ControlService,
+    private _flowService: FlowService,
+    private _modalProcessRouteService: ModalProcessRouteService
   ) {}
 
   /** ----------------------------------------------------------------------------------------------------- */
@@ -85,6 +103,7 @@ export class ModalProcessComponent implements OnInit {
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
       this.data = state.global;
+      this.id_company = this.data.user.company.id_company;
       if (this.data.official) {
         this.official = this.data.official;
       }
@@ -94,7 +113,7 @@ export class ModalProcessComponent implements OnInit {
      */
     this.processForm = this._formBuilder.group({
       id_process: [''],
-      process_type: [''],
+      flow: [''],
       official: [''],
       flow_version: [''],
       number_process: [''],
@@ -119,6 +138,22 @@ export class ModalProcessComponent implements OnInit {
             this.flowVersionLevel = _flowVersionLevel;
 
             this.levelProfile = this.getLevelProfile(this.flowVersionLevel);
+          });
+
+        // Flow
+        this._flowService
+          .byCompanyQueryRead(this.id_company, '*')
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((flows: Flow[]) => {
+            this.listFlow = flows;
+
+            console.log(this.process.flow_version);
+
+            this.selectedFlow = this.listFlow.find(
+              (item) =>
+                item.id_flow ==
+                this.process.flow_version.flow.id_flow.toString()
+            )!;
           });
         /**
          * Patch values to the form
@@ -189,8 +224,8 @@ export class ModalProcessComponent implements OnInit {
               ...process,
               id_user_: parseInt(id_user_),
               id_process: parseInt(process.id_process),
-              process_type: {
-                id_process_type: parseInt(process.process_type.id_process_type),
+              flow: {
+                id_flow: parseInt(process.flow.id_flow),
               },
               // Se envia el id_official seleccionado para asignar en la tarea
               official: {
@@ -301,7 +336,39 @@ export class ModalProcessComponent implements OnInit {
         this._layoutService.setOpenModal(false);
       });
   }
+  /**
+   * openModalVersion
+   * @param id_flow_version
+   */
+  openModalVersion(id_flow_version: string): void {
+    const editMode: boolean = false;
+    this._controlService
+      .byCompanyQueryRead(this.id_company, '*')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this._controlService.controls$
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((_controls: Control[]) => {
+            this.listControls = _controls;
+          });
+        this._modalVersionService.openModalVersion(
+          id_flow_version,
+          this.listControls,
+          editMode
+        );
+      });
+  }
   closeModalProcess(): void {
     this._modalProcessService.closeModalProcess();
+  }
+  /**
+   * openModalProcessRoute
+   * @param id_process
+   */
+  openModalProcessRoute(id_process: string): void {
+    this._modalProcessRouteService.openModalProcessRoute(
+      id_process,
+      this.id_company
+    );
   }
 }

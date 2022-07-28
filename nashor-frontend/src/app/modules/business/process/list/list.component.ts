@@ -24,9 +24,9 @@ import {
   takeWhile,
   tap,
 } from 'rxjs/operators';
+import { ModalSelectFlowService } from '../../flow/modal-select-flow/modal-select-flow.service';
 import { official } from '../../official/official.data';
 import { Official } from '../../official/official.types';
-import { ModalSelectProcessTypeService } from '../../process-type/modal-select-process-type/modal-select-process-type.service';
 import { ProcessService } from '../process.service';
 import { Process } from '../process.types';
 
@@ -78,7 +78,7 @@ export class ProcessListComponent implements OnInit {
     private _notificationService: NotificationService,
     private _layoutService: LayoutService,
     private _authService: AuthService,
-    private _modalSelectProcessTypeService: ModalSelectProcessTypeService
+    private _modalSelectFlowService: ModalSelectFlowService
   ) {}
 
   ngOnInit(): void {
@@ -353,18 +353,18 @@ export class ProcessListComponent implements OnInit {
    * createProcess
    */
   createProcess(): void {
-    this._modalSelectProcessTypeService
-      .openModalSelectProcessType()
+    this._modalSelectFlowService
+      .openModalSelectFlow()
       .afterClosed()
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((id_process_type: string) => {
-        if (id_process_type) {
+      .subscribe((id_flow: string) => {
+        if (id_flow) {
           const id_user_ = this.data.user.id_user;
           /**
            * Create the process
            */
           this._processService
-            .create(id_user_, id_process_type)
+            .create(id_user_, id_flow)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_process: Process) => {

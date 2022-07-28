@@ -285,6 +285,50 @@ export class TaskService {
     );
   }
   /**
+   * send
+   * @param task
+   */
+  send(task: Task): Observable<any> {
+    return this.tasks$.pipe(
+      take(1),
+      switchMap((tasks) =>
+        this._httpClient
+          .patch(this._url + '/send', task, {
+            headers: this._headers,
+          })
+          .pipe(
+            switchMap((response: any) => {
+              /**
+               * check the response body to match with the type
+               */
+              const _task: Task = response.body;
+              /**
+               * Find the index of the updated task
+               */
+              const index = tasks.findIndex(
+                (item) => item.id_task == task.id_task
+              );
+              /**
+               * Update the task
+               */
+              tasks[index] = _task;
+              /**
+               * Update the tasks
+               */
+              this._tasks.next(tasks);
+
+              /**
+               * Update the task
+               */
+              this._task.next(_task);
+
+              return of(_task);
+            })
+          )
+      )
+    );
+  }
+  /**
    * delete
    * @param id_user_
    * @param id_task

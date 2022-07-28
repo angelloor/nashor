@@ -509,7 +509,6 @@ export class ProcessAttached {
 				},
 				process: {
 					id_process: item.id_process,
-					process_type: { id_process_type: item.id_process_type },
 					official: { id_official: item.id_official },
 					flow_version: { id_flow_version: item.id_flow_version },
 					number_process: item.number_process,
@@ -522,6 +521,7 @@ export class ProcessAttached {
 					process: { id_process: item.id_process },
 					official: { id_official: item.id_official },
 					level: { id_level: item.id_level },
+					number_task: item.number_task,
 					creation_date_task: item.creation_date_task,
 					type_status_task: item.type_status_task,
 					type_action_task: item.type_action_task,
@@ -559,7 +559,6 @@ export class ProcessAttached {
 			delete _processAttached.id_area;
 			delete _processAttached.id_position;
 			delete _processAttached.id_process;
-			delete _processAttached.id_process_type;
 			delete _processAttached.id_official;
 			delete _processAttached.id_flow_version;
 			delete _processAttached.number_process;
@@ -570,6 +569,7 @@ export class ProcessAttached {
 			delete _processAttached.id_process;
 			delete _processAttached.id_official;
 			delete _processAttached.id_level;
+			delete _processAttached.number_task;
 			delete _processAttached.creation_date_task;
 			delete _processAttached.type_status_task;
 			delete _processAttached.type_action_task;

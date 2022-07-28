@@ -56,7 +56,6 @@ export class ModalSelectOfficialByLevelProfileComponent implements OnInit {
             }
           }
         );
-        console.log(_levelProfileOfficial);
 
         this.listLevelProfileOfficial = _levelProfileOfficial;
       });

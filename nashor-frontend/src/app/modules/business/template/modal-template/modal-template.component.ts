@@ -7,8 +7,8 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppInitialData, MessageAPI } from 'app/core/app/app.type';
 import { LayoutService } from 'app/layout/layout.service';
@@ -68,7 +68,7 @@ export class ModalTemplateComponent implements OnInit {
     private _templateService: TemplateService,
     @Inject(DOCUMENT) private _document: any,
     private _formBuilder: FormBuilder,
-    private _activatedRoute: ActivatedRoute,
+    private _dialog: MatDialog,
     private _router: Router,
     private _notificationService: NotificationService,
     private _angelConfirmationService: AngelConfirmationService,
@@ -277,21 +277,6 @@ export class ModalTemplateComponent implements OnInit {
           const id_user_ = this.data.user.id_user;
           const id_template = this.template.id_template;
           /**
-           * Get the next/previous template's id
-           */
-          const currentIndex = this.templates.findIndex(
-            (item) => item.id_template === id_template
-          );
-
-          const nextIndex =
-            currentIndex +
-            (currentIndex === this.templates.length - 1 ? -1 : 1);
-          const nextId =
-            this.templates.length === 1 &&
-            this.templates[0].id_template === id_template
-              ? null
-              : this.templates[nextIndex].id_template;
-          /**
            * Delete the template
            */
           this._templateService
@@ -306,27 +291,10 @@ export class ModalTemplateComponent implements OnInit {
                   this._notificationService.success(
                     'Plantilla eliminada correctamente'
                   );
-                  this.closeModalTemplate();
                   /**
-                   * Get the current activated route
+                   * Close all modal
                    */
-                  let route = this._activatedRoute;
-                  while (route.firstChild) {
-                    route = route.firstChild;
-                  }
-                  /**
-                   * Navigate to the next template if available
-                   */
-                  if (nextId) {
-                    this._router.navigate(['../', nextId], {
-                      relativeTo: route,
-                    });
-                  } else {
-                    /**
-                     * Otherwise, navigate to the parent
-                     */
-                    this._router.navigate(['../'], { relativeTo: route });
-                  }
+                  this._dialog.closeAll();
                 } else {
                   this._notificationService.error(
                     '¡Error interno!, consulte al administrador.'

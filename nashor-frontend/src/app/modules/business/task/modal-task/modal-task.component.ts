@@ -22,6 +22,9 @@ import { GlobalUtils } from 'app/utils/GlobalUtils';
 import { FullDate } from 'app/utils/utils.types';
 import { environment } from 'environments/environment';
 import { Subject, takeUntil } from 'rxjs';
+import { flow } from '../../flow/flow.data';
+import { FlowService } from '../../flow/flow.service';
+import { Flow } from '../../flow/flow.types';
 import { levelProfile } from '../../level-profile/level-profile.data';
 import { LevelProfileService } from '../../level-profile/level-profile.service';
 import { LevelProfile } from '../../level-profile/level-profile.types';
@@ -35,9 +38,6 @@ import { ModalSelectOfficialByLevelProfileService } from '../../official/modal-s
 import { official } from '../../official/official.data';
 import { OfficialService } from '../../official/official.service';
 import { Official } from '../../official/official.types';
-import { processType } from '../../process-type/process-type.data';
-import { ProcessTypeService } from '../../process-type/process-type.service';
-import { ProcessType } from '../../process-type/process-type.types';
 import { process } from '../../process/process.data';
 import { ProcessService } from '../../process/process.service';
 import { Process } from '../../process/process.types';
@@ -74,8 +74,8 @@ export class ModalTaskComponent implements OnInit {
   listLevel: Level[] = [];
   selectedLevel: Level = level;
 
-  listProcessType: ProcessType[] = [];
-  selectedProcessType: ProcessType = processType;
+  listFlow: Flow[] = [];
+  selectedFlow: Flow = flow;
 
   listLevelProfile: LevelProfile[] = [];
   selectedLevelProfile: LevelProfile = levelProfile;
@@ -155,7 +155,7 @@ export class ModalTaskComponent implements OnInit {
     private _officialService: OfficialService,
     private _levelService: LevelService,
     private _modalTaskService: ModalTaskService,
-    private _processTypeService: ProcessTypeService,
+    private _flowService: FlowService,
     private _levelProfileService: LevelProfileService,
     private _levelStatusService: LevelStatusService,
     private _modalSelectOfficialByLevelProfileService: ModalSelectOfficialByLevelProfileService,
@@ -198,6 +198,7 @@ export class ModalTaskComponent implements OnInit {
       id_process: ['', [Validators.required]],
       id_official: ['', [Validators.required]],
       id_level: ['', [Validators.required]],
+      number_task: ['', [Validators.required]],
       creation_date_task: ['', [Validators.required]],
       type_status_task: ['', [Validators.required]],
       type_action_task: ['', [Validators.required]],
@@ -376,17 +377,17 @@ export class ModalTaskComponent implements OnInit {
             )!;
           });
 
-        // ProcessType
-        this._processTypeService
+        // Flow
+        this._flowService
           .byCompanyQueryRead(this.id_company, '*')
           .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((process_types: ProcessType[]) => {
-            this.listProcessType = process_types;
+          .subscribe((flows: Flow[]) => {
+            this.listFlow = flows;
 
-            this.selectedProcessType = this.listProcessType.find(
+            this.selectedFlow = this.listFlow.find(
               (item) =>
-                item.id_process_type ==
-                this.task.process.process_type.id_process_type.toString()
+                item.id_flow ==
+                this.task.process.flow_version.flow.id_flow.toString()
             )!;
           });
 
@@ -478,61 +479,6 @@ export class ModalTaskComponent implements OnInit {
   /** ----------------------------------------------------------------------------------------------------- */
   /** @ Public methods
       /** ----------------------------------------------------------------------------------------------------- */
-  /**
-   * Update the task
-   */
-  updateTask(): void {
-    /**
-     * Get the task
-     */
-    const id_user_ = this.data.user.id_user;
-    let task = this.taskForm.getRawValue();
-    /**
-     * Delete whitespace (trim() the atributes type string)
-     */
-    task = {
-      ...task,
-      id_user_: parseInt(id_user_),
-      id_task: parseInt(task.id_task),
-      process: {
-        id_process: parseInt(task.id_process),
-      },
-      official: {
-        id_official: parseInt(task.id_official),
-      },
-      level: {
-        id_level: parseInt(task.id_level),
-      },
-    };
-    /**
-     * Update
-     */
-    this._taskService
-      .update(task)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (_task: Task) => {
-          if (_task) {
-            this._notificationService.success(
-              'Tarea actualizada correctamente'
-            );
-          } else {
-            this._notificationService.error(
-              '¡Error interno!, consulte al administrador.'
-            );
-          }
-        },
-        error: (error: { error: MessageAPI }) => {
-          this._notificationService.error(
-            !error.error
-              ? '¡Error interno!, consulte al administrador.'
-              : !error.error.description
-              ? '¡Error interno!, consulte al administrador.'
-              : error.error.description
-          );
-        },
-      });
-  }
   /**
    * Delete the task
    */
@@ -914,9 +860,13 @@ export class ModalTaskComponent implements OnInit {
    * @param time
    */
   parseTime(time: string) {
-    const dateTimeNow: FullDate = this._globalUtils.getFullDate(time);
-    const dateS: string = `${dateTimeNow.fullYear}-${dateTimeNow.month}-${dateTimeNow.day}T${dateTimeNow.hours}:${dateTimeNow.minutes}:${dateTimeNow.seconds}`;
-    return this._localDatePipe.transform(dateS, 'medium');
+    let date: string = '';
+    if (time != ' ') {
+      const dateTimeNow: FullDate = this._globalUtils.getFullDate(time);
+      const dateString: string = `${dateTimeNow.fullYear}-${dateTimeNow.month}-${dateTimeNow.day}T${dateTimeNow.hours}:${dateTimeNow.minutes}:${dateTimeNow.seconds}`;
+      date = this._localDatePipe.transform(dateString, 'medium');
+    }
+    return date;
   }
   /**
    * getTypeStatusTaskEnum

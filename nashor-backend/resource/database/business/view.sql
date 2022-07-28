@@ -328,29 +328,30 @@ CREATE OR REPLACE VIEW business.view_template_control_inner_join
 ALTER TABLE business.view_template_control_inner_join
     OWNER TO postgres;
   
--- View: business.view_process_type_inner_join
--- DROP VIEW business.view_process_type_inner_join;
+-- View: business.view_flow_inner_join
+-- DROP VIEW business.view_flow_inner_join;
 
-CREATE OR REPLACE VIEW business.view_process_type_inner_join
+CREATE OR REPLACE VIEW business.view_flow_inner_join
  AS
- SELECT bvpt.id_process_type,
-    bvpt.id_company,
-    bvpt.name_process_type,
-    bvpt.description_process_type,
-    bvpt.acronym_process_type,
-    bvpt.sequential_process_type,
-    bvpt.deleted_process_type,
+ SELECT bvf.id_flow,
+    bvf.id_company,
+    bvf.name_flow,
+    bvf.description_flow,
+    bvf.acronym_flow,
+    bvf.acronym_task,
+    bvf.sequential_flow,
+    bvf.deleted_flow,
     cvc.id_setting,
     cvc.name_company,
     cvc.acronym_company,
     cvc.address_company,
     cvc.status_company
-   FROM business.view_process_type bvpt
-     JOIN core.view_company cvc ON bvpt.id_company = cvc.id_company
-  WHERE bvpt.deleted_process_type = false
-  ORDER BY bvpt.id_process_type DESC;
+   FROM business.view_flow bvf
+     JOIN core.view_company cvc ON bvf.id_company = cvc.id_company
+  WHERE bvf.deleted_flow = false
+  ORDER BY bvf.id_flow DESC;
 
-ALTER TABLE business.view_process_type_inner_join
+ALTER TABLE business.view_flow_inner_join
     OWNER TO postgres;
 
 -- View: business.view_level_status_inner_join
@@ -482,35 +483,6 @@ CREATE OR REPLACE VIEW business.view_level_inner_join
 ALTER TABLE business.view_level_inner_join
     OWNER TO postgres;
 
--- View: business.view_flow_inner_join
--- DROP VIEW business.view_flow_inner_join;
-
-CREATE OR REPLACE VIEW business.view_flow_inner_join
- AS
- SELECT bvf.id_flow,
-    bvf.id_company,
-    bvf.id_process_type,
-    bvf.name_flow,
-    bvf.description_flow,
-    bvf.deleted_flow,
-    cvc.id_setting,
-    cvc.name_company,
-    cvc.acronym_company,
-    cvc.address_company,
-    cvc.status_company,
-    bvpt.name_process_type,
-    bvpt.description_process_type,
-    bvpt.acronym_process_type,
-    bvpt.sequential_process_type
-   FROM business.view_flow bvf
-     JOIN core.view_company cvc ON bvf.id_company = cvc.id_company
-     JOIN business.view_process_type bvpt ON bvf.id_process_type = bvpt.id_process_type
-  WHERE bvf.deleted_flow = false
-  ORDER BY bvf.id_flow DESC;
-
-ALTER TABLE business.view_flow_inner_join
-    OWNER TO postgres;
-
 -- View: business.view_flow_version_inner_join
 -- DROP VIEW business.view_flow_version_inner_join;
 
@@ -523,7 +495,6 @@ CREATE OR REPLACE VIEW business.view_flow_version_inner_join
     bvfv.creation_date_flow_version,
     bvfv.deleted_flow_version,
     bvf.id_company,
-    bvf.id_process_type,
     bvf.name_flow,
     bvf.description_flow
    FROM business.view_flow_version bvfv
@@ -571,12 +542,11 @@ ALTER TABLE business.view_flow_version_level_inner_join
     OWNER TO postgres;
 
 -- View: business.view_process_inner_join
--- DROP VIEW business.view_process_inner_join;
+-- 
 
 CREATE OR REPLACE VIEW business.view_process_inner_join
  AS
  SELECT bvp.id_process,
-    bvp.id_process_type,
     bvp.id_official,
     bvp.id_flow_version,
     bvp.number_process,
@@ -584,21 +554,22 @@ CREATE OR REPLACE VIEW business.view_process_inner_join
     bvp.generated_task,
     bvp.finalized_process,
     bvp.deleted_process,
-    bvpt.name_process_type,
-    bvpt.description_process_type,
-    bvpt.acronym_process_type,
-    bvpt.sequential_process_type,
     bvo.id_user,
     bvo.id_area,
     bvo.id_position,
-    bvfv.id_flow,
     bvfv.number_flow_version,
     bvfv.status_flow_version,
-    bvfv.creation_date_flow_version
+    bvfv.creation_date_flow_version,
+    bvf.id_flow,
+    bvf.name_flow,
+    bvf.description_flow,
+    bvf.acronym_flow,
+    bvf.acronym_task,
+    bvf.sequential_flow
    FROM business.view_process bvp
-     JOIN business.view_process_type bvpt ON bvp.id_process_type = bvpt.id_process_type
      JOIN business.view_official bvo ON bvp.id_official = bvo.id_official
      JOIN business.view_flow_version bvfv ON bvp.id_flow_version = bvfv.id_flow_version
+	 JOIN business.view_flow bvf ON bvfv.id_flow = bvf.id_flow
   WHERE bvp.deleted_process = false
   ORDER BY bvp.id_process DESC;
 
@@ -643,12 +614,12 @@ CREATE OR REPLACE VIEW business.view_task_inner_join
     bvt.id_process,
     bvt.id_official,
     bvt.id_level,
+    bvt.number_task,
     bvt.creation_date_task,
     bvt.type_status_task,
     bvt.type_action_task,
     bvt.action_date_task,
     bvt.deleted_task,
-    bvp.id_process_type,
     bvp.id_flow_version,
     bvp.number_process,
     bvp.date_process,
@@ -661,9 +632,21 @@ CREATE OR REPLACE VIEW business.view_task_inner_join
     bvl.id_level_profile,
     bvl.id_level_status,
     bvl.name_level,
-    bvl.description_level
+    bvl.description_level,
+    bvfv.id_flow,
+    bvfv.number_flow_version,
+    bvfv.status_flow_version,
+    bvfv.creation_date_flow_version,
+    bvf.id_company,
+    bvf.name_flow,
+    bvf.description_flow,
+    bvf.acronym_flow,
+    bvf.acronym_task,
+    bvf.sequential_flow
    FROM business.view_task bvt
      JOIN business.view_process bvp ON bvt.id_process = bvp.id_process
+     JOIN business.view_flow_version bvfv ON bvp.id_flow_version = bvfv.id_flow_version
+     JOIN business.view_flow bvf ON bvfv.id_flow = bvf.id_flow
      JOIN business.view_official bvo ON bvt.id_official = bvo.id_official
      JOIN business.view_level bvl ON bvt.id_level = bvl.id_level
   WHERE bvt.deleted_task = false
@@ -702,12 +685,12 @@ CREATE OR REPLACE VIEW business.view_process_item_inner_join
     cvp.last_name_person,
     cvp.address_person,
     cvp.phone_person,
-    bvp.id_process_type,
     bvp.id_flow_version,
     bvp.number_process,
     bvp.date_process,
     bvp.generated_task,
     bvp.finalized_process,
+    bvt.number_task,
     bvt.creation_date_task,
     bvt.type_status_task,
     bvt.type_action_task,
@@ -768,12 +751,12 @@ CREATE OR REPLACE VIEW business.view_process_attached_inner_join
     cvp.last_name_person,
     cvp.address_person,
     cvp.phone_person,
-    bvp.id_process_type,
     bvp.id_flow_version,
     bvp.number_process,
     bvp.date_process,
     bvp.generated_task,
     bvp.finalized_process,
+    bvt.number_task,
     bvt.creation_date_task,
     bvt.type_status_task,
     bvt.type_action_task,
@@ -831,12 +814,12 @@ CREATE OR REPLACE VIEW business.view_process_control_inner_join
     cvp.last_name_person,
     cvp.address_person,
     cvp.phone_person,
-    bvp.id_process_type,
     bvp.id_flow_version,
     bvp.number_process,
     bvp.date_process,
     bvp.generated_task,
     bvp.finalized_process,
+    bvt.number_task,
     bvt.creation_date_task,
     bvt.type_status_task,
     bvt.type_action_task,
@@ -900,12 +883,12 @@ CREATE OR REPLACE VIEW business.view_process_comment_inner_join
     cvp.last_name_person,
     cvp.address_person,
     cvp.phone_person,
-    bvp.id_process_type,
     bvp.id_flow_version,
     bvp.number_process,
     bvp.date_process,
     bvp.generated_task,
     bvp.finalized_process,
+    bvt.number_task,
     bvt.creation_date_task,
     bvt.type_status_task,
     bvt.type_action_task,

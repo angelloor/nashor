@@ -14,7 +14,11 @@ export class ModalVersionService {
   ) {}
   dialogRef: any;
 
-  openModalVersion(id_flow_version: string, listControls: Control[]) {
+  openModalVersion(
+    id_flow_version: string,
+    listControls: Control[],
+    editMode: boolean
+  ) {
     this._layoutService.setOpenModal(true);
 
     return (this.dialogRef = this._dialog.open(ModalVersionComponent, {
@@ -25,6 +29,7 @@ export class ModalVersionService {
       data: {
         id_flow_version,
         listControls,
+        editMode,
       },
       disableClose: true,
     }));

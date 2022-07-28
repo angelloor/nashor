@@ -7,8 +7,8 @@ const routerFlow = express.Router();
 
 routerFlow.post('/create', async (req: any, res: any) => {
 	await validation(req.body, req.url, req.headers.token)
-		.then((flow: Flow) => {
-			success(res, flow);
+		.then((processType: Flow) => {
+			success(res, processType);
 		})
 		.catch((err: MessageAPI | any) => {
 			error(res, err);
@@ -17,8 +17,8 @@ routerFlow.post('/create', async (req: any, res: any) => {
 
 routerFlow.get('/queryRead/:name_flow', async (req: any, res: any) => {
 	await validation(req.params, req.url, req.headers.token)
-		.then((flows: Flow[]) => {
-			res.status(200).send(flows);
+		.then((processTypes: Flow[]) => {
+			res.status(200).send(processTypes);
 		})
 		.catch((err: MessageAPI | any) => {
 			error(res, err);
@@ -29,21 +29,8 @@ routerFlow.get(
 	'/byCompanyQueryRead/:company/:name_flow',
 	async (req: any, res: any) => {
 		await validation(req.params, req.url, req.headers.token)
-			.then((flows: Flow[]) => {
-				res.status(200).send(flows);
-			})
-			.catch((err: MessageAPI | any) => {
-				error(res, err);
-			});
-	}
-);
-
-routerFlow.get(
-	'/byProcessTypeQueryRead/:process_type/:name_flow',
-	async (req: any, res: any) => {
-		await validation(req.params, req.url, req.headers.token)
-			.then((flows: Flow[]) => {
-				res.status(200).send(flows);
+			.then((processTypes: Flow[]) => {
+				res.status(200).send(processTypes);
 			})
 			.catch((err: MessageAPI | any) => {
 				error(res, err);
@@ -53,8 +40,8 @@ routerFlow.get(
 
 routerFlow.get('/specificRead/:id_flow', async (req: any, res: any) => {
 	await validation(req.params, req.url, req.headers.token)
-		.then((flow: Flow) => {
-			res.status(200).send(flow);
+		.then((processType: Flow) => {
+			res.status(200).send(processType);
 		})
 		.catch((err: MessageAPI | any) => {
 			error(res, err);
@@ -63,8 +50,8 @@ routerFlow.get('/specificRead/:id_flow', async (req: any, res: any) => {
 
 routerFlow.patch('/update', async (req: any, res: any) => {
 	await validation(req.body, req.url, req.headers.token)
-		.then((flow: Flow) => {
-			success(res, flow);
+		.then((processType: Flow) => {
+			success(res, processType);
 		})
 		.catch((err: MessageAPI | any) => {
 			error(res, err);

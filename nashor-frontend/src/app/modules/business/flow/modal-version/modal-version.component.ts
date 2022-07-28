@@ -11,6 +11,7 @@ import { LayoutService } from 'app/layout/layout.service';
 import { NotificationService } from 'app/shared/notification/notification.service';
 import { Subject, takeUntil } from 'rxjs';
 import { Control } from '../../control/control.types';
+import { ModalTemplatePreviewService } from '../../template/modal-template-preview/modal-template-preview.service';
 import { FlowVersionLevelService } from '../flow-version/flow-version-level/flow-version-level.service';
 import {
   FlowVersionLevel,
@@ -33,6 +34,8 @@ export class ModalVersionComponent implements OnInit {
   id_flow_version: string = '';
   id_company: string = '';
 
+  editMode: boolean = false;
+
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private data!: AppInitialData;
 
@@ -46,6 +49,8 @@ export class ModalVersionComponent implements OnInit {
   flowVersionLevels: FlowVersionLevel[] = [];
 
   position_level: number = 0;
+  type_element!: TYPE_ELEMENT;
+
   listControls: Control[] = [];
 
   constructor(
@@ -60,12 +65,14 @@ export class ModalVersionComponent implements OnInit {
     private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
     private _modalEditPositionLevelFatherService: ModalEditPositionLevelFatherService,
-    private _modalEditFlowVersionLevelService: ModalEditFlowVersionLevelService
+    private _modalEditFlowVersionLevelService: ModalEditFlowVersionLevelService,
+    private _modalTemplatePreviewService: ModalTemplatePreviewService
   ) {}
 
   ngOnInit(): void {
     this.id_flow_version = this._data.id_flow_version;
     this.listControls = this._data.listControls;
+    this.editMode = this._data.editMode;
     /**
      * Subscribe to user changes of state
      */
@@ -81,7 +88,7 @@ export class ModalVersionComponent implements OnInit {
     });
 
     this._flowVersionService
-      .specificReadInLocal(this.id_flow_version)
+      .specificRead(this.id_flow_version)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe();
 
@@ -92,17 +99,18 @@ export class ModalVersionComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((_flowVersion: FlowVersion) => {
         this.flowVersion = _flowVersion;
+        /**
+         * byFlowVersionRead
+         */
+        if (this.flowVersion.id_flow_version != ' ') {
+          this._flowVersionLevelService
+            .byFlowVersionRead(this.flowVersion.id_flow_version)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe();
+        }
 
         this._changeDetectorRef.markForCheck();
       });
-
-    /**
-     * byFlowVersionRead
-     */
-    this._flowVersionLevelService
-      .byFlowVersionRead(this.flowVersion.id_flow_version)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe();
 
     this._flowVersionLevelService.flowVersionLevels$
       .pipe(takeUntil(this._unsubscribeAll))
@@ -119,6 +127,7 @@ export class ModalVersionComponent implements OnInit {
           /**
            * Create an flowVersion form group
            */
+
           flowVersionLevelFormGroups.push(
             this._formBuilder.group({
               id_flow_version_level: [_flowVersionLevel.id_flow_version_level],
@@ -155,9 +164,11 @@ export class ModalVersionComponent implements OnInit {
    * @returns
    */
   getFormNameControl(id_control: string): string {
-    return this.listControls.find(
-      (control: Control) => control.id_control == id_control
-    )?.form_name_control!;
+    return id_control != '0'
+      ? this.listControls.find(
+          (control: Control) => control.id_control == id_control
+        )?.form_name_control!
+      : '';
   }
   /**
    * getIdControl
@@ -174,15 +185,18 @@ export class ModalVersionComponent implements OnInit {
    * @param index
    */
   setIndex(index: number): void {
-    this.index = index;
+    if (this.editMode) {
+      this.index = index;
 
-    const flowVersionLevelFormArray = this.versionForm.get(
-      'lotFlowVersionLevel'
-    ) as FormArray;
-    let flowVersionLevel: FlowVersionLevel =
-      flowVersionLevelFormArray.getRawValue()[this.index];
+      const flowVersionLevelFormArray = this.versionForm.get(
+        'lotFlowVersionLevel'
+      ) as FormArray;
+      let flowVersionLevel: FlowVersionLevel =
+        flowVersionLevelFormArray.getRawValue()[this.index];
 
-    this.position_level = flowVersionLevel.position_level;
+      this.type_element = flowVersionLevel.type_element;
+      this.position_level = flowVersionLevel.position_level;
+    }
   }
   /**
    * formArrayFlowVersionLevel
@@ -226,232 +240,243 @@ export class ModalVersionComponent implements OnInit {
    * createFlowVersionLevel
    */
   createFlowVersionLevel(type_element: TYPE_ELEMENT): void {
-    this._angelConfirmationService
-      .open({
-        title: 'Añadir elemento',
-        message:
-          '¿Estás seguro de que deseas añadir una nuevo elemento? ¡Esta acción no se puede deshacer!',
-      })
-      .afterClosed()
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((confirm: ActionAngelConfirmation) => {
-        if (confirm === 'confirmed') {
-          const id_user_ = this.data.user.id_user;
-          /**
-           * Create the flow_version_level
-           */
-          this._flowVersionLevelService
-            .create(id_user_, this.flowVersion.id_flow_version, type_element)
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe({
-              next: (_flowVersionLevel: FlowVersionLevel) => {
-                if (_flowVersionLevel) {
-                  this._notificationService.success(
-                    'Elemento agregado correctamente'
-                  );
-                } else {
+    if (this.editMode) {
+      this._angelConfirmationService
+        .open({
+          title: 'Añadir elemento',
+          message:
+            '¿Estás seguro de que deseas añadir una nuevo elemento? ¡Esta acción no se puede deshacer!',
+        })
+        .afterClosed()
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe((confirm: ActionAngelConfirmation) => {
+          if (confirm === 'confirmed') {
+            const id_user_ = this.data.user.id_user;
+            /**
+             * Create the flow_version_level
+             */
+            this._flowVersionLevelService
+              .create(id_user_, this.flowVersion.id_flow_version, type_element)
+              .pipe(takeUntil(this._unsubscribeAll))
+              .subscribe({
+                next: (_flowVersionLevel: FlowVersionLevel) => {
+                  if (_flowVersionLevel) {
+                    this._notificationService.success(
+                      'Elemento agregado correctamente'
+                    );
+                  } else {
+                    this._notificationService.error(
+                      '¡Error interno!, consulte al administrador.'
+                    );
+                  }
+                },
+                error: (error: { error: MessageAPI }) => {
                   this._notificationService.error(
-                    '¡Error interno!, consulte al administrador.'
+                    !error.error
+                      ? '¡Error interno!, consulte al administrador.'
+                      : !error.error.description
+                      ? '¡Error interno!, consulte al administrador.'
+                      : error.error.description
                   );
-                }
-              },
-              error: (error: { error: MessageAPI }) => {
-                this._notificationService.error(
-                  !error.error
-                    ? '¡Error interno!, consulte al administrador.'
-                    : !error.error.description
-                    ? '¡Error interno!, consulte al administrador.'
-                    : error.error.description
-                );
-              },
-            });
-        }
-        this._layoutService.setOpenModal(false);
-      });
+                },
+              });
+          }
+          this._layoutService.setOpenModal(false);
+        });
+    }
   }
   /**
    * dragEnded
    * @param event
    */
   dragEnded(event: any, index: number) {
-    const id_user_ = this.data.user.id_user;
+    if (this.editMode) {
+      const id_user_ = this.data.user.id_user;
 
-    const flowVersionLevelFormArray = this.versionForm.get(
-      'lotFlowVersionLevel'
-    ) as FormArray;
-    let flowVersionLevel: FlowVersionLevel | any =
-      flowVersionLevelFormArray.getRawValue()[index];
+      const flowVersionLevelFormArray = this.versionForm.get(
+        'lotFlowVersionLevel'
+      ) as FormArray;
+      let flowVersionLevel: FlowVersionLevel | any =
+        flowVersionLevelFormArray.getRawValue()[index];
 
-    flowVersionLevel = {
-      id_user_: parseInt(id_user_),
-      ...flowVersionLevel,
-      flow_version: {
-        ...flowVersionLevel.flow_version,
-        id_flow_version: parseInt(
-          flowVersionLevel.flow_version.id_flow_version
-        ),
-      },
-      level: {
-        ...flowVersionLevel.level,
-        id_level: parseInt(flowVersionLevel.level.id_level),
-      },
-      id_flow_version_level: parseInt(flowVersionLevel.id_flow_version_level),
-      position_level: parseInt(flowVersionLevel.position_level),
-      position_level_father: parseInt(flowVersionLevel.position_level_father),
-      id_control:
-        flowVersionLevel.id_control != null
+      flowVersionLevel = {
+        id_user_: parseInt(id_user_),
+        ...flowVersionLevel,
+        flow_version: {
+          ...flowVersionLevel.flow_version,
+          id_flow_version: parseInt(
+            flowVersionLevel.flow_version.id_flow_version
+          ),
+        },
+        level: {
+          ...flowVersionLevel.level,
+          id_level: parseInt(flowVersionLevel.level.id_level),
+        },
+        id_flow_version_level: parseInt(flowVersionLevel.id_flow_version_level),
+        position_level: parseInt(flowVersionLevel.position_level),
+        position_level_father: parseInt(flowVersionLevel.position_level_father),
+        id_control: !(
+          flowVersionLevel.id_control === null ||
+          flowVersionLevel.id_control === ' ' ||
+          flowVersionLevel.id_control === ''
+        )
           ? this.getIdControl(flowVersionLevel.id_control)
           : '',
-      x: parseInt(flowVersionLevel.x!) + event.distance.x,
-      y: parseInt(flowVersionLevel.y!) + event.distance.y,
-    };
+        x: parseInt(flowVersionLevel.x!) + event.distance.x,
+        y: parseInt(flowVersionLevel.y!) + event.distance.y,
+      };
 
-    this.flowVersionLevels[index] = flowVersionLevel;
-    this._flowVersionLevelService.$flowVersionLevels = this.flowVersionLevels;
+      this.flowVersionLevels[index] = flowVersionLevel;
+      this._flowVersionLevelService.$flowVersionLevels = this.flowVersionLevels;
 
-    /**
-     * updateFlowVersion
-     */
-    this._flowVersionLevelService
-      .update(flowVersionLevel)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (_flowVersion: FlowVersion) => {
-          if (!_flowVersion) {
+      /**
+       * updateFlowVersion
+       */
+      this._flowVersionLevelService
+        .update(flowVersionLevel)
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe({
+          next: (_flowVersion: FlowVersion) => {
+            if (!_flowVersion) {
+              this._notificationService.error(
+                'Ocurrió un error actualizando el nivel'
+              );
+            }
+            /**
+             * Mark for check
+             */
+            this._changeDetectorRef.markForCheck();
+          },
+          error: (error: { error: MessageAPI }) => {
             this._notificationService.error(
-              'Ocurrió un error actualizando el nivel'
+              !error.error
+                ? '¡Error interno!, consulte al administrador.'
+                : !error.error.description
+                ? '¡Error interno!, consulte al administrador.'
+                : error.error.description
             );
-          }
-          /**
-           * Mark for check
-           */
-          this._changeDetectorRef.markForCheck();
-        },
-        error: (error: { error: MessageAPI }) => {
-          this._notificationService.error(
-            !error.error
-              ? '¡Error interno!, consulte al administrador.'
-              : !error.error.description
-              ? '¡Error interno!, consulte al administrador.'
-              : error.error.description
-          );
-        },
-      });
+          },
+        });
+    }
   }
   /**
    * Delete the flowVersionLevel
    */
   deleteFlowVersionLevel(): void {
-    this._angelConfirmationService
-      .open({
-        title: 'Eliminar elemento',
-        message:
-          '¿Estás seguro de que deseas eliminar este elemento? ¡Esta acción no se puede deshacer!',
-      })
-      .afterClosed()
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((confirm: ActionAngelConfirmation) => {
-        if (confirm === 'confirmed') {
-          /**
-           * Get the current flowVersionLevel's id
-           */
-          const id_user_ = this.data.user.id_user;
+    if (this.editMode) {
+      this._angelConfirmationService
+        .open({
+          title: 'Eliminar elemento',
+          message:
+            '¿Estás seguro de que deseas eliminar este elemento? ¡Esta acción no se puede deshacer!',
+        })
+        .afterClosed()
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe((confirm: ActionAngelConfirmation) => {
+          if (confirm === 'confirmed') {
+            /**
+             * Get the current flowVersionLevel's id
+             */
+            const id_user_ = this.data.user.id_user;
 
-          const flowVersionLevelFormArray = this.versionForm.get(
-            'lotFlowVersionLevel'
-          ) as FormArray;
-          let flowVersionLevel: FlowVersionLevel | any =
-            flowVersionLevelFormArray.getRawValue()[this.index];
+            const flowVersionLevelFormArray = this.versionForm.get(
+              'lotFlowVersionLevel'
+            ) as FormArray;
+            let flowVersionLevel: FlowVersionLevel | any =
+              flowVersionLevelFormArray.getRawValue()[this.index];
 
-          /**
-           * Delete
-           */
-          this._flowVersionLevelService
-            .delete(id_user_, flowVersionLevel.id_flow_version_level)
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe({
-              next: (response: boolean) => {
-                if (response) {
-                  /**
-                   * Return if the flowVersionLevel wasn't deleted...
-                   */
-                  this._notificationService.success(
-                    'Elemento eliminado correctamente'
-                  );
-                } else {
+            /**
+             * Delete
+             */
+            this._flowVersionLevelService
+              .delete(id_user_, flowVersionLevel.id_flow_version_level)
+              .pipe(takeUntil(this._unsubscribeAll))
+              .subscribe({
+                next: (response: boolean) => {
+                  if (response) {
+                    /**
+                     * Return if the flowVersionLevel wasn't deleted...
+                     */
+                    this._notificationService.success(
+                      'Elemento eliminado correctamente'
+                    );
+                  } else {
+                    this._notificationService.error(
+                      '¡Error interno!, consulte al administrador.'
+                    );
+                  }
+                },
+                error: (error: { error: MessageAPI }) => {
                   this._notificationService.error(
-                    '¡Error interno!, consulte al administrador.'
+                    !error.error
+                      ? '¡Error interno!, consulte al administrador.'
+                      : !error.error.description
+                      ? '¡Error interno!, consulte al administrador.'
+                      : error.error.description
                   );
-                }
-              },
-              error: (error: { error: MessageAPI }) => {
-                this._notificationService.error(
-                  !error.error
-                    ? '¡Error interno!, consulte al administrador.'
-                    : !error.error.description
-                    ? '¡Error interno!, consulte al administrador.'
-                    : error.error.description
-                );
-              },
-            });
-          /**
-           * Mark for check
-           */
-          this._changeDetectorRef.markForCheck();
-        }
-        this._layoutService.setOpenModal(false);
-      });
+                },
+              });
+            /**
+             * Mark for check
+             */
+            this._changeDetectorRef.markForCheck();
+          }
+          this._layoutService.setOpenModal(false);
+        });
+    }
   }
   /**
    * resetFlowVersionLevel
    */
   resetFlowVersionLevel(): void {
-    this._angelConfirmationService
-      .open({
-        title: 'Restablecer versión',
-        message:
-          '¿Estás seguro de que deseas restablecer está versión? ¡Esta acción no se puede deshacer!',
-      })
-      .afterClosed()
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((confirm: ActionAngelConfirmation) => {
-        if (confirm === 'confirmed') {
-          const id_user_ = this.data.user.id_user;
-          /**
-           * Delete
-           */
-          this._flowVersionLevelService
-            .resetFlowVersionLevel(id_user_, this.flowVersion.id_flow_version)
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe({
-              next: (response: boolean) => {
-                if (response) {
-                  this._notificationService.success(
-                    'Versión restablecida correctamente'
-                  );
-                } else {
+    if (this.editMode) {
+      this._angelConfirmationService
+        .open({
+          title: 'Restablecer versión',
+          message:
+            '¿Estás seguro de que deseas restablecer está versión? ¡Esta acción no se puede deshacer!',
+        })
+        .afterClosed()
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe((confirm: ActionAngelConfirmation) => {
+          if (confirm === 'confirmed') {
+            const id_user_ = this.data.user.id_user;
+            /**
+             * Delete
+             */
+            this._flowVersionLevelService
+              .resetFlowVersionLevel(id_user_, this.flowVersion.id_flow_version)
+              .pipe(takeUntil(this._unsubscribeAll))
+              .subscribe({
+                next: (response: boolean) => {
+                  if (response) {
+                    this._notificationService.success(
+                      'Versión restablecida correctamente'
+                    );
+                  } else {
+                    this._notificationService.error(
+                      '¡Error interno!, consulte al administrador.'
+                    );
+                  }
+                },
+                error: (error: { error: MessageAPI }) => {
                   this._notificationService.error(
-                    '¡Error interno!, consulte al administrador.'
+                    !error.error
+                      ? '¡Error interno!, consulte al administrador.'
+                      : !error.error.description
+                      ? '¡Error interno!, consulte al administrador.'
+                      : error.error.description
                   );
-                }
-              },
-              error: (error: { error: MessageAPI }) => {
-                this._notificationService.error(
-                  !error.error
-                    ? '¡Error interno!, consulte al administrador.'
-                    : !error.error.description
-                    ? '¡Error interno!, consulte al administrador.'
-                    : error.error.description
-                );
-              },
-            });
-          /**
-           * Mark for check
-           */
-          this._changeDetectorRef.markForCheck();
-        }
-        this._layoutService.setOpenModal(false);
-      });
+                },
+              });
+            /**
+             * Mark for check
+             */
+            this._changeDetectorRef.markForCheck();
+          }
+          this._layoutService.setOpenModal(false);
+        });
+    }
   }
   /**
    * closeModalVersion
@@ -463,44 +488,69 @@ export class ModalVersionComponent implements OnInit {
    * openModalEditPositionLevelFather
    */
   openModalEditPositionLevelFather(): void {
-    const id_user_ = this.data.user.id_user;
-    const flowVersionLevelFormArray = this.versionForm.get(
-      'lotFlowVersionLevel'
-    ) as FormArray;
-    let flowVersionLevel: FlowVersionLevel | any =
-      flowVersionLevelFormArray.getRawValue()[this.index];
+    if (this.editMode) {
+      const id_user_ = this.data.user.id_user;
+      const flowVersionLevelFormArray = this.versionForm.get(
+        'lotFlowVersionLevel'
+      ) as FormArray;
+      let flowVersionLevel: FlowVersionLevel | any =
+        flowVersionLevelFormArray.getRawValue()[this.index];
 
-    const flowVersionLevels: FlowVersionLevel[] = flowVersionLevelFormArray
-      .getRawValue()
-      .filter(
-        (item: FlowVersionLevel) =>
-          item.position_level != flowVersionLevel.position_level
+      const flowVersionLevels: FlowVersionLevel[] = flowVersionLevelFormArray
+        .getRawValue()
+        .filter(
+          (item: FlowVersionLevel) =>
+            item.position_level != flowVersionLevel.position_level
+        );
+
+      this._modalEditPositionLevelFatherService.openModalEditPositionLevelFather(
+        id_user_,
+        flowVersionLevel.id_flow_version_level,
+        flowVersionLevels
       );
-
-    this._modalEditPositionLevelFatherService.openModalEditPositionLevelFather(
-      id_user_,
-      flowVersionLevel.id_flow_version_level,
-      flowVersionLevels
-    );
+    }
   }
   /**
    * openModalEditFlowVersionLevel
    */
   openModalEditFlowVersionLevel(): void {
-    const id_user_ = this.data.user.id_user;
-    const id_company = this.data.user.company.id_company;
-    const flowVersionLevelFormArray = this.versionForm.get(
-      'lotFlowVersionLevel'
-    ) as FormArray;
-    let flowVersionLevel: FlowVersionLevel | any =
-      flowVersionLevelFormArray.getRawValue()[this.index];
+    if (this.editMode) {
+      const id_user_ = this.data.user.id_user;
+      const id_company = this.data.user.company.id_company;
+      const flowVersionLevelFormArray = this.versionForm.get(
+        'lotFlowVersionLevel'
+      ) as FormArray;
+      let flowVersionLevel: FlowVersionLevel | any =
+        flowVersionLevelFormArray.getRawValue()[this.index];
 
-    this._modalEditFlowVersionLevelService.openModalEditFlowVersionLevel(
-      id_user_,
-      id_company,
-      flowVersionLevel.id_flow_version_level,
-      this.flowVersionLevels
-    );
+      this._modalEditFlowVersionLevelService.openModalEditFlowVersionLevel(
+        id_user_,
+        id_company,
+        flowVersionLevel.id_flow_version_level,
+        this.flowVersionLevels
+      );
+    }
+  }
+  /**
+   * openModalTemplatePreview
+   */
+  openModalTemplatePreview(): void {
+    if (this.editMode) {
+      const editMode: boolean = true;
+
+      const flowVersionLevelFormArray = this.versionForm.get(
+        'lotFlowVersionLevel'
+      ) as FormArray;
+      let flowVersionLevel: FlowVersionLevel | any =
+        flowVersionLevelFormArray.getRawValue()[this.index];
+
+      const id_template = flowVersionLevel.level.template.id_template;
+
+      this._modalTemplatePreviewService.openModalTemplatePreview(
+        id_template,
+        editMode
+      );
+    }
   }
   /**
    * Track by function for ngFor loops

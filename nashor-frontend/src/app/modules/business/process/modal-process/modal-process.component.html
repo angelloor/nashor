@@ -12,6 +12,55 @@
     </div>
     <!-- Process form -->
     <form class="flex flex-col flex-auto px-6 pb-6 sm:px-8 sm:pb-8 overflow-y-auto" [formGroup]="processForm">
+        <div class="flex flex-auto">
+            <div class="flex flex-col w-2/4 pr-3">
+                <!-- name_flow -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>flujo</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
+                        </mat-icon>
+                        <input matInput [value]="selectedFlow.name_flow" readonly
+                            [matTooltip]="selectedFlow.description_flow">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex flex-col w-2/4 pl-3">
+                <!-- acronym_flow -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>acronym_flow</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:timeline'">
+                        </mat-icon>
+                        <input matInput [value]="selectedFlow.acronym_flow" readonly
+                            [matTooltip]="'Etiqueta de la institución: ' + selectedFlow.company.acronym_company">
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center mt-4">
+            <a (click)="openModalVersion(process.flow_version.id_flow_version)"
+                class="flex flex-col items-center w-56 p-6 rounded-lg shadow bg-card rounded-lg hover:shadow-xl transition-shadow duration-150 ease-in-out cursor-pointer">
+                <div
+                    class="flex items-center justify-center p-4 rounded-full bg-primary-50 text-primary-700 dark:bg-primary dark:text-on-primary">
+                    <mat-icon class="text-current" [svgIcon]="'heroicons_outline:template'"></mat-icon>
+                </div>
+                <div class="mt-5 text-lg font-medium leading-5">Ver flujo</div>
+                <div class="mt-0.5 line-clamp-2 text-secondary text-center">
+                    Observa el flujo en que esta el proceso</div>
+            </a>
+            <a (click)="openModalProcessRoute(process.id_process)"
+                class="flex flex-col items-center w-56 p-6 rounded-lg shadow bg-card rounded-lg hover:shadow-xl transition-shadow duration-150 ease-in-out cursor-pointer">
+                <div
+                    class="flex items-center justify-center p-4 rounded-full bg-primary-50 text-primary-700 dark:bg-primary dark:text-on-primary">
+                    <mat-icon class="text-current" [svgIcon]="'heroicons_outline:template'"></mat-icon>
+                </div>
+                <div class="mt-5 text-lg font-medium leading-5">Recorrido</div>
+                <div class="mt-0.5 line-clamp-2 text-secondary text-center">
+                    Ver recorrido</div>
+            </a>
+        </div>
 
         <div class="flex items-center justify-center sm:justify-end py-2 space-x-3 ng-star-inserted br-10 pt-6">
             <!-- Delete -->

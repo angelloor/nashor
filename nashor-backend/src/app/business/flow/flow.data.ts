@@ -1,4 +1,2 @@
-
-	import { Flow } from './flow.class';
-	export const _flow = new Flow();
-	
+import { Flow } from './flow.class';
+export const _flow = new Flow();

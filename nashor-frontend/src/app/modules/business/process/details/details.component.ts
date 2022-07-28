@@ -18,12 +18,12 @@ import { filter, fromEvent, merge, Subject, takeUntil } from 'rxjs';
 import { flowVersion } from '../../flow/flow-version/flow-version.data';
 import { FlowVersionService } from '../../flow/flow-version/flow-version.service';
 import { FlowVersion } from '../../flow/flow-version/flow-version.types';
+import { flow } from '../../flow/flow.data';
+import { FlowService } from '../../flow/flow.service';
+import { Flow } from '../../flow/flow.types';
 import { official } from '../../official/official.data';
 import { OfficialService } from '../../official/official.service';
 import { Official } from '../../official/official.types';
-import { processType } from '../../process-type/process-type.data';
-import { ProcessTypeService } from '../../process-type/process-type.service';
-import { ProcessType } from '../../process-type/process-type.types';
 import { ProcessListComponent } from '../list/list.component';
 import { ProcessService } from '../process.service';
 import { Process } from '../process.types';
@@ -36,8 +36,8 @@ import { Process } from '../process.types';
 export class ProcessDetailsComponent implements OnInit {
   id_company: string = '';
 
-  listProcessType: ProcessType[] = [];
-  selectedProcessType: ProcessType = processType;
+  listFlow: Flow[] = [];
+  selectedFlow: Flow = flow;
 
   listOfficial: Official[] = [];
   selectedOfficial: Official = official;
@@ -88,7 +88,7 @@ export class ProcessDetailsComponent implements OnInit {
     private _notificationService: NotificationService,
     private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
-    private _processTypeService: ProcessTypeService,
+    private _flowService: FlowService,
     private _officialService: OfficialService,
     private _flowVersionService: FlowVersionService
   ) {}
@@ -128,7 +128,7 @@ export class ProcessDetailsComponent implements OnInit {
      */
     this.processForm = this._formBuilder.group({
       id_process: [''],
-      id_process_type: ['', [Validators.required]],
+      id_flow: ['', [Validators.required]],
       id_official: ['', [Validators.required]],
       id_flow_version: ['', [Validators.required]],
       number_process: ['', [Validators.required, Validators.maxLength(150)]],
@@ -162,20 +162,6 @@ export class ProcessDetailsComponent implements OnInit {
          * Get the process
          */
         this.process = process;
-
-        // ProcessType
-        this._processTypeService
-          .byCompanyQueryRead(this.id_company, '*')
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((process_types: ProcessType[]) => {
-            this.listProcessType = process_types;
-
-            this.selectedProcessType = this.listProcessType.find(
-              (item) =>
-                item.id_process_type ==
-                this.process.process_type.id_process_type.toString()
-            )!;
-          });
 
         // Official
         this._officialService
@@ -253,7 +239,6 @@ export class ProcessDetailsComponent implements OnInit {
   patchForm(): void {
     this.processForm.patchValue({
       ...this.process,
-      id_process_type: this.process.process_type.id_process_type,
       id_official: this.process.official.id_official,
       id_flow_version: this.process.flow_version.id_flow_version,
     });
@@ -319,8 +304,8 @@ export class ProcessDetailsComponent implements OnInit {
       ...process,
       id_user_: parseInt(id_user_),
       id_process: parseInt(process.id_process),
-      process_type: {
-        id_process_type: parseInt(process.id_process_type),
+      flow: {
+        id_flow: parseInt(process.id_flow),
       },
       official: {
         id_official: parseInt(process.id_official),
