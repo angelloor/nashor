@@ -1,4 +1,4 @@
-import { clientANGELPostgreSQL } from '../../../utils/conections';
+import { clientNASHORPostgreSQL } from '../../../utils/conections';
 import { _messages } from '../../../utils/message/message';
 import { Navigation } from './navigation.class';
 
@@ -9,7 +9,7 @@ export const dml_navigation_create = (navigation: Navigation) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -35,7 +35,7 @@ export const view_navigation_query_read = (navigation: Navigation) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -63,7 +63,7 @@ export const view_navigation_by_company_query_read = (
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -85,7 +85,7 @@ export const view_navigation_specific_read = (navigation: Navigation) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -117,7 +117,7 @@ export const dml_navigation_update = (navigation: Navigation) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -139,7 +139,7 @@ export const dml_navigation_delete = (navigation: Navigation) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].result);
 		} catch (error: any) {
 			if (error.detail == '_database') {

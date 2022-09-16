@@ -1,28 +1,6 @@
-import { clientANGELPostgreSQL } from '../../../utils/conections';
+import { clientNASHORPostgreSQL } from '../../../utils/conections';
 import { _messages } from '../../../utils/message/message';
 import { Control } from './control.class';
-
-export const dml_control_create = (control: Control) => {
-	return new Promise<Control[]>(async (resolve, reject) => {
-		const query = `select * from business.dml_control_create_modified(${control.id_user_}, ${control.company.id_company})`;
-
-		// console.log(query);
-
-		try {
-			const response = await clientANGELPostgreSQL.query(query);
-			resolve(response.rows);
-		} catch (error: any) {
-			if (error.detail == '_database') {
-				reject({
-					..._messages[3],
-					description: error.toString().slice(7),
-				});
-			} else {
-				reject(error.toString());
-			}
-		}
-	});
-};
 
 export const view_control_query_read = (control: Control) => {
 	return new Promise<Control[]>(async (resolve, reject) => {
@@ -36,7 +14,7 @@ export const view_control_query_read = (control: Control) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -64,29 +42,7 @@ export const view_control_by_company_query_read = (control: Control) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
-			resolve(response.rows);
-		} catch (error: any) {
-			if (error.detail == '_database') {
-				reject({
-					..._messages[3],
-					description: error.toString().slice(7),
-				});
-			} else {
-				reject(error.toString());
-			}
-		}
-	});
-};
-
-export const view_control_by_level_and_company_read = (control: Control) => {
-	return new Promise<Control[]>(async (resolve, reject) => {
-		const query = `select * from business.view_control_inner_join_bvt_bvtc_bvc bvcij where bvcij.id_level = ${control.form_name_control} and bvcij.id_company = ${control.company} and bvcij.required_control = true `;
-
-		// console.log(query);
-
-		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -108,7 +64,7 @@ export const view_control_specific_read = (control: Control) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -146,7 +102,7 @@ export const dml_control_update = (control: Control) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -168,7 +124,7 @@ export const dml_control_delete = (control: Control) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].result);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -190,7 +146,7 @@ export const dml_control_delete_cascade = (control: Control) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].result);
 		} catch (error: any) {
 			if (error.detail == '_database') {

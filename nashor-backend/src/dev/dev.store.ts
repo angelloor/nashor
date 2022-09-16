@@ -1,4 +1,4 @@
-import { clientANGELPostgreSQL } from '../utils/conections';
+import { clientNASHORPostgreSQL } from '../utils/conections';
 
 export const utils_table_exists = (scheme: string, entity: string) => {
 	return new Promise<any>(async (resolve, reject) => {
@@ -7,7 +7,7 @@ export const utils_table_exists = (scheme: string, entity: string) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].count);
 		} catch (error: any) {
 			reject(error.toString());
@@ -22,7 +22,7 @@ export const utils_get_columns_backend = (scheme: string, entity: string) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			reject(error.toString());
@@ -35,7 +35,7 @@ export const utils_get_alias = (scheme: string, entity: string) => {
 		const query = `select * from dev.utils_get_alias('${scheme}', '${entity}')`;
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].utils_get_alias);
 		} catch (error: any) {
 			reject(error.toString());
@@ -60,7 +60,7 @@ export const ddl_create_crud_modified = (
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].ddl_create_crud_modified);
 		} catch (error: any) {
 			reject(error.toString());
@@ -85,7 +85,7 @@ export const ddl_create_view_inner_table = (
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].ddl_create_view_inner_table);
 		} catch (error: any) {
 			reject(error.toString());
@@ -108,7 +108,7 @@ export const utils_get_schema = (entity: string) => {
 		const query = `select * from dev.utils_get_schema('${entity}')`;
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].utils_get_schema);
 		} catch (error: any) {
 			reject(error.toString());

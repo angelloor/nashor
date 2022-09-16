@@ -1,4 +1,4 @@
-import { clientANGELPostgreSQL } from '../../../utils/conections';
+import { clientNASHORPostgreSQL } from '../../../utils/conections';
 import { _messages } from '../../../utils/message/message';
 import { Level } from './level.class';
 
@@ -9,7 +9,7 @@ export const dml_level_create = (level: Level) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -35,7 +35,7 @@ export const view_level_query_read = (level: Level) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -61,7 +61,7 @@ export const view_level_by_company_query_read = (level: Level) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -87,7 +87,7 @@ export const view_level_by_template_query_read = (level: Level) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -113,7 +113,7 @@ export const view_level_by_level_profile_query_read = (level: Level) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -139,7 +139,7 @@ export const view_level_by_level_status_query_read = (level: Level) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -161,7 +161,7 @@ export const view_level_specific_read = (level: Level) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -191,7 +191,7 @@ export const dml_level_update = (level: Level) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -213,7 +213,7 @@ export const dml_level_delete = (level: Level) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].result);
 		} catch (error: any) {
 			if (error.detail == '_database') {

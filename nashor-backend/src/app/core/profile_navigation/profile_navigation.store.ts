@@ -1,4 +1,4 @@
-import { clientANGELPostgreSQL } from '../../../utils/conections';
+import { clientNASHORPostgreSQL } from '../../../utils/conections';
 import { _messages } from '../../../utils/message/message';
 import { ProfileNavigation } from './profile_navigation.class';
 
@@ -11,7 +11,7 @@ export const dml_profile_navigation_create = (
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -35,7 +35,7 @@ export const view_profile_navigation_by_profile_read = (
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -59,7 +59,7 @@ export const view_profile_navigation_specific_read = (
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -86,7 +86,7 @@ export const dml_profile_navigation_update = (
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -110,7 +110,7 @@ export const dml_profile_navigation_delete = (
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].result);
 		} catch (error: any) {
 			if (error.detail == '_database') {

@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  urlBackend: 'http://172.18.2.3:3000 ',
+  urlBackend: 'http://nashor.puyo.gob.ec',
   passwordEncrypt: 'eNcR$NaShOr$2022',
 };

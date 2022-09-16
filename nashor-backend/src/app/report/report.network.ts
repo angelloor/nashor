@@ -1,7 +1,6 @@
 // import cluster from 'cluster';
-import cluster from 'cluster';
 import express from 'express';
-import { error, success, workerKill } from '../../network/response';
+import { error, success } from '../../network/response';
 import { MessageAPI } from '../../utils/message/message.type';
 import { validation } from './report.controller';
 const routerReport = express.Router();
@@ -23,7 +22,7 @@ routerReport.post('/downloadReport', async (req: any, res: any) => {
 			/**
 			 * workerKill in res.sendFile
 			 */
-			workerKill(cluster);
+			// workerKill(cluster);
 		})
 		.catch((err: MessageAPI | any) => {
 			error(res, err);

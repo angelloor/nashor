@@ -1,4 +1,4 @@
-import { clientANGELPostgreSQL } from '../../../utils/conections';
+import { clientNASHORPostgreSQL } from '../../../utils/conections';
 import { _messages } from '../../../utils/message/message';
 import { Auth } from './auth.class';
 import { Session } from './auth.types';
@@ -12,7 +12,7 @@ export const auth_sign_in = (auth: Auth, session: Session) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0]);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -39,7 +39,7 @@ export const auth_check_user = (auth: Auth) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0]);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -66,7 +66,7 @@ export const auth_sign_out = (name_user: string, id_session: string) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].result);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -93,7 +93,7 @@ export const auth_reset_password = (auth: Auth) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].result);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -122,7 +122,7 @@ export const auth_check_session = (id_session: string, session: Session) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].result);
 		} catch (error: any) {
 			if (error.detail == '_database') {

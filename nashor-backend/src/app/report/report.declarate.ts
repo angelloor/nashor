@@ -178,7 +178,7 @@ const generateHeader = (
 					<img src="data:image/png;base64, ${b64Logo}" alt="logo">
 				</div>
 				<div class="containerTitle">
-					<h1>EVWS</h1>
+					<h1>NASHOR</h1>
 					<h2>${title}</h2>${query_parameters}
 					<h3><strong>Generado: </strong>${_getFullDate.day}-${_getFullDate.month}-${_getFullDate.fullYear} ${_getFullDate.hours}:${_getFullDate.minutes}:${_getFullDate.seconds}</h3>
 				</div>

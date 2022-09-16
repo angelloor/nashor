@@ -44,7 +44,7 @@ export const validation = (official: Official, url: string, token: string) => {
 						 * Validation company
 						 */
 
-						if (url == '/create' || url == '/update') {
+						if (url == '/create') {
 							attributeValidate(
 								'id_company',
 								official.company.id_company,

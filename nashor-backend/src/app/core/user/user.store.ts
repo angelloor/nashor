@@ -1,4 +1,4 @@
-import { clientANGELPostgreSQL } from '../../../utils/conections';
+import { clientNASHORPostgreSQL } from '../../../utils/conections';
 import { _messages } from '../../../utils/message/message';
 import { User } from './user.class';
 
@@ -9,7 +9,7 @@ export const dml_user_create = (user: User) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -35,7 +35,7 @@ export const view_user_query_read = (user: User) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -61,7 +61,7 @@ export const view_user_by_company_query_read = (user: User) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -87,7 +87,7 @@ export const view_user_by_type_user_query_read = (user: User) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -109,7 +109,7 @@ export const view_user_specific_read = (user: User) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -154,7 +154,7 @@ export const dml_user_update = (user: User) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -176,7 +176,7 @@ export const dml_user_delete = (user: User) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0].result);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -198,7 +198,7 @@ export const dml_user_upload_avatar = (user: User, new_avatar: string) => {
 		// console.log(query);
 
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0]);
 		} catch (error: any) {
 			if (error.detail == '_database') {
@@ -216,8 +216,13 @@ export const dml_user_upload_avatar = (user: User, new_avatar: string) => {
 export const dml_user_remove_avatar = (user: User) => {
 	return new Promise<any>(async (resolve, reject) => {
 		const query = `select * from core.dml_user_remove_avatar(${user.id_user}) as result`;
+		console.log(
+			'🚀 ~ file: user.store.ts ~ line 219 ~ returnnewPromise<any> ~ query',
+			query
+		);
+
 		try {
-			const response = await clientANGELPostgreSQL.query(query);
+			const response = await clientNASHORPostgreSQL.query(query);
 			resolve(response.rows[0]);
 		} catch (error: any) {
 			if (error.detail == '_database') {

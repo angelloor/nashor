@@ -6,7 +6,7 @@ dotenv.config({
 	path: path.join(path.resolve('./env'), process.env.NODE_ENV + '.env'),
 });
 
-const clientANGELPostgreSQL = new Client({
+const clientNASHORPostgreSQL = new Client({
 	user: process.env.BD_PG_USER,
 	host: process.env.BD_PG_HOST,
 	database: process.env.BD_PG_DATABASE,
@@ -14,6 +14,6 @@ const clientANGELPostgreSQL = new Client({
 	port: parseInt(`${process.env.BD_PG_PORT}`),
 });
 
-clientANGELPostgreSQL.connect();
+clientNASHORPostgreSQL.connect();
 
-export { clientANGELPostgreSQL };
+export { clientNASHORPostgreSQL };

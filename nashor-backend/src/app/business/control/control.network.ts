@@ -5,16 +5,6 @@ import { Control } from './control.class';
 import { validation } from './control.controller';
 const routerControl = express.Router();
 
-routerControl.post('/create', async (req: any, res: any) => {
-	await validation(req.body, req.url, req.headers.token)
-		.then((control: Control) => {
-			success(res, control);
-		})
-		.catch((err: MessageAPI | any) => {
-			error(res, err);
-		});
-});
-
 routerControl.get(
 	'/queryRead/:form_name_control',
 	async (req: any, res: any) => {
@@ -30,19 +20,6 @@ routerControl.get(
 
 routerControl.get(
 	'/byCompanyQueryRead/:company/:form_name_control',
-	async (req: any, res: any) => {
-		await validation(req.params, req.url, req.headers.token)
-			.then((controls: Control[]) => {
-				res.status(200).send(controls);
-			})
-			.catch((err: MessageAPI | any) => {
-				error(res, err);
-			});
-	}
-);
-
-routerControl.get(
-	'/byLevelAndCompanyRead/:company/:form_name_control',
 	async (req: any, res: any) => {
 		await validation(req.params, req.url, req.headers.token)
 			.then((controls: Control[]) => {

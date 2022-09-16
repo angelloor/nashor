@@ -2,12 +2,10 @@ import { _messages } from '../../../utils/message/message';
 import { Company } from '../../core/company/company.class';
 import { _company } from '../../core/company/company.data';
 import {
-	dml_control_create,
 	dml_control_delete,
 	dml_control_delete_cascade,
 	dml_control_update,
 	view_control_by_company_query_read,
-	view_control_by_level_and_company_read,
 	view_control_query_read,
 	view_control_specific_read,
 } from './control.store';
@@ -170,23 +168,6 @@ export class Control {
 	}
 
 	/** Methods */
-	create() {
-		return new Promise<Control>(async (resolve, reject) => {
-			await dml_control_create(this)
-				.then((controls: Control[]) => {
-					/**
-					 * Mutate response
-					 */
-					const _controls = this.mutateResponse(controls);
-
-					resolve(_controls[0]);
-				})
-				.catch((error: any) => {
-					reject(error);
-				});
-		});
-	}
-
 	queryRead() {
 		return new Promise<Control[]>(async (resolve, reject) => {
 			await view_control_query_read(this)
@@ -207,23 +188,6 @@ export class Control {
 	byCompanyQueryRead() {
 		return new Promise<Control[]>(async (resolve, reject) => {
 			await view_control_by_company_query_read(this)
-				.then((controls: Control[]) => {
-					/**
-					 * Mutate response
-					 */
-					const _controls = this.mutateResponse(controls);
-
-					resolve(_controls);
-				})
-				.catch((error: any) => {
-					reject(error);
-				});
-		});
-	}
-
-	byLevelAndCompanyRead() {
-		return new Promise<Control[]>(async (resolve, reject) => {
-			await view_control_by_level_and_company_read(this)
 				.then((controls: Control[]) => {
 					/**
 					 * Mutate response

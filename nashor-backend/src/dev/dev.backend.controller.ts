@@ -1240,7 +1240,7 @@ const generateEntityStore = (
 				// console.log(query);
 	
 				try {
-					const response = await clientANGELPostgreSQL.query(query);
+					const response = await clientNASHORPostgreSQL.query(query);
 					resolve(response.rows);
 				} catch (error: any) {
 					if (error.detail == '_database') {
@@ -1314,7 +1314,7 @@ const generateEntityStore = (
 	updateParams = updateParams.substring(0, updateParams.length - 2);
 
 	const classContent = `
-	import { clientANGELPostgreSQL } from '../../../utils/conections';
+	import { clientNASHORPostgreSQL } from '../../../utils/conections';
 	import { _messages } from '../../../utils/message/message';
 	import { ${entityToUpperCase(entity)} } from './${entity}.class';
 
@@ -1327,7 +1327,7 @@ const generateEntityStore = (
 			// console.log(query);
 
 			try {
-				const response = await clientANGELPostgreSQL.query(query);
+				const response = await clientNASHORPostgreSQL.query(query);
 				resolve(response.rows);
 			} catch (error: any) {
 				if (error.detail == '_database') {
@@ -1352,7 +1352,7 @@ const generateEntityStore = (
 			// console.log(query);
 
 			try {
-				const response = await clientANGELPostgreSQL.query(query);
+				const response = await clientNASHORPostgreSQL.query(query);
 				resolve(response.rows);
 			} catch (error: any) {
 				if (error.detail == '_database') {
@@ -1378,7 +1378,7 @@ const generateEntityStore = (
 			// console.log(query);
 
 			try {
-				const response = await clientANGELPostgreSQL.query(query);
+				const response = await clientNASHORPostgreSQL.query(query);
 				resolve(response.rows);
 			} catch (error: any) {
 				if (error.detail == '_database') {
@@ -1402,7 +1402,7 @@ const generateEntityStore = (
 			// console.log(query);
 
 			try {
-				const response = await clientANGELPostgreSQL.query(query);
+				const response = await clientNASHORPostgreSQL.query(query);
 				resolve(response.rows);
 			} catch (error: any) {
 				if (error.detail == '_database') {
@@ -1428,7 +1428,7 @@ const generateEntityStore = (
 			// console.log(query);
 			
 			try {
-				const response = await clientANGELPostgreSQL.query(query);
+				const response = await clientNASHORPostgreSQL.query(query);
 				resolve(response.rows[0].result);
 			} catch (error: any) {
 				if (error.detail == '_database') {
@@ -1493,8 +1493,8 @@ const generateRestServices = (
 	const dirspecificRead = `${basePath}/app/${scheme}/${entity}/2.${entity}.rest.specificRead.json`;
 	const dirUpdate = `${basePath}/app/${scheme}/${entity}/3.${entity}.rest.update.json`;
 	const dirDelete = `${basePath}/app/${scheme}/${entity}/4.${entity}.rest.delete.json`;
-	const nameVarUrlBaseApp = 'urlBaseApiEVWS';
-	const nameVarTokenApp = 'tokenEVWS';
+	const nameVarUrlBaseApp = 'urlBaseApiNASHOR';
+	const nameVarTokenApp = 'tokenNASHOR';
 	/**
 	 * Generate
 	 */

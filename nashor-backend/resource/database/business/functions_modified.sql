@@ -947,155 +947,155 @@ ALTER FUNCTION business.dml_item_update_modified(numeric, numeric, numeric, nume
 -- FUNCTION: business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
 -- DROP FUNCTION IF EXISTS business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric);
 
-CREATE OR REPLACE FUNCTION business.dml_control_create(
-	id_user_ numeric,
-	_id_company numeric,
-	_type_control business."TYPE_CONTROL",
-	_title_control character varying,
-	_form_name_control character varying,
-	_initial_value_control character varying,
-	_required_control boolean,
-	_min_length_control numeric,
-	_max_length_control numeric,
-	_placeholder_control character varying,
-	_spell_check_control boolean,
-	_options_control json,
-	_in_use boolean,
-	_deleted_control boolean,
-	_id_template numeric)
-    RETURNS numeric
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
-DECLARE
-	_RESPONSE BOOLEAN DEFAULT false;
-	_COUNT NUMERIC;
-	_COUNT_ATT NUMERIC;
-	_COUNT_EXTERNALS_IDS NUMERIC;
-	_RETURNING NUMERIC;
-	_CURRENT_ID NUMERIC;
-	_X RECORD;
-	_SAVE_LOG BOOLEAN DEFAULT false;
-	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
-BEGIN 
-	-- company
-	_COUNT_EXTERNALS_IDS = (select count(*) from core.view_company v where v.id_company = _id_company);
+-- CREATE OR REPLACE FUNCTION business.dml_control_create(
+-- 	id_user_ numeric,
+-- 	_id_company numeric,
+-- 	_type_control business."TYPE_CONTROL",
+-- 	_title_control character varying,
+-- 	_form_name_control character varying,
+-- 	_initial_value_control character varying,
+-- 	_required_control boolean,
+-- 	_min_length_control numeric,
+-- 	_max_length_control numeric,
+-- 	_placeholder_control character varying,
+-- 	_spell_check_control boolean,
+-- 	_options_control json,
+-- 	_in_use boolean,
+-- 	_deleted_control boolean,
+-- 	_id_template numeric)
+--     RETURNS numeric
+--     LANGUAGE 'plpgsql'
+--     COST 100
+--     VOLATILE PARALLEL UNSAFE
+-- AS $BODY$
+-- DECLARE
+-- 	_RESPONSE BOOLEAN DEFAULT false;
+-- 	_COUNT NUMERIC;
+-- 	_COUNT_ATT NUMERIC;
+-- 	_COUNT_EXTERNALS_IDS NUMERIC;
+-- 	_RETURNING NUMERIC;
+-- 	_CURRENT_ID NUMERIC;
+-- 	_X RECORD;
+-- 	_SAVE_LOG BOOLEAN DEFAULT false;
+-- 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+-- BEGIN 
+-- 	-- company
+-- 	_COUNT_EXTERNALS_IDS = (select count(*) from core.view_company v where v.id_company = _id_company);
 		
-	IF (_COUNT_EXTERNALS_IDS = 0) THEN
-		_EXCEPTION = 'El id '||_id_company||' de la tabla company no se encuentra registrado';
-		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-	END IF;
+-- 	IF (_COUNT_EXTERNALS_IDS = 0) THEN
+-- 		_EXCEPTION = 'El id '||_id_company||' de la tabla company no se encuentra registrado';
+-- 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+-- 	END IF;
 			
-	_CURRENT_ID = (select nextval('business.serial_control')-1);
-	_COUNT = (select count(*) from business.view_control t where t.id_control = _CURRENT_ID);
+-- 	_CURRENT_ID = (select nextval('business.serial_control')-1);
+-- 	_COUNT = (select count(*) from business.view_control t where t.id_control = _CURRENT_ID);
 	
-	IF (_COUNT = 0) THEN
-		_COUNT_ATT = (select count(*) from business.view_template_control bvtc
-			inner join business.view_control bvc on bvtc.id_control = bvc.id_control
-			where bvc.form_name_control = _form_name_control and bvtc.id_template = _id_template);
+-- 	IF (_COUNT = 0) THEN
+-- 		_COUNT_ATT = (select count(*) from business.view_template_control bvtc
+-- 			inner join business.view_control bvc on bvtc.id_control = bvc.id_control
+-- 			where bvc.form_name_control = _form_name_control and bvtc.id_template = _id_template);
 			
-		IF (_COUNT_ATT = 0) THEN 
-			FOR _X IN INSERT INTO business.control(id_control, id_company, type_control, title_control, form_name_control, initial_value_control, required_control, min_length_control, max_length_control, placeholder_control, spell_check_control, options_control, in_use, deleted_control) VALUES (_CURRENT_ID, $2 ,$3 ,$4 ,$5 ,$6 ,$7 ,$8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14) RETURNING id_control LOOP
-				_RETURNING = _X.id_control;
-			END LOOP;
+-- 		IF (_COUNT_ATT = 0) THEN 
+-- 			FOR _X IN INSERT INTO business.control(id_control, id_company, type_control, title_control, form_name_control, initial_value_control, required_control, min_length_control, max_length_control, placeholder_control, spell_check_control, options_control, in_use, deleted_control) VALUES (_CURRENT_ID, $2 ,$3 ,$4 ,$5 ,$6 ,$7 ,$8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14) RETURNING id_control LOOP
+-- 				_RETURNING = _X.id_control;
+-- 			END LOOP;
 			
-			IF (_RETURNING >= 1) THEN
-				_SAVE_LOG = (select cvuij.save_log from core.view_user_inner_join_cvc_cvs cvuij
-					where cvuij.id_user = id_user_);
+-- 			IF (_RETURNING >= 1) THEN
+-- 				_SAVE_LOG = (select cvuij.save_log from core.view_user_inner_join_cvc_cvs cvuij
+-- 					where cvuij.id_user = id_user_);
 
-				IF (_SAVE_LOG) THEN
-					_RESPONSE = (select * from core.dml_system_event_create(id_user_,'control',_CURRENT_ID,'CREATE', now()::timestamp, false));
+-- 				IF (_SAVE_LOG) THEN
+-- 					_RESPONSE = (select * from core.dml_system_event_create(id_user_,'control',_CURRENT_ID,'CREATE', now()::timestamp, false));
 					
-					IF (_RESPONSE != true) THEN
-						_EXCEPTION = 'Ocurrió un error al registrar el evento del sistema';
-						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-					ELSE
-						RETURN _CURRENT_ID;
-					END IF;
-				ELSE 
-					RETURN _CURRENT_ID;
-				END IF;
-			ELSE
-				_EXCEPTION = 'Ocurrió un error al insertar el registro';
-				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-			END IF;
-		ELSE
-			_EXCEPTION = 'Ya existe un registro con el form_name_control '||_form_name_control||'';
-			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-		END IF;
-	ELSE
-		_EXCEPTION = 'El registro con id '||_CURRENT_ID||' ya se encuentra registrado en la tabla control';
-		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-	END IF;
-	exception when others then 
-		-- RAISE NOTICE '%', SQLERRM;
-		IF (_CURRENT_ID >= 1) THEN
-			EXECUTE 'select setval(''business.serial_control'', '||_CURRENT_ID||')';
-		END IF;
-		IF (_EXCEPTION = 'Internal Error') THEN
-			RAISE EXCEPTION '%', 'dml_control_create -> '||SQLERRM||'' USING DETAIL = '_database';
-		ELSE
-			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-		END IF;
-END;
-$BODY$;
+-- 					IF (_RESPONSE != true) THEN
+-- 						_EXCEPTION = 'Ocurrió un error al registrar el evento del sistema';
+-- 						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+-- 					ELSE
+-- 						RETURN _CURRENT_ID;
+-- 					END IF;
+-- 				ELSE 
+-- 					RETURN _CURRENT_ID;
+-- 				END IF;
+-- 			ELSE
+-- 				_EXCEPTION = 'Ocurrió un error al insertar el registro';
+-- 				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+-- 			END IF;
+-- 		ELSE
+-- 			_EXCEPTION = 'Ya existe un registro con el form_name_control '||_form_name_control||'';
+-- 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+-- 		END IF;
+-- 	ELSE
+-- 		_EXCEPTION = 'El registro con id '||_CURRENT_ID||' ya se encuentra registrado en la tabla control';
+-- 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+-- 	END IF;
+-- 	exception when others then 
+-- 		-- RAISE NOTICE '%', SQLERRM;
+-- 		IF (_CURRENT_ID >= 1) THEN
+-- 			EXECUTE 'select setval(''business.serial_control'', '||_CURRENT_ID||')';
+-- 		END IF;
+-- 		IF (_EXCEPTION = 'Internal Error') THEN
+-- 			RAISE EXCEPTION '%', 'dml_control_create -> '||SQLERRM||'' USING DETAIL = '_database';
+-- 		ELSE
+-- 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+-- 		END IF;
+-- END;
+-- $BODY$;
 
-ALTER FUNCTION business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
-    OWNER TO postgres;
+-- ALTER FUNCTION business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
+--     OWNER TO postgres;
 
 -- FUNCTION: business.dml_control_create_modified(numeric, numeric, numeric)
 -- DROP FUNCTION IF EXISTS business.dml_control_create_modified(numeric, numeric, numeric);
 
-CREATE OR REPLACE FUNCTION business.dml_control_create_modified(
-	id_user_ numeric,
-	_id_company numeric,
-	_id_template numeric)
-    RETURNS TABLE(id_control numeric, id_company numeric, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, deleted_control boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-    ROWS 1000
+-- CREATE OR REPLACE FUNCTION business.dml_control_create_modified(
+-- 	id_user_ numeric,
+-- 	_id_company numeric,
+-- 	_id_template numeric)
+--     RETURNS TABLE(id_control numeric, id_company numeric, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, deleted_control boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
+--     LANGUAGE 'plpgsql'
+--     COST 100
+--     VOLATILE PARALLEL UNSAFE
+--     ROWS 1000
 
-AS $BODY$
-DECLARE
-	_ID_CONTROL NUMERIC;
-	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
-BEGIN
-	_ID_CONTROL = (select * from business.dml_control_create(id_user_, _ID_COMPANY, 'input', 'Nuevo control', 'form_control', '', false, 1, 1, '', false, '[
-	  {
-		"name": "One",
-		"value": "one"
-	  },
-	  {
-		"name": "Two",
-		"value": "two"
-	  },
-	  {
-		"name": "Three",
-		"value": "three"
-	  }
-	]', false, false, _id_template));
+-- AS $BODY$
+-- DECLARE
+-- 	_ID_CONTROL NUMERIC;
+-- 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+-- BEGIN
+-- 	_ID_CONTROL = (select * from business.dml_control_create(id_user_, _ID_COMPANY, 'input', 'Nuevo control', 'form_control', '', false, 1, 1, '', false, '[
+-- 	  {
+-- 		"name": "One",
+-- 		"value": "one"
+-- 	  },
+-- 	  {
+-- 		"name": "Two",
+-- 		"value": "two"
+-- 	  },
+-- 	  {
+-- 		"name": "Three",
+-- 		"value": "three"
+-- 	  }
+-- 	]', false, false, _id_template));
 	
-	IF (_ID_CONTROL >= 1) THEN
-		RETURN QUERY select * from business.view_control_inner_join bvcij 
-			where bvcij.id_control = _ID_CONTROL;
-	ELSE
-		_EXCEPTION = 'Ocurrió un error al ingresar control';
-		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-	END IF;
-	exception when others then 
-		-- RAISE NOTICE '%', SQLERRM;
-		IF (_EXCEPTION = 'Internal Error') THEN
-			RAISE EXCEPTION '%', 'dml_control_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
-		ELSE
-			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
-		END IF;
-END;
-$BODY$;
+-- 	IF (_ID_CONTROL >= 1) THEN
+-- 		RETURN QUERY select * from business.view_control_inner_join bvcij 
+-- 			where bvcij.id_control = _ID_CONTROL;
+-- 	ELSE
+-- 		_EXCEPTION = 'Ocurrió un error al ingresar control';
+-- 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+-- 	END IF;
+-- 	exception when others then 
+-- 		-- RAISE NOTICE '%', SQLERRM;
+-- 		IF (_EXCEPTION = 'Internal Error') THEN
+-- 			RAISE EXCEPTION '%', 'dml_control_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+-- 		ELSE
+-- 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+-- 		END IF;
+-- END;
+-- $BODY$;
 
-ALTER FUNCTION business.dml_control_create_modified(numeric, numeric, numeric)
-    OWNER TO postgres;
+-- ALTER FUNCTION business.dml_control_create_modified(numeric, numeric, numeric)
+--     OWNER TO postgres;
 
 -- FUNCTION: business.dml_control_update(numeric, numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
 -- DROP FUNCTION IF EXISTS business.dml_control_update(numeric, numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric);
@@ -2343,10 +2343,16 @@ DECLARE
 	_ID_LEVEL_PROFILE_OFFICIAL NUMERIC;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
+
 	-- Descartar officials que ya esten asignadas en el level_profile
 	_ID_OFFICIAL = (select officials.id_official from (select bvo.id_official from business.view_official bvo) as officials
 		LEFT JOIN (select distinct bvlpo.id_official from business.view_level_profile_official bvlpo where bvlpo.id_level_profile = _id_level_profile) as assignedOfficials
 		on officials.id_official = assignedOfficials.id_official where assignedOfficials.id_official IS NULL order by officials.id_official asc limit 1);
+	
+	IF (_ID_OFFICIAL IS NULL) THEN 
+		_EXCEPTION = 'No se encontró officials registrados';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
 	
 	_ID_LEVEL_PROFILE_OFFICIAL = (select business.dml_level_profile_official_create(id_user_, _id_level_profile, _ID_OFFICIAL, false));
 	
@@ -3292,7 +3298,7 @@ CREATE OR REPLACE FUNCTION business.dml_task_update_modified(
 	_type_action_task business."TYPE_ACTION_TASK",
 	_action_date_task timestamp without time zone,
 	_deleted_task boolean)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying,creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3340,7 +3346,7 @@ CREATE OR REPLACE FUNCTION business.dml_task_reasign(
 	_type_action_task business."TYPE_ACTION_TASK",
 	_action_date_task timestamp without time zone,
 	_deleted_task boolean)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying,creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3348,6 +3354,7 @@ CREATE OR REPLACE FUNCTION business.dml_task_reasign(
 
 AS $BODY$
 DECLARE
+	_COUNT NUMERIC;
 	_ID_OFFICIAL_PRIMARY NUMERIC;
  	_UPDATE_TASK BOOLEAN;
 	_ID_NEW_TASK NUMERIC;
@@ -3356,6 +3363,13 @@ DECLARE
 	_NUMBER_TASK_NEW_TASK CHARACTER VARYING;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
+	_COUNT = (select count(*) from business.view_task t where t.id_task = _id_task);
+	
+	IF (_COUNT = 0) THEN 
+		_EXCEPTION = 'El registro con id '||_id_task||' no se encuentra registrado en la tabla task';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+
 	_ID_OFFICIAL_PRIMARY = (select bvt.id_official from business.view_task bvt where bvt.id_task = _id_task);
 
  	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _ID_OFFICIAL_PRIMARY, _id_level, _number_task, _creation_date_task, 'finished', 'reassigned', now()::timestamp, _deleted_task));
@@ -3412,7 +3426,7 @@ CREATE OR REPLACE FUNCTION business.dml_task_send(
 	_type_action_task business."TYPE_ACTION_TASK",
 	_action_date_task timestamp without time zone,
 	_deleted_task boolean)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying,creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3420,10 +3434,10 @@ CREATE OR REPLACE FUNCTION business.dml_task_send(
 
 AS $BODY$
 DECLARE
+	_COUNT NUMERIC;
 	_ID_OFFICIAL_PRIMARY NUMERIC;
  	_UPDATE_TASK BOOLEAN;
 	_POSITION_LEVEL_CURRENT_LEVEL NUMERIC;
-	
 	_POSITION_LEVEL_NEXT_LEVEL NUMERIC DEFAULT 0;
 	_TYPE_ELEMENT_NEXT_LEVEL business."TYPE_ELEMENT";
 	_ID_CONTROL_NEXT_LEVEL CHARACTER VARYING;
@@ -3441,6 +3455,13 @@ DECLARE
 	_X RECORD;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
+	_COUNT = (select count(*) from business.view_task t where t.id_task = _id_task);
+	
+	IF (_COUNT = 0) THEN 
+		_EXCEPTION = 'El registro con id '||_id_task||' no se encuentra registrado en la tabla task';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+
 	_ID_OFFICIAL_PRIMARY = (select bvt.id_official from business.view_task bvt where bvt.id_task = _id_task);
 
  	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _ID_OFFICIAL_PRIMARY, _id_level, _number_task, _creation_date_task, 'finished', 'dispatched', now()::timestamp, _deleted_task));

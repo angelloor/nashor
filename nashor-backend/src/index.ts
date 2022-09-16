@@ -1,4 +1,4 @@
-import cluster from 'cluster';
+// import cluster from 'cluster';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -9,10 +9,12 @@ import path from 'path';
 import { appRoutes } from './network/routes';
 const app = express();
 let numCpu = os.cpus().length;
-if (process.env.NODE_ENV == 'production') {
-	console.log(`Cores: ${numCpu}`);
-}
+
 numCpu = numCpu === 0 ? 1 : numCpu;
+
+if (process.env.NODE_ENV == 'production') {
+	console.log(`Cores -> ${numCpu}`);
+}
 
 const PRODUCTION_PORT = 80;
 const DEVELOPMENT_PORT = 3000;
@@ -81,34 +83,34 @@ appRoutes(app);
 /**
  * Cluster
  */
-if (cluster.isPrimary) {
-	for (let i = 0; i < numCpu; i++) {
-		cluster.fork();
-	}
-	cluster.on('exit', (worker, code, signal) => {
-		console.log(`worker ${worker.process.pid} died`);
-		cluster.fork();
-	});
-} else {
-	var httpServer = http.createServer(app);
-	httpServer.listen(
-		process.env.NODE_ENV == 'production' ? PRODUCTION_PORT : DEVELOPMENT_PORT
-	);
-	console.log(
-		`The app is listening on http://localhost:${
-			process.env.NODE_ENV == 'production' ? PRODUCTION_PORT : DEVELOPMENT_PORT
-		} PID ${process.pid}`
-	);
-}
+// if (cluster.isPrimary) {
+// 	for (let i = 0; i < numCpu; i++) {
+// 		cluster.fork();
+// 	}
+// 	cluster.on('exit', (worker, code, signal) => {
+// 		console.log(`worker ${worker.process.pid} died`);
+// 		cluster.fork();
+// 	});
+// } else {
+// 	var httpServer = http.createServer(app);
+// 	httpServer.listen(
+// 		process.env.NODE_ENV == 'production' ? PRODUCTION_PORT : DEVELOPMENT_PORT
+// 	);
+// 	console.log(
+// 		`The app is listening on http://localhost:${
+// 			process.env.NODE_ENV == 'production' ? PRODUCTION_PORT : DEVELOPMENT_PORT
+// 		} PID ${process.pid}`
+// 	);
+// }
 /**
  * Cluster
  */
-// var httpServer = http.createServer(app);
-// httpServer.listen(
-// 	process.env.NODE_ENV == 'production' ? PRODUCTION_PORT : DEVELOPMENT_PORT
-// );
-// console.log(
-// 	`The app is listening on http://localhost:${
-// 		process.env.NODE_ENV == 'production' ? PRODUCTION_PORT : DEVELOPMENT_PORT
-// 	} PID ${process.pid}`
-// );
+var httpServer = http.createServer(app);
+httpServer.listen(
+	process.env.NODE_ENV == 'production' ? PRODUCTION_PORT : DEVELOPMENT_PORT
+);
+console.log(
+	`The app is listening on http://localhost:${
+		process.env.NODE_ENV == 'production' ? PRODUCTION_PORT : DEVELOPMENT_PORT
+	} PID ${process.pid}`
+);

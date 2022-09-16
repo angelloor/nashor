@@ -42,7 +42,7 @@ routerValidation.get(
 );
 
 routerValidation.get(
-	'/specificRead/:id_validation',
+	'/byTypeValidationQueryRead/:company/:type_validation',
 	async (req: any, res: any) => {
 		await validation(req.params, req.url, req.headers.token)
 			.then((validation: Validation) => {
@@ -55,7 +55,7 @@ routerValidation.get(
 );
 
 routerValidation.get(
-	'/byTypeValidationQueryRead/:company/:type_validation',
+	'/specificRead/:id_validation',
 	async (req: any, res: any) => {
 		await validation(req.params, req.url, req.headers.token)
 			.then((validation: Validation) => {

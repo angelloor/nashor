@@ -191,19 +191,7 @@ export const validation = (control: Control, url: string, token: string) => {
 							/**
 							 * Execute the url depending on the path
 							 */
-							if (url == '/create') {
-								/** set required attributes for action */
-								_control.id_user_ = control.id_user_;
-								_control.company = control.company;
-								await _control
-									.create()
-									.then((_control: Control) => {
-										resolve(_control);
-									})
-									.catch((error: any) => {
-										reject(error);
-									});
-							} else if (url.substring(0, 10) == '/queryRead') {
+							if (url.substring(0, 10) == '/queryRead') {
 								/** set required attributes for action */
 								_control.form_name_control = control.form_name_control;
 								await _control
@@ -223,30 +211,6 @@ export const validation = (control: Control, url: string, token: string) => {
 									_control.form_name_control = control.form_name_control;
 									await _control
 										.byCompanyQueryRead()
-										.then((_controls: Control[]) => {
-											resolve(_controls);
-										})
-										.catch((error: any) => {
-											reject(error);
-										});
-								} else {
-									reject({
-										..._messages[11],
-										description: _messages[11].description.replace(
-											'name_entity',
-											'company'
-										),
-									});
-								}
-							} else if (url.substring(0, 22) == '/byLevelAndCompanyRead') {
-								const id_company: any = control.company;
-
-								if (id_company >= 1) {
-									/** set required attributes for action */
-									_control.company = control.company;
-									_control.form_name_control = control.form_name_control;
-									await _control
-										.byLevelAndCompanyRead()
 										.then((_controls: Control[]) => {
 											resolve(_controls);
 										})

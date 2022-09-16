@@ -1,7 +1,5 @@
-// import cluster from 'cluster';
-import cluster from 'cluster';
 import express from 'express';
-import { error, success, workerKill } from '../../../network/response';
+import { error, success } from '../../../network/response';
 import { uploadAvatar } from '../../../utils/fileStorage';
 import { MessageAPI } from '../../../utils/message/message.type';
 import { User } from './user.class';
@@ -130,7 +128,7 @@ routerUser.post('/reportUser', async (req: any, res: any) => {
 				/**
 				 * workerKill in res.sendFile
 				 */
-				workerKill(cluster);
+				// workerKill(cluster);
 				res.sendFile(response.pathFinal);
 			}
 		})
