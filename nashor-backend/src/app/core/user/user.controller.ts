@@ -145,8 +145,8 @@ export const validation = (user: User, url: string, token: string) => {
 
 					if (url == '/update') {
 						attributeValidate(
-							'nivel_academic',
-							user.person.academic.nivel_academic,
+							'level_academic',
+							user.person.academic.level_academic,
 							'string',
 							100
 						).catch((err) => {

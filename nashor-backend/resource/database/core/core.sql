@@ -550,13 +550,13 @@ DECLARE
 	_RESPONSE4 NUMERIC DEFAULT 0;
 	_X RECORD;
 BEGIN
-	-- Administrador (Por defecto)
+	-- Super Administrador (Por defecto)
 	_CURRENT_ID_NAVIGATION = (select nextval('core.serial_navigation')-1);	
 	_ID_INITIAL = _CURRENT_ID_NAVIGATION;
 	
 	FOR _X IN INSERT INTO core.navigation(
 		id_navigation, id_company, name_navigation, description_navigation, type_navigation, status_navigation, content_navigation, deleted_navigation)
-		VALUES (_CURRENT_ID_NAVIGATION, 1, 'Administrador (Por defecto)', 'Navegación por defecto para el administrador', 'defaultNavigation', true, '[
+		VALUES (_CURRENT_ID_NAVIGATION, 1, 'Super Administrador (Por defecto)', 'Navegación por defecto para el super administrador', 'defaultNavigation', true, '[
 	{
 		"id": "core",
 		"title": "Core",
@@ -671,6 +671,13 @@ BEGIN
 				"type": "collapsable",
 				"icon": "mat_outline:ballot",
 				"children": [
+					{
+						"id": "business.plugin-item",
+						"title": "Plugin Item",
+						"type": "basic",
+						"icon": "mat_outline:category",
+						"link": "/business/plugin-item"
+					},
 					{
 						"id": "business.item-category",
 						"title": "Categoría del artículo",
@@ -758,11 +765,11 @@ BEGIN
 	END LOOP;
 		
 		
-	-- Administrador (Compacta)
+	-- Super Administrador (Compacta)
 	_CURRENT_ID_NAVIGATION = (select nextval('core.serial_navigation')-1);	
 	FOR _X IN INSERT INTO core.navigation(
 		id_navigation, id_company, name_navigation, description_navigation, type_navigation, status_navigation, content_navigation, deleted_navigation)
-		VALUES (_CURRENT_ID_NAVIGATION, 1, 'Administrador (Compacta)', 'Navegación compacta para el administrador', 'compactNavigation',  true, '[
+		VALUES (_CURRENT_ID_NAVIGATION, 1, 'Super Administrador (Compacta)', 'Navegación compacta para el super administrador', 'compactNavigation',  true, '[
   {
     "id": "core",
     "title": "Core",
@@ -788,11 +795,11 @@ BEGIN
 			_RESPONSE2 = _X.id_navigation;
 	END LOOP;
 				
-	-- Administrador (Futurista)
+	-- Super Administrador (Futurista)
 	_CURRENT_ID_NAVIGATION = (select nextval('core.serial_navigation')-1);	
 	FOR _X IN INSERT INTO core.navigation(
 		id_navigation, id_company, name_navigation, description_navigation, type_navigation, status_navigation, content_navigation, deleted_navigation)
-		VALUES (_CURRENT_ID_NAVIGATION, 1, 'Administrador (Futurista)', 'Navegación futurista para el administrador', 'futuristicNavigation',  true, '[
+		VALUES (_CURRENT_ID_NAVIGATION, 1, 'Super Administrador (Futurista)', 'Navegación futurista para el super administrador', 'futuristicNavigation',  true, '[
 	{
 		"id": "core",
 		"title": "Core",
@@ -908,6 +915,13 @@ BEGIN
 				"icon": "mat_outline:ballot",
 				"children": [
 					{
+						"id": "business.plugin-item",
+						"title": "Plugin Item",
+						"type": "basic",
+						"icon": "mat_outline:category",
+						"link": "/business/plugin-item"
+					},
+					{
 						"id": "business.item-category",
 						"title": "Categoría del artículo",
 						"type": "basic",
@@ -994,11 +1008,11 @@ BEGIN
 	END LOOP;
 		
 		
-	-- Administrador (Horizontal)
+	-- Super Administrador (Horizontal)
 	_CURRENT_ID_NAVIGATION = (select nextval('core.serial_navigation')-1);	
 	FOR _X IN INSERT INTO core.navigation(
 		id_navigation, id_company, name_navigation, description_navigation, type_navigation, status_navigation, content_navigation, deleted_navigation)
-		VALUES (_CURRENT_ID_NAVIGATION, 1, 'Administrador (Horizontal)', 'Navegación horizontal para el administrador', 'horizontalNavigation', true, '[
+		VALUES (_CURRENT_ID_NAVIGATION, 1, 'Super Administrador (Horizontal)', 'Navegación horizontal para el super administrador', 'horizontalNavigation', true, '[
   {
     "id": "core",
     "title": "Core",
@@ -1110,7 +1124,7 @@ BEGIN
 			END LOOP;
 
 			_CURRENT_ID_ACADEMIC = (select nextval('core.serial_academic')-1);	
-			FOR _X IN INSERT INTO core.academic(id_academic, title_academic, abbreviation_academic, nivel_academic, deleted_academic) VALUES (_CURRENT_ID_ACADEMIC, '', '', '', false) RETURNING id_academic LOOP
+			FOR _X IN INSERT INTO core.academic(id_academic, title_academic, abbreviation_academic, level_academic, deleted_academic) VALUES (_CURRENT_ID_ACADEMIC, '', '', '', false) RETURNING id_academic LOOP
 				_ID_ACADEMIC = _X.id_academic;
 			END LOOP;
 			
@@ -1134,13 +1148,13 @@ BEGIN
 							_CURRENT_ID_PROFILE = (select nextval('core.serial_profile')-1);
 							_ID_INITIAL_PROFILE = _CURRENT_ID_PROFILE;
 							
-							FOR _X IN INSERT INTO core.profile(id_profile, id_company, type_profile, name_profile, description_profile, status_profile, deleted_profile) VALUES (_CURRENT_ID_PROFILE, _ID_COMPANY, 'administator', 'Perfil Administrador', 'Perfil de usuario para el administrador', true, false) RETURNING id_profile LOOP
+							FOR _X IN INSERT INTO core.profile(id_profile, id_company, type_profile, name_profile, description_profile, status_profile, deleted_profile) VALUES (_CURRENT_ID_PROFILE, _ID_COMPANY, 'administator', 'Perfil Super Administrador', 'Perfil de usuario para el super administrador', true, false) RETURNING id_profile LOOP
 								_ID_PROFILE = _X.id_profile;
 							END LOOP;
 							
 							_CURRENT_ID_TYPE_USER = (select nextval('core.serial_type_user')-1);
 							
-							FOR _X IN INSERT INTO core.type_user(id_type_user, id_company, id_profile, name_type_user, description_type_user, status_type_user, deleted_type_user) VALUES (_CURRENT_ID_TYPE_USER, _ID_COMPANY, _ID_PROFILE, 'Administrador', 'Tipo de usuario para el administrador', true, false) RETURNING id_type_user LOOP
+							FOR _X IN INSERT INTO core.type_user(id_type_user, id_company, id_profile, name_type_user, description_type_user, status_type_user, deleted_type_user) VALUES (_CURRENT_ID_TYPE_USER, _ID_COMPANY, _ID_PROFILE, 'Super Administrador', 'Tipo de usuario para el super administrador', true, false) RETURNING id_type_user LOOP
 								_ID_TYPE_USER = _X.id_type_user;
 							END LOOP;
 							

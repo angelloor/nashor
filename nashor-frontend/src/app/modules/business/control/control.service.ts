@@ -116,29 +116,6 @@ export class ControlService {
       );
   }
   /**
-   * byLevelAndCompanyRead
-   * @param id_company
-   * @param id_level
-   */
-  byLevelAndCompanyRead(
-    id_company: string,
-    id_level: string
-  ): Observable<Control[]> {
-    return this._httpClient
-      .get<Control[]>(
-        this._url + `/byLevelAndCompanyRead/${id_company}/${id_level}`
-      )
-      .pipe(
-        tap((controls: Control[]) => {
-          if (controls) {
-            this._controls.next(controls);
-          } else {
-            this._controls.next([]);
-          }
-        })
-      );
-  }
-  /**
    * specificRead
    * @param id_control
    */

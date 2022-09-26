@@ -13,6 +13,8 @@ import { routerLevelProfile } from '../app/business/level_profile/level_profile.
 import { routerLevelProfileOfficial } from '../app/business/level_profile_official/level_profile_official.network';
 import { routerLevelStatus } from '../app/business/level_status/level_status.network';
 import { routerOfficial } from '../app/business/official/official.network';
+import { routerPluginItem } from '../app/business/plugin_item/plugin_item.network';
+import { routerPluginItemColumn } from '../app/business/plugin_item_column/plugin_item_column.network';
 import { routerPosition } from '../app/business/position/position.network';
 import { routerProcess } from '../app/business/process/process.network';
 import { routerProcessAttached } from '../app/business/process_attached/process_attached.network';
@@ -75,6 +77,8 @@ export const appRoutes = (app: any) => {
 	app.use('/app/business/item_category', routerItemCategory);
 	app.use('/app/business/item', routerItem);
 	app.use('/app/business/control', routerControl);
+	app.use('/app/business/plugin_item', routerPluginItem);
+	app.use('/app/business/plugin_item_column', routerPluginItemColumn);
 	app.use('/app/business/template', routerTemplate);
 	app.use('/app/business/template_control', routerTemplateControl);
 	app.use('/app/business/flow', routerFlow);

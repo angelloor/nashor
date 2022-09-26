@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  ViewEncapsulation,
+  ViewEncapsulation
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppInitialData, MessageAPI } from 'app/core/app/app.type';
@@ -118,15 +118,6 @@ export class SettingsAccountComponent implements OnInit {
      * isOpenModal
      */
     /**
-     * Subscribe to user changes of state
-     */
-    this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
-      this.data = state.global;
-      this.id_user = this.data.user.id_user;
-      this.id_company = this.data.user.company.id_company;
-      this.type_profile = this.data.user.type_user.profile.type_profile;
-    });
-    /**
      * Create the user form
      */
     this.userForm = this._formBuilder.group({
@@ -148,7 +139,7 @@ export class SettingsAccountComponent implements OnInit {
       id_academic: [''],
       title_academic: ['', [Validators.maxLength(250)]],
       abbreviation_academic: ['', [Validators.maxLength(50)]],
-      nivel_academic: ['', [Validators.maxLength(100)]],
+      level_academic: ['', [Validators.maxLength(100)]],
 
       id_job: [''],
       name_job: ['', [Validators.maxLength(200)]],
@@ -156,7 +147,21 @@ export class SettingsAccountComponent implements OnInit {
       phone_job: ['', [Validators.maxLength(13)]],
       position_job: ['', [Validators.maxLength(150)]],
 
-      id_type_user: ['', [Validators.required]],
+      id_type_user: [{ value: '', disabled: false }, [Validators.required]],
+    });
+    /**
+     * Subscribe to user changes of state
+     */
+    this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
+      this.data = state.global;
+      this.id_user = this.data.user.id_user;
+      this.id_company = this.data.user.company.id_company;
+      this.type_profile = this.data.user.type_user.profile.type_profile;
+      if (this.type_profile != 'administator') {
+        this.userForm.get('id_type_user')?.disable();
+        this.userForm.get('status_user')?.disable();
+        this.userForm.get('id_company')?.disable();
+      }
     });
     /**
      * Patch values to the form
@@ -358,7 +363,7 @@ export class SettingsAccountComponent implements OnInit {
       id_academic: this.user.person.academic.id_academic,
       title_academic: this.user.person.academic.title_academic,
       abbreviation_academic: this.user.person.academic.abbreviation_academic,
-      nivel_academic: this.user.person.academic.nivel_academic,
+      level_academic: this.user.person.academic.level_academic,
 
       id_job: this.user.person.job.id_job,
       name_job: this.user.person.job.name_job,
@@ -412,7 +417,7 @@ export class SettingsAccountComponent implements OnInit {
           id_academic: parseInt(user.id_academic),
           title_academic: user.title_academic.trim(),
           abbreviation_academic: user.abbreviation_academic.trim(),
-          nivel_academic: user.nivel_academic.trim(),
+          level_academic: user.level_academic.trim(),
         },
         job: {
           id_job: parseInt(user.id_job),

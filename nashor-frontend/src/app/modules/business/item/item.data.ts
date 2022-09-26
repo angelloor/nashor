@@ -9,6 +9,5 @@ export const item: Item = {
   item_category: itemCategory,
   name_item: ' ',
   description_item: ' ',
-  cpc_item: ' ',
   deleted_item: false,
 };

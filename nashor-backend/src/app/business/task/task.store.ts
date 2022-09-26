@@ -237,7 +237,7 @@ export const dml_task_send = (task: Task) => {
 			'${task.action_date_task}',
 			${task.deleted_task})`;
 
-		// console.log(query);
+		console.log(query);
 
 		try {
 			const response = await clientNASHORPostgreSQL.query(query);

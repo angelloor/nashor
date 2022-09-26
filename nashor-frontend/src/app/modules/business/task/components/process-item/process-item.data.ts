@@ -13,7 +13,4 @@ export const processItem: ProcessItem = {
   task: task,
   level: level,
   item: item,
-  amount_process_item: 1,
-  features_process_item: ' ',
-  entry_date_process_item: ' ',
 };

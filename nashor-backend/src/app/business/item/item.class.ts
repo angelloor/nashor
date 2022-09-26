@@ -20,7 +20,6 @@ export class Item {
 	public item_category: ItemCategory;
 	public name_item?: string;
 	public description_item?: string;
-	public cpc_item?: string;
 	public deleted_item?: boolean;
 	/** Constructor */
 	constructor(
@@ -30,7 +29,6 @@ export class Item {
 		item_category: ItemCategory = _itemCategory,
 		name_item: string = '',
 		description_item: string = '',
-		cpc_item: string = '',
 		deleted_item: boolean = false
 	) {
 		this.id_user_ = id_user_;
@@ -39,7 +37,6 @@ export class Item {
 		this.item_category = item_category;
 		this.name_item = name_item;
 		this.description_item = description_item;
-		this.cpc_item = cpc_item;
 		this.deleted_item = deleted_item;
 	}
 	/** Setters and Getters */
@@ -83,13 +80,6 @@ export class Item {
 	}
 	get _description_item() {
 		return this.description_item!;
-	}
-
-	set _cpc_item(cpc_item: string) {
-		this.cpc_item = cpc_item;
-	}
-	get _cpc_item() {
-		return this.cpc_item!;
 	}
 
 	set _deleted_item(deleted_item: boolean) {

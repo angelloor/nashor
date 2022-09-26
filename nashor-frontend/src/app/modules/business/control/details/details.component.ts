@@ -40,7 +40,7 @@ export class ControlDetailsComponent implements OnInit {
   /**
    * ajv
    */
-  ajv = new Ajv({ allErrors: true });
+  ajv = new Ajv({ allErrors: true, strictTuples: false });
   schema = schemaFile;
   /**
    * ajv

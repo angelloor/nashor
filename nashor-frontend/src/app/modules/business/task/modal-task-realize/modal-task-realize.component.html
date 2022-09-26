@@ -24,7 +24,7 @@
                                         <div class="relative flex">
                                             <button mat-icon-button class="self-center" class="self-start"
                                                 [ngClass]="first ? 'self-center' : 'self-start'"
-                                                [matTooltip]="formArrayProcessItems.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessItems.getRawValue()[i].official.user.person.last_name_person + ' - ' + parseTime(formArrayProcessItems.getRawValue()[i].entry_date_process_item)">
+                                                [matTooltip]="formArrayProcessItems.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessItems.getRawValue()[i].official.user.person.last_name_person + ' - '">
                                                 <span class="relative">
                                                     <img class="w-7 h-7 rounded-full"
                                                         *ngIf="formArrayProcessItems.getRawValue()[i].official.user.avatar_user"
@@ -43,16 +43,7 @@
                                                     </mat-option>
                                                 </mat-select>
                                             </mat-form-field>
-                                            <mat-form-field class="angel-mat-no-subscript flex-auto ml-2 sm:ml-4">
-                                                <mat-label *ngIf="first">Cantidad</mat-label>
-                                                <mat-icon matPrefix class="hidden sm:flex icon-size-5"
-                                                    [svgIcon]="'heroicons_solid:tag'">
-                                                </mat-icon>
-                                                <input matInput maxlength="5" type="number" min="1" max="99999"
-                                                    [formControl]="getFromControl(formArrayProcessItems, i, 'amount_process_item')"
-                                                    (change)="updateProcessItem(i)">
-                                            </mat-form-field>
-                                            <mat-form-field
+                                            <!-- <mat-form-field
                                                 class="angel-mat-no-subscript flex-auto w-full ml-2 sm:ml-4">
                                                 <mat-label *ngIf="first">Características</mat-label>
                                                 <mat-icon matPrefix class="hidden sm:flex icon-size-5"
@@ -62,7 +53,7 @@
                                                     [cdkAutosizeMinRows]="2" [cdkAutosizeMaxRows]="30"
                                                     [formControl]="getFromControl(formArrayProcessItems, i, 'features_process_item')"
                                                     (change)="updateProcessItem(i)"></textarea>
-                                            </mat-form-field>
+                                            </mat-form-field> -->
                                             <ng-container>
                                                 <div class="flex items-center w-10 pl-2 self-start"
                                                     [ngClass]="{'mt-6': first}">
@@ -360,22 +351,14 @@
                                     *ngIf="template.plugin_item_process && formArrayProcessItems.controls.length == 0">
                                     • Tiene que seleccionar al menos un item
                                 </mat-error>
-                                <!-- amount_process_item -->
-                                <mat-error
-                                    *ngFor="let control of formArrayProcessItems.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
-                                    <div
-                                        *ngIf="getFromControl(formArrayProcessItems, i, 'amount_process_item')?.hasError('required')">
-                                        • Ingrese la cantidad del item {{i +1}}
-                                    </div>
-                                </mat-error>
                                 <!-- features_process_item -->
-                                <mat-error
+                                <!-- <mat-error
                                     *ngFor="let control of formArrayProcessItems.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
                                     <div
                                         *ngIf="getFromControl(formArrayProcessItems, i, 'features_process_item')?.hasError('required')">
                                         • Ingrese las características del item {{i +1}}
                                     </div>
-                                </mat-error>
+                                </mat-error> -->
                                 <!-- Controls -->
                                 <mat-error
                                     *ngFor="let control of formArrayProcessControls.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">

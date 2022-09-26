@@ -2,6 +2,8 @@ import { Company } from '../../core/company/company.class';
 import { _company } from '../../core/company/company.data';
 import { DocumentationProfile } from '../documentation_profile/documentation_profile.class';
 import { _documentationProfile } from '../documentation_profile/documentation_profile.data';
+import { PluginItem } from '../plugin_item/plugin_item.class';
+import { _pluginItem } from '../plugin_item/plugin_item.data';
 import {
 	dml_template_create,
 	dml_template_delete,
@@ -9,7 +11,7 @@ import {
 	view_template_by_company_query_read,
 	view_template_by_documentation_profile_query_read,
 	view_template_query_read,
-	view_template_specific_read,
+	view_template_specific_read
 } from './template.store';
 
 export class Template {
@@ -18,8 +20,9 @@ export class Template {
 	public id_template: number;
 	public company: Company;
 	public documentation_profile: DocumentationProfile;
-	public plugin_item_process?: boolean;
+	public plugin_item: PluginItem;
 	public plugin_attached_process?: boolean;
+	public plugin_item_process?: boolean;
 	public name_template?: string;
 	public description_template?: string;
 	public status_template?: boolean;
@@ -32,8 +35,9 @@ export class Template {
 		id_template: number = 0,
 		company: Company = _company,
 		documentation_profile: DocumentationProfile = _documentationProfile,
-		plugin_item_process: boolean = false,
+		plugin_item: PluginItem = _pluginItem,
 		plugin_attached_process: boolean = false,
+		plugin_item_process: boolean = false,
 		name_template: string = '',
 		description_template: string = '',
 		status_template: boolean = false,
@@ -45,8 +49,9 @@ export class Template {
 		this.id_template = id_template;
 		this.company = company;
 		this.documentation_profile = documentation_profile;
-		this.plugin_item_process = plugin_item_process;
+		this.plugin_item = plugin_item;
 		this.plugin_attached_process = plugin_attached_process;
+		this.plugin_item_process = plugin_item_process;
 		this.name_template = name_template;
 		this.description_template = description_template;
 		this.status_template = status_template;
@@ -83,11 +88,11 @@ export class Template {
 		return this.documentation_profile;
 	}
 
-	set _plugin_item_process(plugin_item_process: boolean) {
-		this.plugin_item_process = plugin_item_process;
+	set _plugin_item(plugin_item: PluginItem) {
+		this.plugin_item = plugin_item;
 	}
-	get _plugin_item_process() {
-		return this.plugin_item_process!;
+	get _plugin_item() {
+		return this.plugin_item;
 	}
 
 	set _plugin_attached_process(plugin_attached_process: boolean) {
@@ -95,6 +100,13 @@ export class Template {
 	}
 	get _plugin_attached_process() {
 		return this.plugin_attached_process!;
+	}
+
+	set _plugin_item_process(plugin_item_process: boolean) {
+		this.plugin_item_process = plugin_item_process;
+	}
+	get _plugin_item_process() {
+		return this.plugin_item_process!;
 	}
 
 	set _name_template(name_template: string) {
@@ -280,6 +292,9 @@ export class Template {
 					description_documentation_profile:
 						item.description_documentation_profile,
 					status_documentation_profile: item.status_documentation_profile,
+				},
+				plugin_item: {
+					id_plugin_item: item.id_plugin_item,
 				},
 				/**
 				 * Generate structure of second level the entity (is important add the ids of entity)

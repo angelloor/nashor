@@ -33,6 +33,7 @@ import {
 } from 'rxjs/operators';
 import { official } from '../../official/official.data';
 import { Official } from '../../official/official.types';
+import { ModalTaskService } from '../modal-task/modal-task.service';
 import { TaskService } from '../task.service';
 import {
   Task,
@@ -111,7 +112,8 @@ export class TaskListComponent implements OnInit {
     private _layoutService: LayoutService,
     private _authService: AuthService,
     private _localDatePipe: LocalDatePipe,
-    private _globalUtils: GlobalUtils
+    private _globalUtils: GlobalUtils,
+    private _modalTaskService: ModalTaskService
   ) {}
 
   ngOnInit(): void {
@@ -174,7 +176,6 @@ export class TaskListComponent implements OnInit {
     this._taskService.tasks$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((tasks: Task[]) => {
-        console.log(tasks);
         /**
          * Update the counts
          */
@@ -432,6 +433,12 @@ export class TaskListComponent implements OnInit {
         }
         this._layoutService.setOpenModal(false);
       });
+  }
+  /**
+   * Navigate to the entity detail page
+   */
+  openModalTask(id_task: string): void {
+    this._modalTaskService.openModalTask(id_task, false);
   }
   /**
    * @param time

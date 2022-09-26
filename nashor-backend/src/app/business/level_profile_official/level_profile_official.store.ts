@@ -7,10 +7,8 @@ export const dml_level_profile_official_create = (
 ) => {
 	return new Promise<LevelProfileOfficial[]>(async (resolve, reject) => {
 		const query = `select * from business.dml_level_profile_official_create_modified(${level_profile_official.id_user_}, ${level_profile_official.level_profile.id_level_profile})`;
-		console.log(
-			'🚀 ~ file: level_profile_official.store.ts ~ line 10 ~ returnnewPromise<LevelProfileOfficial[]> ~ query',
-			query
-		);
+
+		// console.log(query);
 
 		try {
 			const response = await clientNASHORPostgreSQL.query(query);

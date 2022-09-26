@@ -1,6 +1,6 @@
 import {
   ActionAngelConfirmation,
-  AngelConfirmationService,
+  AngelConfirmationService
 } from '@angel/services/confirmation';
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
@@ -15,7 +15,7 @@ import { ModalTemplatePreviewService } from '../../template/modal-template-previ
 import { FlowVersionLevelService } from '../flow-version/flow-version-level/flow-version-level.service';
 import {
   FlowVersionLevel,
-  TYPE_ELEMENT,
+  TYPE_ELEMENT
 } from '../flow-version/flow-version-level/flow-version-level.types';
 import { flowVersion } from '../flow-version/flow-version.data';
 import { FlowVersionService } from '../flow-version/flow-version.service';
@@ -228,6 +228,9 @@ export class ModalVersionComponent implements OnInit {
   }
   /**
    * On destroy
+   */
+  /**
+   * When the component is destroyed, unsubscribe from all subscriptions.
    */
   ngOnDestroy(): void {
     /**

@@ -207,7 +207,7 @@ ALTER FUNCTION business.dml_position_update_modified(numeric, numeric, numeric, 
 CREATE OR REPLACE FUNCTION business.dml_official_create_modified(
 	id_user_ numeric,
 	_id_company numeric)
-    RETURNS TABLE(id_official numeric, id_company numeric, id_user numeric, id_area numeric, id_position numeric, deleted_official boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, name_area character varying, description_area character varying, name_position character varying, description_position character varying, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_profile numeric, name_type_user character varying, description_type_user character varying, status_type_user boolean, title_academic character varying, abbreviation_academic character varying, nivel_academic character varying, name_job character varying, address_job character varying, phone_job character varying, position_job character varying) 
+    RETURNS TABLE(id_official numeric, id_company numeric, id_user numeric, id_area numeric, id_position numeric, deleted_official boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, name_area character varying, description_area character varying, name_position character varying, description_position character varying, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_profile numeric, name_type_user character varying, description_type_user character varying, status_type_user boolean, title_academic character varying, abbreviation_academic character varying, level_academic character varying, name_job character varying, address_job character varying, phone_job character varying, position_job character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -319,14 +319,14 @@ CREATE OR REPLACE FUNCTION business.dml_official_update_modified(
 	_phone_person character varying,
 	_title_academic character varying,
 	_abbreviation_academic character varying,
-	_nivel_academic character varying,
+	_level_academic character varying,
 	_name_job character varying,
 	_address_job character varying,
 	_phone_job character varying,
 	_position_job character varying,
 	_id_area numeric,
 	_id_position numeric)
-    RETURNS TABLE(id_official numeric, id_company numeric, id_user numeric, id_area numeric, id_position numeric, deleted_official boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, name_area character varying, description_area character varying, name_position character varying, description_position character varying, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_profile numeric, name_type_user character varying, description_type_user character varying, status_type_user boolean, title_academic character varying, abbreviation_academic character varying, nivel_academic character varying, name_job character varying, address_job character varying, phone_job character varying, position_job character varying) 
+    RETURNS TABLE(id_official numeric, id_company numeric, id_user numeric, id_area numeric, id_position numeric, deleted_official boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, name_area character varying, description_area character varying, name_position character varying, description_position character varying, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_profile numeric, name_type_user character varying, description_type_user character varying, status_type_user boolean, title_academic character varying, abbreviation_academic character varying, level_academic character varying, name_job character varying, address_job character varying, phone_job character varying, position_job character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -341,7 +341,7 @@ DECLARE
 	_UPDATE_OFFICIAL BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
-	_UPDATE_ACADEMIC = (select * from core.dml_academic_update(id_user_, _id_academic, _title_academic, _abbreviation_academic, _nivel_academic, false));
+	_UPDATE_ACADEMIC = (select * from core.dml_academic_update(id_user_, _id_academic, _title_academic, _abbreviation_academic, _level_academic, false));
 				
 	IF (_UPDATE_ACADEMIC) THEN
 		_UPDATE_JOB = (select * from core.dml_job_update(id_user_, _id_job, _name_job, _address_job, _phone_job, _position_job, false));
@@ -858,7 +858,7 @@ ALTER FUNCTION business.dml_item_category_update_modified(numeric, numeric, nume
 CREATE OR REPLACE FUNCTION business.dml_item_create_modified(
 	id_user_ numeric,
 	_id_company numeric)
-    RETURNS TABLE(id_item numeric, id_company numeric, id_item_category numeric, name_item character varying, description_item character varying, cpc_item character varying, deleted_item boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_item_category character varying, description_item_category character varying) 
+    RETURNS TABLE(id_item numeric, id_company numeric, id_item_category numeric, name_item character varying, description_item character varying, deleted_item boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_item_category character varying, description_item_category character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -909,9 +909,8 @@ CREATE OR REPLACE FUNCTION business.dml_item_update_modified(
 	_id_item_category numeric,
 	_name_item character varying,
 	_description_item character varying,
-	_cpc_item character varying,
 	_deleted_item boolean)
-    RETURNS TABLE(id_item numeric, id_company numeric, id_item_category numeric, name_item character varying, description_item character varying, cpc_item character varying, deleted_item boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_item_category character varying, description_item_category character varying) 
+    RETURNS TABLE(id_item numeric, id_company numeric, id_item_category numeric, name_item character varying, description_item character varying, deleted_item boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_item_category character varying, description_item_category character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -922,7 +921,7 @@ DECLARE
  	_UPDATE_ITEM BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
- 	_UPDATE_ITEM = (select * from business.dml_item_update(id_user_, _id_item, _id_company, _id_item_category, _name_item, _description_item, _cpc_item, _deleted_item));
+ 	_UPDATE_ITEM = (select * from business.dml_item_update(id_user_, _id_item, _id_company, _id_item_category, _name_item, _description_item, _deleted_item));
 
  	IF (_UPDATE_ITEM) THEN
 		RETURN QUERY select * from business.view_item_inner_join bviij 
@@ -941,161 +940,161 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_item_update_modified(numeric, numeric, numeric, numeric, character varying, character varying, character varying, boolean)
+ALTER FUNCTION business.dml_item_update_modified(numeric, numeric, numeric, numeric, character varying, character varying, boolean)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
 -- DROP FUNCTION IF EXISTS business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric);
 
--- CREATE OR REPLACE FUNCTION business.dml_control_create(
--- 	id_user_ numeric,
--- 	_id_company numeric,
--- 	_type_control business."TYPE_CONTROL",
--- 	_title_control character varying,
--- 	_form_name_control character varying,
--- 	_initial_value_control character varying,
--- 	_required_control boolean,
--- 	_min_length_control numeric,
--- 	_max_length_control numeric,
--- 	_placeholder_control character varying,
--- 	_spell_check_control boolean,
--- 	_options_control json,
--- 	_in_use boolean,
--- 	_deleted_control boolean,
--- 	_id_template numeric)
---     RETURNS numeric
---     LANGUAGE 'plpgsql'
---     COST 100
---     VOLATILE PARALLEL UNSAFE
--- AS $BODY$
--- DECLARE
--- 	_RESPONSE BOOLEAN DEFAULT false;
--- 	_COUNT NUMERIC;
--- 	_COUNT_ATT NUMERIC;
--- 	_COUNT_EXTERNALS_IDS NUMERIC;
--- 	_RETURNING NUMERIC;
--- 	_CURRENT_ID NUMERIC;
--- 	_X RECORD;
--- 	_SAVE_LOG BOOLEAN DEFAULT false;
--- 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
--- BEGIN 
--- 	-- company
--- 	_COUNT_EXTERNALS_IDS = (select count(*) from core.view_company v where v.id_company = _id_company);
+CREATE OR REPLACE FUNCTION business.dml_control_create(
+	id_user_ numeric,
+	_id_company numeric,
+	_type_control business."TYPE_CONTROL",
+	_title_control character varying,
+	_form_name_control character varying,
+	_initial_value_control character varying,
+	_required_control boolean,
+	_min_length_control numeric,
+	_max_length_control numeric,
+	_placeholder_control character varying,
+	_spell_check_control boolean,
+	_options_control json,
+	_in_use boolean,
+	_deleted_control boolean,
+	_id_template numeric)
+    RETURNS numeric
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+	_RESPONSE BOOLEAN DEFAULT false;
+	_COUNT NUMERIC;
+	_COUNT_ATT NUMERIC;
+	_COUNT_EXTERNALS_IDS NUMERIC;
+	_RETURNING NUMERIC;
+	_CURRENT_ID NUMERIC;
+	_X RECORD;
+	_SAVE_LOG BOOLEAN DEFAULT false;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN 
+	-- company
+	_COUNT_EXTERNALS_IDS = (select count(*) from core.view_company v where v.id_company = _id_company);
 		
--- 	IF (_COUNT_EXTERNALS_IDS = 0) THEN
--- 		_EXCEPTION = 'El id '||_id_company||' de la tabla company no se encuentra registrado';
--- 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
--- 	END IF;
+	IF (_COUNT_EXTERNALS_IDS = 0) THEN
+		_EXCEPTION = 'El id '||_id_company||' de la tabla company no se encuentra registrado';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
 			
--- 	_CURRENT_ID = (select nextval('business.serial_control')-1);
--- 	_COUNT = (select count(*) from business.view_control t where t.id_control = _CURRENT_ID);
+	_CURRENT_ID = (select nextval('business.serial_control')-1);
+	_COUNT = (select count(*) from business.view_control t where t.id_control = _CURRENT_ID);
 	
--- 	IF (_COUNT = 0) THEN
--- 		_COUNT_ATT = (select count(*) from business.view_template_control bvtc
--- 			inner join business.view_control bvc on bvtc.id_control = bvc.id_control
--- 			where bvc.form_name_control = _form_name_control and bvtc.id_template = _id_template);
+	IF (_COUNT = 0) THEN
+		_COUNT_ATT = (select count(*) from business.view_template_control bvtc
+			inner join business.view_control bvc on bvtc.id_control = bvc.id_control
+			where bvc.form_name_control = _form_name_control and bvtc.id_template = _id_template);
 			
--- 		IF (_COUNT_ATT = 0) THEN 
--- 			FOR _X IN INSERT INTO business.control(id_control, id_company, type_control, title_control, form_name_control, initial_value_control, required_control, min_length_control, max_length_control, placeholder_control, spell_check_control, options_control, in_use, deleted_control) VALUES (_CURRENT_ID, $2 ,$3 ,$4 ,$5 ,$6 ,$7 ,$8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14) RETURNING id_control LOOP
--- 				_RETURNING = _X.id_control;
--- 			END LOOP;
+		IF (_COUNT_ATT = 0) THEN 
+			FOR _X IN INSERT INTO business.control(id_control, id_company, type_control, title_control, form_name_control, initial_value_control, required_control, min_length_control, max_length_control, placeholder_control, spell_check_control, options_control, in_use, deleted_control) VALUES (_CURRENT_ID, $2 ,$3 ,$4 ,$5 ,$6 ,$7 ,$8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14) RETURNING id_control LOOP
+				_RETURNING = _X.id_control;
+			END LOOP;
 			
--- 			IF (_RETURNING >= 1) THEN
--- 				_SAVE_LOG = (select cvuij.save_log from core.view_user_inner_join_cvc_cvs cvuij
--- 					where cvuij.id_user = id_user_);
+			IF (_RETURNING >= 1) THEN
+				_SAVE_LOG = (select cvuij.save_log from core.view_user_inner_join_cvc_cvs cvuij
+					where cvuij.id_user = id_user_);
 
--- 				IF (_SAVE_LOG) THEN
--- 					_RESPONSE = (select * from core.dml_system_event_create(id_user_,'control',_CURRENT_ID,'CREATE', now()::timestamp, false));
+				IF (_SAVE_LOG) THEN
+					_RESPONSE = (select * from core.dml_system_event_create(id_user_,'control',_CURRENT_ID,'CREATE', now()::timestamp, false));
 					
--- 					IF (_RESPONSE != true) THEN
--- 						_EXCEPTION = 'Ocurrió un error al registrar el evento del sistema';
--- 						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
--- 					ELSE
--- 						RETURN _CURRENT_ID;
--- 					END IF;
--- 				ELSE 
--- 					RETURN _CURRENT_ID;
--- 				END IF;
--- 			ELSE
--- 				_EXCEPTION = 'Ocurrió un error al insertar el registro';
--- 				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
--- 			END IF;
--- 		ELSE
--- 			_EXCEPTION = 'Ya existe un registro con el form_name_control '||_form_name_control||'';
--- 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
--- 		END IF;
--- 	ELSE
--- 		_EXCEPTION = 'El registro con id '||_CURRENT_ID||' ya se encuentra registrado en la tabla control';
--- 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
--- 	END IF;
--- 	exception when others then 
--- 		-- RAISE NOTICE '%', SQLERRM;
--- 		IF (_CURRENT_ID >= 1) THEN
--- 			EXECUTE 'select setval(''business.serial_control'', '||_CURRENT_ID||')';
--- 		END IF;
--- 		IF (_EXCEPTION = 'Internal Error') THEN
--- 			RAISE EXCEPTION '%', 'dml_control_create -> '||SQLERRM||'' USING DETAIL = '_database';
--- 		ELSE
--- 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
--- 		END IF;
--- END;
--- $BODY$;
+					IF (_RESPONSE != true) THEN
+						_EXCEPTION = 'Ocurrió un error al registrar el evento del sistema';
+						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+					ELSE
+						RETURN _CURRENT_ID;
+					END IF;
+				ELSE 
+					RETURN _CURRENT_ID;
+				END IF;
+			ELSE
+				_EXCEPTION = 'Ocurrió un error al insertar el registro';
+				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+			END IF;
+		ELSE
+			_EXCEPTION = 'Ya existe un registro con el form_name_control '||_form_name_control||'';
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+	ELSE
+		_EXCEPTION = 'El registro con id '||_CURRENT_ID||' ya se encuentra registrado en la tabla control';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_CURRENT_ID >= 1) THEN
+			EXECUTE 'select setval(''business.serial_control'', '||_CURRENT_ID||')';
+		END IF;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_control_create -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
 
--- ALTER FUNCTION business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
---     OWNER TO postgres;
+ALTER FUNCTION business.dml_control_create(numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
+    OWNER TO postgres;
 
 -- FUNCTION: business.dml_control_create_modified(numeric, numeric, numeric)
 -- DROP FUNCTION IF EXISTS business.dml_control_create_modified(numeric, numeric, numeric);
 
--- CREATE OR REPLACE FUNCTION business.dml_control_create_modified(
--- 	id_user_ numeric,
--- 	_id_company numeric,
--- 	_id_template numeric)
---     RETURNS TABLE(id_control numeric, id_company numeric, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, deleted_control boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
---     LANGUAGE 'plpgsql'
---     COST 100
---     VOLATILE PARALLEL UNSAFE
---     ROWS 1000
+CREATE OR REPLACE FUNCTION business.dml_control_create_modified(
+	id_user_ numeric,
+	_id_company numeric,
+	_id_template numeric)
+    RETURNS TABLE(id_control numeric, id_company numeric, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, deleted_control boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
 
--- AS $BODY$
--- DECLARE
--- 	_ID_CONTROL NUMERIC;
--- 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
--- BEGIN
--- 	_ID_CONTROL = (select * from business.dml_control_create(id_user_, _ID_COMPANY, 'input', 'Nuevo control', 'form_control', '', false, 1, 1, '', false, '[
--- 	  {
--- 		"name": "One",
--- 		"value": "one"
--- 	  },
--- 	  {
--- 		"name": "Two",
--- 		"value": "two"
--- 	  },
--- 	  {
--- 		"name": "Three",
--- 		"value": "three"
--- 	  }
--- 	]', false, false, _id_template));
+AS $BODY$
+DECLARE
+	_ID_CONTROL NUMERIC;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+	_ID_CONTROL = (select * from business.dml_control_create(id_user_, _ID_COMPANY, 'input', 'Nuevo control', 'form_control', '', false, 1, 1, '', false, '[
+	  {
+		"name": "One",
+		"value": "one"
+	  },
+	  {
+		"name": "Two",
+		"value": "two"
+	  },
+	  {
+		"name": "Three",
+		"value": "three"
+	  }
+	]', false, false, _id_template));
 	
--- 	IF (_ID_CONTROL >= 1) THEN
--- 		RETURN QUERY select * from business.view_control_inner_join bvcij 
--- 			where bvcij.id_control = _ID_CONTROL;
--- 	ELSE
--- 		_EXCEPTION = 'Ocurrió un error al ingresar control';
--- 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
--- 	END IF;
--- 	exception when others then 
--- 		-- RAISE NOTICE '%', SQLERRM;
--- 		IF (_EXCEPTION = 'Internal Error') THEN
--- 			RAISE EXCEPTION '%', 'dml_control_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
--- 		ELSE
--- 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
--- 		END IF;
--- END;
--- $BODY$;
+	IF (_ID_CONTROL >= 1) THEN
+		RETURN QUERY select * from business.view_control_inner_join bvcij 
+			where bvcij.id_control = _ID_CONTROL;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al ingresar control';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_control_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
 
--- ALTER FUNCTION business.dml_control_create_modified(numeric, numeric, numeric)
---     OWNER TO postgres;
+ALTER FUNCTION business.dml_control_create_modified(numeric, numeric, numeric)
+    OWNER TO postgres;
 
 -- FUNCTION: business.dml_control_update(numeric, numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric)
 -- DROP FUNCTION IF EXISTS business.dml_control_update(numeric, numeric, numeric, business."TYPE_CONTROL", character varying, character varying, character varying, boolean, numeric, numeric, character varying, boolean, json, boolean, boolean, numeric);
@@ -1294,13 +1293,175 @@ $BODY$;
 ALTER FUNCTION business.dml_control_delete_cascade(numeric, numeric)
     OWNER TO postgres;
 
+-- FUNCTION: business.dml_plugin_item_create_modified(numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_plugin_item_create_modified(numeric, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_plugin_item_create_modified(
+	id_user_ numeric,
+	_id_company numeric)
+    RETURNS TABLE(id_plugin_item numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+	_ID_PLUGIN_ITEM NUMERIC;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+	_ID_PLUGIN_ITEM = (select * from business.dml_plugin_item_create(id_user_, _id_company, 'Nuevo plugin item', ''));
+	
+	IF (_ID_PLUGIN_ITEM >= 1) THEN
+		RETURN QUERY select * from business.view_plugin_item_inner_join bvpiij 
+			where bvpiij.id_plugin_item = _ID_PLUGIN_ITEM;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al ingresar plugin_item';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_plugin_item_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_plugin_item_create_modified(numeric, numeric)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_plugin_item_update_modified(numeric, numeric, numeric, character varying, character varying)
+-- DROP FUNCTION IF EXISTS business.dml_plugin_item_update_modified(numeric, numeric, numeric, character varying, character varying);
+
+CREATE OR REPLACE FUNCTION business.dml_plugin_item_update_modified(
+	id_user_ numeric,
+	_id_plugin_item numeric,
+	_id_company numeric,
+	_name_plugin_item character varying,
+	_description_plugin_item character varying)
+    RETURNS TABLE(id_plugin_item numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+ 	_UPDATE_PLUGIN_ITEM BOOLEAN;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+ 	_UPDATE_PLUGIN_ITEM = (select * from business.dml_plugin_item_update(id_user_, _id_plugin_item, _id_company, _name_plugin_item, _description_plugin_item));
+
+ 	IF (_UPDATE_PLUGIN_ITEM) THEN
+		RETURN QUERY select * from business.view_plugin_item_inner_join bvpiij 
+			where bvpiij.id_plugin_item = _id_plugin_item;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al actualizar plugin_item';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_plugin_item_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_plugin_item_update_modified(numeric, numeric, numeric, character varying, character varying)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_plugin_item_column_create_modified(numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_plugin_item_column_create_modified(numeric, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_plugin_item_column_create_modified(
+	id_user_ numeric,
+	_id_plugin_item numeric)
+    RETURNS TABLE(id_plugin_item_column numeric, id_plugin_item numeric, name_plugin_item_column character varying, lenght_plugin_item_column numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+	_ID_PLUGIN_ITEM_COLUMN NUMERIC;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+	_ID_PLUGIN_ITEM_COLUMN = (select * from business.dml_plugin_item_column_create(id_user_, _id_plugin_item, 'Nueva columna', 10));
+	
+	IF (_ID_PLUGIN_ITEM_COLUMN >= 1) THEN
+		RETURN QUERY select * from business.view_plugin_item_column_inner_join bvpicij 
+			where bvpicij.id_plugin_item_column = _ID_PLUGIN_ITEM_COLUMN;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al ingresar plugin_item_column';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_plugin_item_column_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_plugin_item_column_create_modified(numeric, numeric)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_plugin_item_column_update_modified(numeric, numeric, numeric, character varying, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_plugin_item_column_update_modified(numeric, numeric, numeric, character varying, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_plugin_item_column_update_modified(
+	id_user_ numeric,
+	_id_plugin_item_column numeric,
+	_id_plugin_item numeric,
+	_name_plugin_item_column character varying,
+	_lenght_plugin_item_column numeric)
+    RETURNS TABLE(id_plugin_item_column numeric, id_plugin_item numeric, name_plugin_item_column character varying, lenght_plugin_item_column numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+ 	_UPDATE_PLUGIN_ITEM_COLUMN BOOLEAN;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+ 	_UPDATE_PLUGIN_ITEM_COLUMN = (select * from business.dml_plugin_item_column_update(id_user_, _id_plugin_item_column, _id_plugin_item, _name_plugin_item_column, _lenght_plugin_item_column));
+
+ 	IF (_UPDATE_PLUGIN_ITEM_COLUMN) THEN
+		RETURN QUERY select * from business.view_plugin_item_column_inner_join bvpicij 
+			where bvpicij.id_plugin_item_column = _id_plugin_item_column;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al actualizar plugin_item_column';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_plugin_item_column_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_plugin_item_column_update_modified(numeric, numeric, numeric, character varying, numeric)
+    OWNER TO postgres;
+
 -- FUNCTION: business.dml_template_create_modified(numeric, numeric)
 -- DROP FUNCTION IF EXISTS business.dml_template_create_modified(numeric, numeric);
 
 CREATE OR REPLACE FUNCTION business.dml_template_create_modified(
 	id_user_ numeric,
 	_id_company numeric)
-    RETURNS TABLE(id_template numeric, id_company numeric, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, in_use boolean, deleted_template boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_documentation_profile character varying, description_documentation_profile character varying, status_documentation_profile boolean) 
+    RETURNS TABLE(id_template numeric, id_company numeric, id_documentation_profile numeric, id_plugin_item numeric, plugin_attached_process boolean, plugin_item_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, in_use boolean, deleted_template boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_documentation_profile character varying, description_documentation_profile character varying, status_documentation_profile boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -1309,6 +1470,7 @@ CREATE OR REPLACE FUNCTION business.dml_template_create_modified(
 AS $BODY$
 DECLARE
 	_ID_DOCUMENTATION_PROFILE NUMERIC;
+	_ID_PLUGIN_ITEM NUMERIC;
 	_ID_TEMPLATE NUMERIC;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
@@ -1319,7 +1481,14 @@ BEGIN
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 	END IF;
 	
-	_ID_TEMPLATE = (select * from business.dml_template_create(id_user_, _ID_COMPANY, _ID_DOCUMENTATION_PROFILE, false, false, 'Nueva plantilla', '', false, now()::timestamp, false, false));
+	_ID_PLUGIN_ITEM = (select bvpi.id_plugin_item from business.view_plugin_item bvpi order by bvpi.id_plugin_item asc limit 1);
+	
+	IF (_ID_DOCUMENTATION_PROFILE IS NULL) THEN
+		_EXCEPTION = 'No se encontró un plugin_item';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	
+	_ID_TEMPLATE = (select * from business.dml_template_create(id_user_, _ID_COMPANY, _ID_DOCUMENTATION_PROFILE, _ID_PLUGIN_ITEM, false, false, 'Nueva plantilla', '', false, now()::timestamp, false, false));
 	IF (_ID_TEMPLATE >= 1) THEN
 		RETURN QUERY select * from business.view_template_inner_join bvtij 
 			where bvtij.id_template = _ID_TEMPLATE;
@@ -1340,23 +1509,24 @@ $BODY$;
 ALTER FUNCTION business.dml_template_create_modified(numeric, numeric)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_template_update_modified(numeric, numeric, numeric, numeric, boolean, boolean, character varying, character varying, boolean, timestamp without time zone, boolean, boolean)
--- DROP FUNCTION IF EXISTS business.dml_template_update_modified(numeric, numeric, numeric, numeric, boolean, boolean, character varying, character varying, boolean, timestamp without time zone, boolean, boolean);
+-- FUNCTION: business.dml_template_update_modified(numeric, numeric, numeric, numeric, numeric, boolean, boolean, character varying, character varying, boolean, timestamp without time zone, boolean, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_template_update_modified(numeric, numeric, numeric, numeric, numeric, boolean, boolean, character varying, character varying, boolean, timestamp without time zone, boolean, boolean);
 
 CREATE OR REPLACE FUNCTION business.dml_template_update_modified(
 	id_user_ numeric,
 	_id_template numeric,
 	_id_company numeric,
 	_id_documentation_profile numeric,
-	_plugin_item_process boolean,
+	_id_plugin_item numeric,
 	_plugin_attached_process boolean,
+	_plugin_item_process boolean,
 	_name_template character varying,
 	_description_template character varying,
 	_status_template boolean,
 	_last_change timestamp without time zone,
 	_in_use boolean,
 	_deleted_template boolean)
-    RETURNS TABLE(id_template numeric, id_company numeric, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, in_use boolean, deleted_template boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_documentation_profile character varying, description_documentation_profile character varying, status_documentation_profile boolean) 
+    RETURNS TABLE(id_template numeric, id_company numeric, id_documentation_profile numeric, id_plugin_item numeric, plugin_attached_process boolean, plugin_item_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, in_use boolean, deleted_template boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_documentation_profile character varying, description_documentation_profile character varying, status_documentation_profile boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -1368,7 +1538,7 @@ DECLARE
  	_UPDATE_LAST_CHANGE BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
- 	_UPDATE_TEMPLATE = (select * from business.dml_template_update(id_user_, _id_template, _id_company, _id_documentation_profile, _plugin_item_process, _plugin_attached_process, _name_template, _description_template, _status_template, _last_change, _in_use, _deleted_template));
+ 	_UPDATE_TEMPLATE = (select * from business.dml_template_update(id_user_, _id_template, _id_company, _id_documentation_profile, _id_plugin_item, _plugin_attached_process, _plugin_item_process, _name_template, _description_template, _status_template, _last_change, _in_use, _deleted_template));
 
  	IF (_UPDATE_TEMPLATE) THEN
 		_UPDATE_LAST_CHANGE = (select * from business.dml_template_update_last_change(id_user_, _id_template));
@@ -1389,7 +1559,7 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_template_update_modified(numeric, numeric, numeric, numeric, boolean, boolean, character varying, character varying, boolean, timestamp without time zone, boolean, boolean)
+ALTER FUNCTION business.dml_template_update_modified(numeric, numeric, numeric, numeric, numeric, boolean, boolean, character varying, character varying, boolean, timestamp without time zone, boolean, boolean)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_template_delete_modified(numeric, numeric)
@@ -1440,7 +1610,7 @@ CREATE OR REPLACE FUNCTION business.dml_template_control_create_modified(
 	id_user_ numeric,
 	_id_template numeric,
 	_id_control numeric)
-    RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
+    RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, id_plugin_item numeric, plugin_attached_process boolean, plugin_item_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -1491,7 +1661,7 @@ ALTER FUNCTION business.dml_template_control_create_modified(numeric, numeric, n
 CREATE OR REPLACE FUNCTION business.dml_template_control_create_with_new_control(
 	id_user_ numeric,
 	_id_template numeric)
-    RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
+    RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, id_plugin_item numeric, plugin_attached_process boolean, plugin_item_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -1657,7 +1827,7 @@ CREATE OR REPLACE FUNCTION business.dml_template_control_update_control_properti
 	_options_control json,
 	_in_use boolean,
 	_deleted_control boolean)
-    RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
+    RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, id_plugin_item numeric, plugin_attached_process boolean, plugin_item_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -1708,7 +1878,7 @@ CREATE OR REPLACE FUNCTION business.dml_template_control_update_positions(
 	id_user_ numeric,
 	_id_template numeric,
 	_template_control json)
-    RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
+    RETURNS TABLE(id_template_control numeric, id_template numeric, id_control numeric, ordinal_position numeric, id_documentation_profile numeric, id_plugin_item numeric, plugin_attached_process boolean, plugin_item_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, id_company numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -2425,7 +2595,7 @@ CREATE OR REPLACE FUNCTION business.dml_level_create_modified(
 	id_user_ numeric,
 	_id_company numeric,
 	_id_template numeric)
-    RETURNS TABLE(id_level numeric, id_company numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, deleted_level boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, in_use boolean, name_level_profile character varying, description_level_profile character varying, name_level_status character varying, description_level_status character varying, color_level_status character varying) 
+    RETURNS TABLE(id_level numeric, id_company numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, deleted_level boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_documentation_profile numeric, id_plugin_item numeric, plugin_attached_process boolean, plugin_item_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, in_use boolean, name_level_profile character varying, description_level_profile character varying, name_level_status character varying, description_level_status character varying, color_level_status character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -2487,7 +2657,7 @@ CREATE OR REPLACE FUNCTION business.dml_level_update_modified(
 	_name_level character varying,
 	_description_level character varying,
 	_deleted_level boolean)
-    RETURNS TABLE(id_level numeric, id_company numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, deleted_level boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_documentation_profile numeric, plugin_item_process boolean, plugin_attached_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, in_use boolean, name_level_profile character varying, description_level_profile character varying, name_level_status character varying, description_level_status character varying, color_level_status character varying) 
+    RETURNS TABLE(id_level numeric, id_company numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, deleted_level boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_documentation_profile numeric, id_plugin_item numeric, plugin_attached_process boolean, plugin_item_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, in_use boolean, name_level_profile character varying, description_level_profile character varying, name_level_status character varying, description_level_status character varying, color_level_status character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3426,7 +3596,7 @@ CREATE OR REPLACE FUNCTION business.dml_task_send(
 	_type_action_task business."TYPE_ACTION_TASK",
 	_action_date_task timestamp without time zone,
 	_deleted_task boolean)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying,creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3468,12 +3638,13 @@ BEGIN
 
  	IF (_UPDATE_TASK) THEN
 		-- Obtener la posicion del siguiente nivel
-		_POSITION_LEVEL_CURRENT_LEVEL = (select bvfvl.position_level from business.view_flow_version_level bvfvl where bvfvl.id_level = _id_level);
+		
+		_POSITION_LEVEL_CURRENT_LEVEL = (select bvfvl.position_level from business.view_flow_version_level bvfvl where bvfvl.id_level = _id_level order by bvfvl.id_flow_version_level limit 1);
 		
 		FOR _X IN (select bvfvl.* from business.view_process bvp
 			inner join business.view_flow_version bvfv on bvp.id_flow_version = bvfv.id_flow_version
 			inner join business.view_flow_version_level bvfvl on bvfv.id_flow_version = bvfvl.id_flow_version
-			where bvp.id_process = _id_process order by bvfvl.position_level asc) LOOP
+			where bvp.id_process = 1 order by bvfvl.position_level asc) LOOP
 			
 			IF (_X.position_level_father = _POSITION_LEVEL_CURRENT_LEVEL) THEN
 				_POSITION_LEVEL_NEXT_LEVEL = _X.position_level;
@@ -3564,7 +3735,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_item_create_modified(
 	_id_process numeric,
 	_id_task numeric,
 	_id_level numeric)
-    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, amount_process_item numeric, features_process_item character varying, entry_date_process_item timestamp without time zone, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying, cpc_item character varying) 
+    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3611,21 +3782,24 @@ $BODY$;
 ALTER FUNCTION business.dml_process_item_create_modified(numeric, numeric, numeric, numeric, numeric)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_process_item_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone)
--- DROP FUNCTION IF EXISTS business.dml_process_item_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone);
+-- FUNCTION: business.dml_template_update_modified(numeric, numeric, numeric, numeric, numeric, boolean, boolean, character varying, character varying, boolean, timestamp without time zone, boolean, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_template_update_modified(numeric, numeric, numeric, numeric, numeric, boolean, boolean, character varying, character varying, boolean, timestamp without time zone, boolean, boolean);
 
-CREATE OR REPLACE FUNCTION business.dml_process_item_update_modified(
+CREATE OR REPLACE FUNCTION business.dml_template_update_modified(
 	id_user_ numeric,
-	_id_process_item numeric,
-	_id_official numeric,
-	_id_process numeric,
-	_id_task numeric,
-	_id_level numeric,
-	_id_item numeric,
-	_amount_process_item numeric,
-	_features_process_item character varying,
-	_entry_date_process_item timestamp without time zone)
-    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, amount_process_item numeric, features_process_item character varying, entry_date_process_item timestamp without time zone, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying, cpc_item character varying) 
+	_id_template numeric,
+	_id_company numeric,
+	_id_documentation_profile numeric,
+	_id_plugin_item numeric,
+	_plugin_attached_process boolean,
+	_plugin_item_process boolean,
+	_name_template character varying,
+	_description_template character varying,
+	_status_template boolean,
+	_last_change timestamp without time zone,
+	_in_use boolean,
+	_deleted_template boolean)
+    RETURNS TABLE(id_template numeric, id_company numeric, id_documentation_profile numeric, id_plugin_item numeric, plugin_attached_process boolean, plugin_item_process boolean, name_template character varying, description_template character varying, status_template boolean, last_change timestamp without time zone, in_use boolean, deleted_template boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, name_documentation_profile character varying, description_documentation_profile character varying, status_documentation_profile boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3633,29 +3807,32 @@ CREATE OR REPLACE FUNCTION business.dml_process_item_update_modified(
 
 AS $BODY$
 DECLARE
- 	_UPDATE_PROCESS_ITEM BOOLEAN;
+ 	_UPDATE_TEMPLATE BOOLEAN;
+ 	_UPDATE_LAST_CHANGE BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
- 	_UPDATE_PROCESS_ITEM = (select * from business.dml_process_item_update(id_user_, _id_process_item, _id_official, _id_process, _id_task, _id_level, _id_item, _amount_process_item, _features_process_item, now()::timestamp));
+ 	_UPDATE_TEMPLATE = (select * from business.dml_template_update(id_user_, _id_template, _id_company, _id_documentation_profile, _id_plugin_item, _plugin_attached_process, _plugin_item_process, _name_template, _description_template, _status_template, _last_change, _in_use, _deleted_template));
 
- 	IF (_UPDATE_PROCESS_ITEM) THEN
-		RETURN QUERY select * from business.view_process_item_inner_join bvpiij 
-			where bvpiij.id_process_item = _id_process_item;
+ 	IF (_UPDATE_TEMPLATE) THEN
+		_UPDATE_LAST_CHANGE = (select * from business.dml_template_update_last_change(id_user_, _id_template));
+
+		RETURN QUERY select * from business.view_template_inner_join bvtij 
+			where bvtij.id_template = _id_template;
 	ELSE
-		_EXCEPTION = 'Ocurrió un error al actualizar process_item';
+		_EXCEPTION = 'Ocurrió un error al actualizar template';
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 	END IF;
 	exception when others then 
 		-- RAISE NOTICE '%', SQLERRM;
 		IF (_EXCEPTION = 'Internal Error') THEN
-			RAISE EXCEPTION '%', 'dml_process_item_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+			RAISE EXCEPTION '%', 'dml_template_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
 		ELSE
 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 		END IF;
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_process_item_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone)
+ALTER FUNCTION business.dml_template_update_modified(numeric, numeric, numeric, numeric, numeric, boolean, boolean, character varying, character varying, boolean, timestamp without time zone, boolean, boolean)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_process_attached_create_modified(numeric, numeric, numeric, numeric, numeric, numeric, character varying, character varying, character varying, character varying, character varying)

@@ -44,42 +44,6 @@ export const validation = (
 							});
 						}
 
-						if (url == '/update') {
-							attributeValidate(
-								'amount_process_item',
-								process_item.amount_process_item,
-								'number',
-								5
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
-						if (url == '/update') {
-							attributeValidate(
-								'features_process_item',
-								process_item.features_process_item,
-								'string',
-								250
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
-						if (url == '/update') {
-							attributeValidate(
-								'entry_date_process_item',
-								process_item.entry_date_process_item,
-								'string',
-								30
-							).catch((err) => {
-								validationStatus = true;
-								reject(err);
-							});
-						}
-
 						/**
 						 * Validation official
 						 */
@@ -333,12 +297,6 @@ export const validation = (
 								_process_item.task = process_item.task;
 								_process_item.level = process_item.level;
 								_process_item.item = process_item.item;
-								_process_item.amount_process_item =
-									process_item.amount_process_item;
-								_process_item.features_process_item =
-									process_item.features_process_item;
-								_process_item.entry_date_process_item =
-									process_item.entry_date_process_item;
 								await _process_item
 									.update()
 									.then((_processItem: ProcessItem) => {

@@ -82,6 +82,15 @@ const businessRoutes: Route[] = [
       import('./control/control.module').then((m) => m.ControlModule),
   },
   {
+    path: 'plugin-item',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    loadChildren: () =>
+      import('./plugin-item/plugin-item.module').then(
+        (m) => m.PluginItemModule
+      ),
+  },
+  {
     path: 'template',
     canActivate: [AuthGuard],
     canActivateChild: [AuthGuard],

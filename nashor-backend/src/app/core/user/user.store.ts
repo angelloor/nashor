@@ -145,7 +145,7 @@ export const dml_user_update = (user: User) => {
 			'${user.person.phone_person}',
 			'${user.person.academic.title_academic}',
 			'${user.person.academic.abbreviation_academic}',
-			'${user.person.academic.nivel_academic}',
+			'${user.person.academic.level_academic}',
 			'${user.person.job.name_job}',
 			'${user.person.job.address_job}',
 			'${user.person.job.phone_job}',
@@ -216,10 +216,8 @@ export const dml_user_upload_avatar = (user: User, new_avatar: string) => {
 export const dml_user_remove_avatar = (user: User) => {
 	return new Promise<any>(async (resolve, reject) => {
 		const query = `select * from core.dml_user_remove_avatar(${user.id_user}) as result`;
-		console.log(
-			'🚀 ~ file: user.store.ts ~ line 219 ~ returnnewPromise<any> ~ query',
-			query
-		);
+
+		// console.log(query);
 
 		try {
 			const response = await clientNASHORPostgreSQL.query(query);

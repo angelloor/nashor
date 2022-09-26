@@ -117,7 +117,6 @@ export class ItemDetailsComponent implements OnInit {
       id_item_category: ['', [Validators.required]],
       name_item: ['', [Validators.required, Validators.maxLength(100)]],
       description_item: ['', [Validators.required, Validators.maxLength(250)]],
-      cpc_item: ['', [Validators.required, Validators.maxLength(100)]],
     });
     /**
      * Get the items

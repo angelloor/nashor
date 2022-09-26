@@ -36,13 +36,17 @@
                         <mat-error *ngIf="templateForm.get('id_documentation_profile')?.hasError('required')">
                             • Seleccione id_documentation_profile
                         </mat-error>
-                        <!-- plugin_item_process -->
-                        <mat-error *ngIf="templateForm.get('plugin_item_process')?.hasError('required')">
-                            • Ingrese plugin_item_process
+                        <!-- id_plugin_item -->
+                        <mat-error *ngIf="templateForm.get('id_plugin_item')?.hasError('required')">
+                            • Seleccione id_plugin_item
                         </mat-error>
                         <!-- plugin_attached_process -->
                         <mat-error *ngIf="templateForm.get('plugin_attached_process')?.hasError('required')">
                             • Ingrese plugin_attached_process
+                        </mat-error>
+                        <!-- plugin_item_process -->
+                        <mat-error *ngIf="templateForm.get('plugin_item_process')?.hasError('required')">
+                            • Ingrese plugin_item_process
                         </mat-error>
                         <!-- name_template -->
                         <mat-error *ngIf="templateForm.get('name_template')?.hasError('required')">
@@ -87,16 +91,7 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <!-- plugin_item_process -->
-                    <div class="mt-8">
-                        <mat-form-field class="angel-mat-no-subscript w-full">
-                            <mat-label>plugin_item_process</mat-label>
-                            <mat-select [formControlName]="'plugin_item_process'" [value]="false">
-                                <mat-option [value]="true">Activo</mat-option>
-                                <mat-option [value]="false">Inactivo</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div><!-- plugin_attached_process -->
+                    <!-- plugin_attached_process -->
                     <div class="mt-8">
                         <mat-form-field class="angel-mat-no-subscript w-full">
                             <mat-label>plugin_attached_process</mat-label>
@@ -116,6 +111,30 @@
                                     <mat-option [value]="category.id_documentation_profile"
                                         [matTooltip]="category.description_documentation_profile">
                                         {{category.name_documentation_profile}}</mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <!-- plugin_item_process -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>plugin_item_process</mat-label>
+                            <mat-select [formControlName]="'plugin_item_process'" [value]="false">
+                                <mat-option [value]="true">Activo</mat-option>
+                                <mat-option [value]="false">Inactivo</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <!-- id_plugin_item -->
+                    <div class="mt-8" *ngIf="templateForm.get('plugin_item_process')!.value">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>PluginItem</mat-label>
+                            <mat-select [formControlName]="'id_plugin_item'"
+                                [value]="selectedPluginItem.id_plugin_item">
+                                <ng-container *ngFor="let category of categoriesPluginItem">
+                                    <mat-option [value]="category.id_plugin_item"
+                                        [matTooltip]="category.description_plugin_item">
+                                        {{category.name_plugin_item}}</mat-option>
                                 </ng-container>
                             </mat-select>
                         </mat-form-field>

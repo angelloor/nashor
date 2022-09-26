@@ -14,7 +14,7 @@ export class ModalTaskService {
 
   dialogRef: any;
 
-  openModalTask() {
+  openModalTask(id_task: string, sourceProcess: boolean) {
     this._layoutService.setOpenModal(true);
 
     return (this.dialogRef = this._dialog.open(ModalTaskComponent, {
@@ -23,6 +23,10 @@ export class ModalTaskService {
       height: 'auto',
       width: '50rem',
       maxWidth: '',
+      data: {
+        id_task,
+        sourceProcess,
+      },
       panelClass: ['mat-dialog-cont'],
       disableClose: true,
     }));

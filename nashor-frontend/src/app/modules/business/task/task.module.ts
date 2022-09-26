@@ -22,7 +22,6 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from 'app/shared/shared.module';
 import * as moment from 'moment';
 import { MaterialFileInputModule } from 'ngx-material-file-input';
-import { ContainerModalTaskComponent } from './container-modal-task/container-modal-task.component';
 import { TaskListComponent } from './list/list.component';
 import { ModalSelectTaskComponent } from './modal-select-task/modal-select-task.component';
 import { ModalTaskRealizeComponent } from './modal-task-realize/modal-task-realize.component';
@@ -35,7 +34,7 @@ import { taskRoutes } from './task.routing';
     TaskListComponent,
     TaskComponent,
     ModalSelectTaskComponent,
-    ContainerModalTaskComponent,
+    // ContainerModalTaskComponent,
     ModalTaskComponent,
     ModalTaskRealizeComponent,
   ],

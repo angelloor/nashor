@@ -183,7 +183,6 @@ export class ModalEditFlowVersionLevelComponent implements OnInit {
                 (item) => item.id_level == flowVersionLevelTop.level.id_level
               )!;
 
-              this.byLevelAndCompanyRead(flowVersionLevelTop.level.id_level);
               this.flowVersionLevelForm.get('id_level')?.disable();
             } else {
               this.selectedLevel = this.listLevel.find(
@@ -191,6 +190,8 @@ export class ModalEditFlowVersionLevelComponent implements OnInit {
               )!;
             }
           });
+
+        this.byCompanyQueryRead();
 
         this.toggleEditMode(false);
       });
@@ -260,6 +261,21 @@ export class ModalEditFlowVersionLevelComponent implements OnInit {
     this.typeElement = type_element;
   }
   /**
+   * byCompanyQueryRead
+   */
+  byCompanyQueryRead(): void {
+    this._controlService
+      .byCompanyQueryRead(this.id_company, '*')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this._controlService.controls$
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((_controls: Control[]) => {
+            this.listControls = _controls;
+          });
+      });
+  }
+  /**
    * Update the flowVersionLevel
    */
   updateFlowVersionLevel(): void {
@@ -318,29 +334,6 @@ export class ModalEditFlowVersionLevelComponent implements OnInit {
               : error.error.description
           );
         },
-      });
-  }
-  /**
-   * selectionChangeLevel
-   */
-  selectionChangeLevel(): void {
-    let id_level = this.flowVersionLevelForm.getRawValue().id_level;
-    this.byLevelAndCompanyRead(id_level);
-  }
-  /**
-   * byLevelAndCompanyRead
-   * @param id_level
-   */
-  byLevelAndCompanyRead(id_level: string): void {
-    this._controlService
-      .byLevelAndCompanyRead(this.id_company, id_level)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this._controlService.controls$
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((_controls: Control[]) => {
-            this.listControls = _controls;
-          });
       });
   }
   /**

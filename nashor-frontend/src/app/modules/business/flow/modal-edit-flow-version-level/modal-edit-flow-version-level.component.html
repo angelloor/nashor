@@ -61,8 +61,7 @@
                         <div class="mt-8" *ngIf="!(typeElement === 'conditional' && !this.havedRelations)">
                             <mat-form-field class="angel-mat-no-subscript w-full">
                                 <mat-label>Level</mat-label>
-                                <mat-select [formControlName]="'id_level'" [value]="selectedLevel.id_level"
-                                    (selectionChange)="selectionChangeLevel()">
+                                <mat-select [formControlName]="'id_level'" [value]="selectedLevel.id_level">
                                     <ng-container *ngFor="let element of listLevel">
                                         <mat-option [value]="element.id_level">
                                             {{element.name_level}}</mat-option>

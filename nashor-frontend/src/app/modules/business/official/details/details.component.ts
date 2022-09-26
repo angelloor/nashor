@@ -1,18 +1,18 @@
 import { angelAnimations } from '@angel/animations';
 import { AngelAlertType } from '@angel/components/alert';
 import {
-  ActionAngelConfirmation,
-  AngelConfirmationService,
+    ActionAngelConfirmation,
+    AngelConfirmationService
 } from '@angel/services/confirmation';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Inject,
-  OnInit,
-  ViewChild,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Inject,
+    OnInit,
+    ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
@@ -190,7 +190,7 @@ export class OfficialDetailsComponent implements OnInit {
       id_academic: [''],
       title_academic: ['', [Validators.maxLength(250)]],
       abbreviation_academic: ['', [Validators.maxLength(50)]],
-      nivel_academic: ['', [Validators.maxLength(100)]],
+      level_academic: ['', [Validators.maxLength(100)]],
 
       id_job: [''],
       name_job: ['', [Validators.maxLength(200)]],
@@ -543,7 +543,7 @@ export class OfficialDetailsComponent implements OnInit {
       title_academic: this.official.user.person.academic.title_academic,
       abbreviation_academic:
         this.official.user.person.academic.abbreviation_academic,
-      nivel_academic: this.official.user.person.academic.nivel_academic,
+      level_academic: this.official.user.person.academic.level_academic,
 
       id_job: this.official.user.person.job.id_job,
       name_job: this.official.user.person.job.name_job,
@@ -633,7 +633,7 @@ export class OfficialDetailsComponent implements OnInit {
             id_academic: parseInt(official.id_academic),
             title_academic: official.title_academic.trim(),
             abbreviation_academic: official.abbreviation_academic.trim(),
-            nivel_academic: official.nivel_academic.trim(),
+            level_academic: official.level_academic.trim(),
           },
           job: {
             id_job: parseInt(official.id_job),
@@ -680,7 +680,7 @@ export class OfficialDetailsComponent implements OnInit {
     delete official.id_academic;
     delete official.title_academic;
     delete official.abbreviation_academic;
-    delete official.nivel_academic;
+    delete official.level_academic;
 
     delete official.id_job;
     delete official.name_job;

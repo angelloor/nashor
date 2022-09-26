@@ -362,7 +362,6 @@ export class FlowListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_flow: Flow) => {
-                console.log(_flow);
                 if (_flow) {
                   this._notificationService.success(
                     'flujo agregada correctamente'
@@ -378,7 +377,6 @@ export class FlowListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

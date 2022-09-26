@@ -4,7 +4,7 @@ import {
   AngelConfirmationService,
 } from '@angel/services/confirmation';
 import { OverlayRef } from '@angular/cdk/overlay';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -12,6 +12,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppInitialData, MessageAPI } from 'app/core/app/app.type';
@@ -64,6 +65,9 @@ import { ModalTaskService } from './modal-task.service';
 })
 export class ModalTaskComponent implements OnInit {
   _urlPathAvatar: string = environment.urlBackend + '/resource/img/avatar/';
+
+  id_task: string = '';
+  sourceProcess: boolean = false;
 
   listProcess: Process[] = [];
   selectedProcess: Process = process;
@@ -141,6 +145,7 @@ export class ModalTaskComponent implements OnInit {
    * Constructor
    */
   constructor(
+    @Inject(MAT_DIALOG_DATA) public _data: any,
     private _store: Store<{ global: AppInitialData }>,
     private _changeDetectorRef: ChangeDetectorRef,
     private _taskService: TaskService,
@@ -172,6 +177,13 @@ export class ModalTaskComponent implements OnInit {
    * On init
    */
   ngOnInit(): void {
+    this.id_task = this._data.id_task;
+    this.sourceProcess = this._data.sourceProcess;
+
+    this._taskService
+      .specificReadInLocal(this.id_task)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe();
     /**
      * isOpenModal
      */
@@ -229,7 +241,7 @@ export class ModalTaskComponent implements OnInit {
         this.task = task;
 
         this._processCommentService
-          .byLevelRead(this.task.level.id_level)
+          .byProcessRead(this.task.process.id_process)
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe();
 
@@ -429,7 +441,14 @@ export class ModalTaskComponent implements OnInit {
          */
         this._changeDetectorRef.markForCheck();
       });
+    if (this.sourceProcess) {
+      /**
+       * opentask
+       */
+      this.openModalTaskRealize();
+    }
   }
+
   get formArrayProcessComments(): FormArray {
     return this.taskForm.get('processComments') as FormArray;
   }

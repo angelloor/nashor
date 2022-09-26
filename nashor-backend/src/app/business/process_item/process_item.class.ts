@@ -29,9 +29,6 @@ export class ProcessItem {
 	public task: Task;
 	public level: Level;
 	public item: Item;
-	public amount_process_item?: number;
-	public features_process_item?: string;
-	public entry_date_process_item?: string;
 	/** Constructor */
 	constructor(
 		id_user_: number = 0,
@@ -40,10 +37,7 @@ export class ProcessItem {
 		process: Process = _process,
 		task: Task = _task,
 		level: Level = _level,
-		item: Item = _item,
-		amount_process_item: number = 0,
-		features_process_item: string = '',
-		entry_date_process_item: string = ''
+		item: Item = _item
 	) {
 		this.id_user_ = id_user_;
 		this.id_process_item = id_process_item;
@@ -52,9 +46,6 @@ export class ProcessItem {
 		this.task = task;
 		this.level = level;
 		this.item = item;
-		this.amount_process_item = amount_process_item;
-		this.features_process_item = features_process_item;
-		this.entry_date_process_item = entry_date_process_item;
 	}
 	/** Setters and Getters */
 	set _id_user_(id_user_: number) {
@@ -104,27 +95,6 @@ export class ProcessItem {
 	}
 	get _item() {
 		return this.item;
-	}
-
-	set _amount_process_item(amount_process_item: number) {
-		this.amount_process_item = amount_process_item;
-	}
-	get _amount_process_item() {
-		return this.amount_process_item!;
-	}
-
-	set _features_process_item(features_process_item: string) {
-		this.features_process_item = features_process_item;
-	}
-	get _features_process_item() {
-		return this.features_process_item!;
-	}
-
-	set _entry_date_process_item(entry_date_process_item: string) {
-		this.entry_date_process_item = entry_date_process_item;
-	}
-	get _entry_date_process_item() {
-		return this.entry_date_process_item!;
 	}
 
 	/** Methods */
@@ -352,7 +322,6 @@ export class ProcessItem {
 					item_category: { id_item_category: item.id_item_category },
 					name_item: item.name_item,
 					description_item: item.description_item,
-					cpc_item: item.cpc_item,
 				},
 				/**
 				 * Generate structure of second level the entity (is important add the ids of entity)
@@ -396,7 +365,6 @@ export class ProcessItem {
 			delete _processItem.id_item_category;
 			delete _processItem.name_item;
 			delete _processItem.description_item;
-			delete _processItem.cpc_item;
 
 			delete _processItem.id_person;
 			delete _processItem.id_type_user;

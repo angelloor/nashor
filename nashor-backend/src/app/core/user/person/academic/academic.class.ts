@@ -4,7 +4,7 @@ export class Academic {
 	public id_academic: number;
 	public title_academic?: string;
 	public abbreviation_academic?: string;
-	public nivel_academic?: string;
+	public level_academic?: string;
 	public deleted_academic?: boolean;
 	/** Constructor */
 	constructor(
@@ -12,14 +12,14 @@ export class Academic {
 		id_academic: number = 0,
 		title_academic: string = '',
 		abbreviation_academic: string = '',
-		nivel_academic: string = '',
+		level_academic: string = '',
 		deleted_academic: boolean = false
 	) {
 		this.id_user_ = id_user_;
 		this.id_academic = id_academic;
 		this.title_academic = title_academic;
 		this.abbreviation_academic = abbreviation_academic;
-		this.nivel_academic = nivel_academic;
+		this.level_academic = level_academic;
 		this.deleted_academic = deleted_academic;
 	}
 	/** Setters and Getters */
@@ -51,11 +51,11 @@ export class Academic {
 		return this.abbreviation_academic!;
 	}
 
-	set _nivel_academic(nivel_academic: string) {
-		this.nivel_academic = nivel_academic;
+	set _level_academic(level_academic: string) {
+		this.level_academic = level_academic;
 	}
-	get _nivel_academic() {
-		return this.nivel_academic!;
+	get _level_academic() {
+		return this.level_academic!;
 	}
 
 	set _deleted_academic(deleted_academic: boolean) {

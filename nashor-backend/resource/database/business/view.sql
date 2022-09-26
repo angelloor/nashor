@@ -83,7 +83,7 @@ CREATE OR REPLACE VIEW business.view_official_inner_join
     cvtu.status_type_user,
     cva.title_academic,
     cva.abbreviation_academic,
-    cva.nivel_academic,
+    cva.level_academic,
     cvj.name_job,
     cvj.address_job,
     cvj.phone_job,
@@ -208,7 +208,6 @@ CREATE OR REPLACE VIEW business.view_item_inner_join
     bvi.id_item_category,
     bvi.name_item,
     bvi.description_item,
-    bvi.cpc_item,
     bvi.deleted_item,
     cvc.id_setting,
     cvc.name_company,
@@ -258,6 +257,27 @@ CREATE OR REPLACE VIEW business.view_control_inner_join
 ALTER TABLE business.view_control_inner_join
     OWNER TO postgres;
 
+-- View: business.view_plugin_item_inner_join
+-- DROP VIEW business.view_plugin_item_inner_join;
+
+CREATE OR REPLACE VIEW business.view_plugin_item_inner_join
+ AS
+ SELECT bvpi.id_plugin_item,
+    bvpi.id_company,
+    bvpi.name_plugin_item,
+    bvpi.description_plugin_item,
+    cvc.id_setting,
+    cvc.name_company,
+    cvc.acronym_company,
+    cvc.address_company,
+    cvc.status_company
+   FROM business.view_plugin_item bvpi
+     JOIN core.view_company cvc ON bvpi.id_company = cvc.id_company
+  ORDER BY bvpi.id_plugin_item DESC;
+
+ALTER TABLE business.view_plugin_item_inner_join
+    OWNER TO postgres;
+
 -- View: business.view_template_inner_join
 -- DROP VIEW business.view_template_inner_join;
 
@@ -266,8 +286,9 @@ CREATE OR REPLACE VIEW business.view_template_inner_join
  SELECT bvt.id_template,
     bvt.id_company,
     bvt.id_documentation_profile,
-    bvt.plugin_item_process,
+    bvt.id_plugin_item,
     bvt.plugin_attached_process,
+    bvt.plugin_item_process,
     bvt.name_template,
     bvt.description_template,
     bvt.status_template,
@@ -301,8 +322,9 @@ CREATE OR REPLACE VIEW business.view_template_control_inner_join
     bvtc.id_control,
     bvtc.ordinal_position,
     bvt.id_documentation_profile,
-    bvt.plugin_item_process,
+    bvt.id_plugin_item,
     bvt.plugin_attached_process,
+    bvt.plugin_item_process,
     bvt.name_template,
     bvt.description_template,
     bvt.status_template,
@@ -460,8 +482,9 @@ CREATE OR REPLACE VIEW business.view_level_inner_join
     cvc.address_company,
     cvc.status_company,
     bvt.id_documentation_profile,
-    bvt.plugin_item_process,
+    bvt.id_plugin_item,
     bvt.plugin_attached_process,
+    bvt.plugin_item_process,
     bvt.name_template,
     bvt.description_template,
     bvt.status_template,
@@ -666,9 +689,6 @@ CREATE OR REPLACE VIEW business.view_process_item_inner_join
     bvpi.id_task,
     bvpi.id_level,
     bvpi.id_item,
-    bvpi.amount_process_item,
-    bvpi.features_process_item,
-    bvpi.entry_date_process_item,
     bvo.id_user,
     bvo.id_area,
     bvo.id_position,
@@ -702,8 +722,7 @@ CREATE OR REPLACE VIEW business.view_process_item_inner_join
     bvl.description_level,
     bvi.id_item_category,
     bvi.name_item,
-    bvi.description_item,
-    bvi.cpc_item
+    bvi.description_item
    FROM business.view_process_item bvpi
      JOIN business.view_official bvo ON bvpi.id_official = bvo.id_official
      JOIN core.view_user cvu ON bvo.id_user = cvu.id_user
@@ -910,3 +929,23 @@ CREATE OR REPLACE VIEW business.view_process_comment_inner_join
 
 ALTER TABLE business.view_process_comment_inner_join
     OWNER TO postgres;
+
+  -- View: business.view_plugin_item_column_inner_join
+-- DROP VIEW business.view_plugin_item_column_inner_join;
+
+CREATE OR REPLACE VIEW business.view_plugin_item_column_inner_join
+ AS
+ SELECT bvpic.id_plugin_item_column,
+    bvpic.id_plugin_item,
+    bvpic.name_plugin_item_column,
+    bvpic.lenght_plugin_item_column,
+    bvpi.id_company,
+    bvpi.name_plugin_item,
+    bvpi.description_plugin_item
+   FROM business.view_plugin_item_column bvpic
+     JOIN business.view_plugin_item bvpi ON bvpic.id_plugin_item = bvpi.id_plugin_item
+  ORDER BY bvpic.id_plugin_item_column DESC;
+
+ALTER TABLE business.view_plugin_item_column_inner_join
+    OWNER TO postgres;
+

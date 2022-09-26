@@ -43,19 +43,18 @@ export const validation = (template: Template, url: string, token: string) => {
 
 						if (url == '/update') {
 							attributeValidate(
-								'plugin_item_process',
-								template.plugin_item_process,
+								'plugin_attached_process',
+								template.plugin_attached_process,
 								'boolean'
 							).catch((err) => {
 								validationStatus = true;
 								reject(err);
 							});
 						}
-
 						if (url == '/update') {
 							attributeValidate(
-								'plugin_attached_process',
-								template.plugin_attached_process,
+								'plugin_item_process',
+								template.plugin_item_process,
 								'boolean'
 							).catch((err) => {
 								validationStatus = true;
@@ -161,6 +160,22 @@ export const validation = (template: Template, url: string, token: string) => {
 							attributeValidate(
 								'id_documentation_profile',
 								template.documentation_profile.id_documentation_profile,
+								'number',
+								5
+							).catch((err) => {
+								validationStatus = true;
+								reject(err);
+							});
+						}
+
+						/**
+						 * Validation pluginItem
+						 */
+
+						if (url == '/update') {
+							attributeValidate(
+								'id_plugin_item',
+								template.plugin_item.id_plugin_item,
 								'number',
 								5
 							).catch((err) => {
@@ -285,9 +300,10 @@ export const validation = (template: Template, url: string, token: string) => {
 								_template.company = template.company;
 								_template.documentation_profile =
 									template.documentation_profile;
-								_template.plugin_item_process = template.plugin_item_process;
+								_template.plugin_item = template.plugin_item;
 								_template.plugin_attached_process =
 									template.plugin_attached_process;
+								_template.plugin_item_process = template.plugin_item_process;
 								_template.name_template = template.name_template;
 								_template.description_template = template.description_template;
 								_template.status_template = template.status_template;

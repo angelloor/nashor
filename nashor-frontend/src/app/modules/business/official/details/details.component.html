@@ -126,11 +126,11 @@
                     </ng-container>
 
                     <div class="mt-8 mb-8 border-t"
-                        *ngIf="official.user.person.academic.title_academic || official.user.person.academic.abbreviation_academic || official.user.person.academic.nivel_academic">
+                        *ngIf="official.user.person.academic.title_academic || official.user.person.academic.abbreviation_academic || official.user.person.academic.level_academic">
                     </div>
 
                     <div class="w-full"
-                        *ngIf="official.user.person.academic.title_academic || official.user.person.academic.abbreviation_academic || official.user.person.academic.nivel_academic">
+                        *ngIf="official.user.person.academic.title_academic || official.user.person.academic.abbreviation_academic || official.user.person.academic.level_academic">
                         <div class="text-xl">Información académica</div>
                         <div class="text-secondary">Detalla la información académica del usuario.</div>
                     </div>
@@ -147,11 +147,11 @@
                             <mat-icon [svgIcon]="'mat_outline:short_text'"></mat-icon>
                             <div class="ml-6 leading-6">{{official.user.person.academic.abbreviation_academic}}</div>
                         </div>
-                    </ng-container> <!-- nivel_academic -->
-                    <ng-container *ngIf="official.user.person.academic.nivel_academic">
+                    </ng-container> <!-- level_academic -->
+                    <ng-container *ngIf="official.user.person.academic.level_academic">
                         <div class="flex sm:items-center">
                             <mat-icon [svgIcon]="'heroicons_outline:menu-alt-2'"></mat-icon>
-                            <div class="ml-6 leading-6">{{official.user.person.academic.nivel_academic}}</div>
+                            <div class="ml-6 leading-6">{{official.user.person.academic.level_academic}}</div>
                         </div>
                     </ng-container>
 
@@ -339,8 +339,8 @@
                         <mat-error *ngIf="officialForm.get('abbreviation_academic')?.hasError('required')">
                             • Ingrese la abreviación del titulo académico
                         </mat-error>
-                        <!-- nivel_academic -->
-                        <mat-error *ngIf="officialForm.get('nivel_academic')?.hasError('required')">
+                        <!-- level_academic -->
+                        <mat-error *ngIf="officialForm.get('level_academic')?.hasError('required')">
                             • Ingrese el nvel académico
                         </mat-error>
                         <!-- name_job -->
@@ -536,14 +536,14 @@
                             <input matInput maxlength="50" [formControlName]="'abbreviation_academic'"
                                 [placeholder]="'Ingrese la abreviación  del titulo'" [spellcheck]="true">
                         </mat-form-field>
-                    </div> <!-- nivel_academic -->
+                    </div> <!-- level_academic -->
                     <div class="mt-8">
                         <mat-form-field class="angel-mat-no-subscript w-full">
                             <mat-label>Nivel académico</mat-label>
                             <mat-icon matPrefix class="hidden sm:flex icon-size-5"
                                 [svgIcon]="'heroicons_solid:menu-alt-2'">
                             </mat-icon>
-                            <input matInput maxlength="100" [formControlName]="'nivel_academic'"
+                            <input matInput maxlength="100" [formControlName]="'level_academic'"
                                 [placeholder]="'Ingrese el nivel académico'" [spellcheck]="true">
                         </mat-form-field>
                     </div>

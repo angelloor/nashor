@@ -5,7 +5,7 @@ import {
   Component,
   Inject,
   OnInit,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -22,11 +22,14 @@ import {
   switchMap,
   takeUntil,
   takeWhile,
-  tap,
+  tap
 } from 'rxjs/operators';
 import { ModalSelectFlowService } from '../../flow/modal-select-flow/modal-select-flow.service';
 import { official } from '../../official/official.data';
 import { Official } from '../../official/official.types';
+import { ModalTaskService } from '../../task/modal-task/modal-task.service';
+import { TaskService } from '../../task/task.service';
+import { Task } from '../../task/task.types';
 import { ProcessService } from '../process.service';
 import { Process } from '../process.types';
 
@@ -78,7 +81,9 @@ export class ProcessListComponent implements OnInit {
     private _notificationService: NotificationService,
     private _layoutService: LayoutService,
     private _authService: AuthService,
-    private _modalSelectFlowService: ModalSelectFlowService
+    private _modalSelectFlowService: ModalSelectFlowService,
+    private _taskService: TaskService,
+    private _modalTaskService: ModalTaskService
   ) {}
 
   ngOnInit(): void {
@@ -376,11 +381,23 @@ export class ProcessListComponent implements OnInit {
                    * Go to new process
                    */
                   this.goToEntity(_process.id_process);
+                  /**
+                   * open task
+                   */
                 } else {
                   this._notificationService.error(
                     '¡Error interno!, consulte al administrador.'
                   );
                 }
+
+                this._taskService
+                  .byProcessQueryRead(_process.id_process, '')
+                  .pipe(takeUntil(this._unsubscribeAll))
+                  .subscribe((tasks: Task[]) => {
+                    let id_task = tasks[0].id_task;
+
+                    this._modalTaskService.openModalTask(id_task, true);
+                  });
               },
               error: (error: { error: MessageAPI }) => {
                 this._notificationService.error(

@@ -17,6 +17,9 @@ import { filter, fromEvent, merge, Subject, takeUntil } from 'rxjs';
 import { documentationProfile } from '../../documentation-profile/documentation-profile.data';
 import { DocumentationProfileService } from '../../documentation-profile/documentation-profile.service';
 import { DocumentationProfile } from '../../documentation-profile/documentation-profile.types';
+import { pluginItem } from '../../plugin-item/plugin-item.data';
+import { PluginItemService } from '../../plugin-item/plugin-item.service';
+import { PluginItem } from '../../plugin-item/plugin-item.types';
 import { TemplateService } from '../template.service';
 import { Template } from '../template.types';
 import { ModalTemplateService } from './modal-template.service';
@@ -30,6 +33,10 @@ export class ModalTemplateComponent implements OnInit {
   id_template: any;
   categoriesDocumentationProfile: DocumentationProfile[] = [];
   selectedDocumentationProfile: DocumentationProfile = documentationProfile;
+
+  categoriesPluginItem: PluginItem[] = [];
+  selectedPluginItem: PluginItem = pluginItem;
+
   id_company: string = '';
   nameEntity: string = 'Plantilla';
   private data!: AppInitialData;
@@ -74,7 +81,8 @@ export class ModalTemplateComponent implements OnInit {
     private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
     private _documentationProfileService: DocumentationProfileService,
-    private _modalTemplateService: ModalTemplateService
+    private _modalTemplateService: ModalTemplateService,
+    private _pluginItemService: PluginItemService
   ) {}
 
   ngOnInit(): void {
@@ -104,8 +112,9 @@ export class ModalTemplateComponent implements OnInit {
       id_template: [''],
       company: ['', [Validators.required]],
       id_documentation_profile: ['', [Validators.required]],
-      plugin_item_process: ['', [Validators.required]],
+      id_plugin_item: ['', [Validators.required]],
       plugin_attached_process: ['', [Validators.required]],
+      plugin_item_process: ['', [Validators.required]],
       name_template: ['', [Validators.required, Validators.maxLength(100)]],
       description_template: [
         '',
@@ -151,6 +160,20 @@ export class ModalTemplateComponent implements OnInit {
                   item.id_documentation_profile ==
                   this.template.documentation_profile.id_documentation_profile.toString()
               )!;
+          });
+
+        // PluginItem
+        this._pluginItemService
+          .byCompanyQueryRead(this.id_company, '*')
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((plugin_items: PluginItem[]) => {
+            this.categoriesPluginItem = plugin_items;
+
+            this.selectedPluginItem = this.categoriesPluginItem.find(
+              (item) =>
+                item.id_plugin_item ==
+                this.template.plugin_item.id_plugin_item.toString()
+            )!;
           });
 
         /**
@@ -225,6 +248,9 @@ export class ModalTemplateComponent implements OnInit {
       },
       documentation_profile: {
         id_documentation_profile: parseInt(template.id_documentation_profile),
+      },
+      plugin_item: {
+        id_plugin_item: parseInt(template.id_plugin_item),
       },
     };
     /**

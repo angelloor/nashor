@@ -27,10 +27,14 @@
                 <mat-icon [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
                 <span>Condicional</span>
             </button>
+            <button mat-menu-item (click)="createFlowVersionLevel('finish')">
+                <mat-icon [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                <span>Final</span>
+            </button>
         </mat-menu>
 
         <mat-menu [xPosition]="'before'" #levelActions="matMenu">
-            <button mat-menu-item (click)="openModalEditFlowVersionLevel()">
+            <button mat-menu-item (click)="openModalEditFlowVersionLevel()" *ngIf="type_element != 'finish'">
                 <mat-icon [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
                 <span>Editar</span>
             </button>
@@ -94,6 +98,29 @@
                         {{getValueFlowVersionLevel(i).operator}}
                         {{getValueFlowVersionLevel(i).value_against}}
                     </div>
+                </div>
+                <!-- Selector -->
+                <div class="box-drag-selector bg-primary-600"
+                    *ngIf="getValueFlowVersionLevel(i).position_level_father >= 1">
+                    <p>
+                        {{getValueFlowVersionLevel(i).position_level_father}}</p>
+                </div>
+            </div>
+            <!-- FINISH -->
+            <div class="container-box-drag" cdkDragBoundary=".container-drag" cdkDrag
+                *ngIf="getValueFlowVersionLevel(i).type_element === 'finish'" (cdkDragEnded)="dragEnded($event, i)"
+                [cdkDragFreeDragPosition]="{x: getValueFlowVersionLevel(i).x, y: getValueFlowVersionLevel(i).y}">
+                <!-- Opciones -->
+                <button mat-mini-fab *ngIf="editMode" color="primary" class="mr-2" [matTooltip]="'Opciones'"
+                    (click)="setIndex(i)" [matMenuTriggerFor]="levelActions">
+                    <mat-icon>filter_list</mat-icon>
+                </button>
+                <!-- Title -->
+                <div class="box-drag">
+                    <div class="box-drag-selector bg-primary-900">
+                        <p>{{getValueFlowVersionLevel(i).position_level}}</p>
+                    </div>
+                    <div class="mr-2">Final</div>
                 </div>
                 <!-- Selector -->
                 <div class="box-drag-selector bg-primary-600"

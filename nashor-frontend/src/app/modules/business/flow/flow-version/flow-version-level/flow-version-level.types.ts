@@ -19,7 +19,7 @@ export interface FlowVersionLevel {
 /**
  * Type Enum TYPE_ELEMENT
  */
-export type TYPE_ELEMENT = 'level' | 'conditional';
+export type TYPE_ELEMENT = 'level' | 'conditional' | 'finish';
 
 export interface TYPE_ELEMENT_ENUM {
   name_type: string;
@@ -34,6 +34,10 @@ export const _typeElements: TYPE_ELEMENT_ENUM[] = [
   {
     name_type: 'Condicional',
     value_type: 'conditional',
+  },
+  {
+    name_type: 'Final',
+    value_type: 'finish',
   },
 ];
 /**

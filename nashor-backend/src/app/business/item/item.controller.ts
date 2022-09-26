@@ -54,15 +54,6 @@ export const validation = (item: Item, url: string, token: string) => {
 						});
 					}
 
-					if (url == '/update') {
-						attributeValidate('cpc_item', item.cpc_item, 'string', 100).catch(
-							(err) => {
-								validationStatus = true;
-								reject(err);
-							}
-						);
-					}
-
 					/**
 					 * Validation company
 					 */
@@ -208,7 +199,6 @@ export const validation = (item: Item, url: string, token: string) => {
 							_item.item_category = item.item_category;
 							_item.name_item = item.name_item;
 							_item.description_item = item.description_item;
-							_item.cpc_item = item.cpc_item;
 							await _item
 								.update()
 								.then((_item: Item) => {

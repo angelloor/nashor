@@ -48,12 +48,6 @@
                             <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
                             <div class="ml-6 leading-6">{{item.description_item}}</div>
                         </div>
-                    </ng-container> <!-- cpc_item -->
-                    <ng-container *ngIf="item.cpc_item">
-                        <div class="flex sm:items-center">
-                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
-                            <div class="ml-6 leading-6">{{item.cpc_item}}</div>
-                        </div>
                     </ng-container>
                 </div>
             </div>
@@ -120,10 +114,6 @@
                         <mat-error *ngIf="itemForm.get('description_item')?.hasError('required')">
                             • Ingrese description_item
                         </mat-error>
-                        <!-- cpc_item -->
-                        <mat-error *ngIf="itemForm.get('cpc_item')?.hasError('required')">
-                            • Ingrese cpc_item
-                        </mat-error>
                     </angel-alert>
                     <!-- Alert -->
                     <!-- id_item_category -->
@@ -155,15 +145,6 @@
                                 [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
                             <input matInput maxlength="250" [formControlName]="'description_item'"
                                 [placeholder]="'description_item'" [spellcheck]="false">
-                        </mat-form-field>
-                    </div> <!-- cpc_item -->
-                    <div class="mt-8">
-                        <mat-form-field class="angel-mat-no-subscript w-full">
-                            <mat-label>cpcItem</mat-label>
-                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
-                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
-                            <input matInput maxlength="100" [formControlName]="'cpc_item'" [placeholder]="'cpc_item'"
-                                [spellcheck]="false">
                         </mat-form-field>
                     </div>
                 </form>

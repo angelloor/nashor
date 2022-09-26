@@ -132,7 +132,6 @@ export const dml_item_update = (item: Item) => {
 			${item.item_category.id_item_category},
 			'${item.name_item}',
 			'${item.description_item}',
-			'${item.cpc_item}',
 			${item.deleted_item})`;
 
 		// console.log(query);

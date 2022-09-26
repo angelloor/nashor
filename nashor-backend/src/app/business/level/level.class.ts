@@ -289,8 +289,11 @@ export class Level {
 					documentation_profile: {
 						id_documentation_profile: item.id_documentation_profile,
 					},
-					plugin_item_process: item.plugin_item_process,
+					plugin_item: {
+						id_plugin_item: item.id_plugin_item,
+					},
 					plugin_attached_process: item.plugin_attached_process,
+					plugin_item_process: item.plugin_item_process,
 					name_template: item.name_template,
 					description_template: item.description_template,
 					status_template: item.status_template,
@@ -328,8 +331,9 @@ export class Level {
 			delete _level.id_template;
 			delete _level.id_company;
 			delete _level.id_documentation_profile;
-			delete _level.plugin_item_process;
+			delete _level.id_plugin_item;
 			delete _level.plugin_attached_process;
+			delete _level.plugin_item_process;
 			delete _level.name_template;
 			delete _level.description_template;
 			delete _level.status_template;

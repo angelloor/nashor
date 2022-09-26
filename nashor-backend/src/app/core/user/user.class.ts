@@ -11,15 +11,15 @@ import { _typeUser } from '../type_user/type_user.data';
 import { Person } from './person/person.class';
 import { _person } from './person/person.data';
 import {
-	dml_user_create,
-	dml_user_delete,
-	dml_user_remove_avatar,
-	dml_user_update,
-	dml_user_upload_avatar,
-	view_user_by_company_query_read,
-	view_user_by_type_user_query_read,
-	view_user_query_read,
-	view_user_specific_read,
+    dml_user_create,
+    dml_user_delete,
+    dml_user_remove_avatar,
+    dml_user_update,
+    dml_user_upload_avatar,
+    view_user_by_company_query_read,
+    view_user_by_type_user_query_read,
+    view_user_query_read,
+    view_user_specific_read
 } from './user.store';
 
 export class User {
@@ -410,7 +410,7 @@ export class User {
 						id_academic: item.id_academic,
 						title_academic: item.title_academic,
 						abbreviation_academic: item.abbreviation_academic,
-						nivel_academic: item.nivel_academic,
+						level_academic: item.level_academic,
 					},
 					job: {
 						id_job: item.id_job,
@@ -454,7 +454,7 @@ export class User {
 
 			delete _user.title_academic;
 			delete _user.abbreviation_academic;
-			delete _user.nivel_academic;
+			delete _user.level_academic;
 			delete _user.name_job;
 			delete _user.address_job;
 			delete _user.phone_job;

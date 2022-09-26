@@ -42,7 +42,7 @@ export class ModalTemplateControlComponent implements OnInit {
   /**
    * ajv
    */
-  ajv = new Ajv({ allErrors: true });
+  ajv = new Ajv({ allErrors: true, strictTuples: false });
   schema = schemaFile;
   /**
    * ajv

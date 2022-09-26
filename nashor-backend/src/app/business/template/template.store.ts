@@ -132,8 +132,9 @@ export const dml_template_update = (template: Template) => {
 			${template.id_template},
 			${template.company.id_company},
 			${template.documentation_profile.id_documentation_profile},
-			${template.plugin_item_process},
+			${template.plugin_item.id_plugin_item},
 			${template.plugin_attached_process},
+			${template.plugin_item_process},
 			'${template.name_template}',
 			'${template.description_template}',
 			${template.status_template},
@@ -141,7 +142,7 @@ export const dml_template_update = (template: Template) => {
 			${template.in_use},
 			${template.deleted_template})`;
 
-		// console.log(query);
+		console.log(query);
 
 		try {
 			const response = await clientNASHORPostgreSQL.query(query);

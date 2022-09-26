@@ -128,6 +128,7 @@ export class ModalTaskRealizeComponent implements OnInit {
     this.task = this._data.task;
     this.id_template = this._data.id_template;
 
+    console.log(this.task);
     /**
      * readAllItem
      */
@@ -432,7 +433,7 @@ export class ModalTaskRealizeComponent implements OnInit {
            * processAttached byLevelRead
            */
           this._processAttachedService
-            .byLevelRead(this.task.level.id_level)
+            .byTaskRead(this.task.id_task)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe();
           /**
@@ -646,7 +647,7 @@ export class ModalTaskRealizeComponent implements OnInit {
      * ProcessItem byLevelRead
      */
     this._processItemService
-      .byLevelRead(this.task.level.id_level)
+      .byTaskRead(this.task.id_task)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe();
     /**
@@ -766,27 +767,13 @@ export class ModalTaskRealizeComponent implements OnInit {
                 },
                 [Validators.required],
               ],
-              amount_process_item: [
-                {
-                  value: _processItem.amount_process_item,
-                  disabled: false,
-                },
-                [Validators.required],
-              ],
-              features_process_item: [
-                {
-                  value: _processItem.features_process_item,
-                  disabled: false,
-                },
-                [Validators.required],
-              ],
-              entry_date_process_item: [
-                {
-                  value: _processItem.entry_date_process_item,
-                  disabled: false,
-                },
-                [Validators.required],
-              ],
+              // features_process_item: [
+              //   {
+              //     value: _processItem.features_process_item,
+              //     disabled: false,
+              //   },
+              //   [Validators.required],
+              // ],
               editMode: [
                 {
                   value: false,
@@ -905,8 +892,6 @@ export class ModalTaskRealizeComponent implements OnInit {
                     'Tarea enviada correctamente'
                   );
 
-                  console.log(_task);
-
                   this.task = _task;
                   /**
                    * closeModalTaskRealize
@@ -1004,8 +989,7 @@ export class ModalTaskRealizeComponent implements OnInit {
       item: {
         id_item: parseInt(processItem.id_item),
       },
-      amount_process_item: parseInt(processItem.amount_process_item),
-      features_process_item: processItem.features_process_item.trim(),
+      // features_process_item: processItem.features_process_item.trim(),
     };
 
     this._processItemService

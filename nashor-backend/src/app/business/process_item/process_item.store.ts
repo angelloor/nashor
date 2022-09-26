@@ -169,10 +169,7 @@ export const dml_process_item_update = (process_item: ProcessItem) => {
 			${process_item.process.id_process},
 			${process_item.task.id_task},
 			${process_item.level.id_level},
-			${process_item.item.id_item},
-			${process_item.amount_process_item},
-			'${process_item.features_process_item}',
-			'${process_item.entry_date_process_item}')`;
+			${process_item.item.id_item})`;
 
 		// console.log(query);
 

@@ -6,16 +6,16 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { ContainerModalTaskComponent } from './container-modal-task/container-modal-task.component';
+import { TaskListComponent } from './list/list.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CanDeactivateTaskDetails
-  implements CanDeactivate<ContainerModalTaskComponent>
+  implements CanDeactivate<TaskListComponent>
 {
   canDeactivate(
-    component: ContainerModalTaskComponent,
+    component: TaskListComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot

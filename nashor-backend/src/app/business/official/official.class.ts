@@ -272,7 +272,7 @@ export class Official {
 							id_academic: item.id_academic,
 							title_academic: item.title_academic,
 							abbreviation_academic: item.abbreviation_academic,
-							nivel_academic: item.nivel_academic,
+							level_academic: item.level_academic,
 						},
 						job: {
 							id_job: item.id_job,
@@ -349,7 +349,7 @@ export class Official {
 			delete _official.id_academic;
 			delete _official.title_academic;
 			delete _official.abbreviation_academic;
-			delete _official.nivel_academic;
+			delete _official.level_academic;
 			delete _official.id_job;
 			delete _official.name_job;
 			delete _official.address_job;

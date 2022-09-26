@@ -65,7 +65,7 @@ CREATE TYPE business."TYPE_ACTION_TASK" AS ENUM
 /* Type: TYPE_ELEMENT                                           */
 /*==============================================================*/
 CREATE TYPE business."TYPE_ELEMENT" AS ENUM
-    ('level', 'conditional');
+    ('level', 'conditional', 'finish');
 
 /*==============================================================*/
 /* Type: TYPE_OPERATOR                                          */

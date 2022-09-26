@@ -1,7 +1,7 @@
 import { AngelAlertType } from '@angel/components/alert';
 import {
   ActionAngelConfirmation,
-  AngelConfirmationService,
+  AngelConfirmationService
 } from '@angel/services/confirmation';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { OverlayRef } from '@angular/cdk/overlay';
@@ -11,14 +11,14 @@ import {
   Component,
   Inject,
   OnInit,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
-  Validators,
+  Validators
 } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -145,8 +145,9 @@ export class ModalTemplatePreviewComponent implements OnInit {
       id_template: [''],
       company: ['', [Validators.required]],
       id_documentation_profile: ['', [Validators.required]],
-      plugin_item_process: ['', [Validators.required]],
+      id_plugin_item: ['', [Validators.required]],
       plugin_attached_process: ['', [Validators.required]],
+      plugin_item_process: ['', [Validators.required]],
       name_template: ['', [Validators.required, Validators.maxLength(100)]],
       description_template: [
         '',

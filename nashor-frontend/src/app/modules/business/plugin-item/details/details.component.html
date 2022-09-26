@@ -1,0 +1,171 @@
+<div class="flex flex-col w-full">
+    <!-- View mode -->
+    <ng-container *ngIf="!editMode">
+        <!-- Header -->
+        <div class="relative w-full h-40 flex items-center bg-accent-100 dark:bg-accent-700 place-content-center">
+            <!-- Background -->
+            <div class="w-full h-40 bg-black z-10 opacity-0">
+            </div>
+            <h1 class="absolute z-20 text-dark text-3xl">{{nameEntity}}
+            </h1>
+            <!-- Light version -->
+            <img class="dark:hidden absolute inset-0 object-cover w-full h-full" src="assets/images/background.svg">
+            <!-- Dark version -->
+            <img class="hidden dark:flex absolute inset-0 object-cover w-full h-full"
+                src="assets/images/background-on-dark.svg">
+        </div>
+        <!-- Entity -->
+        <div class="relative flex flex-col flex-auto items-center p-6 pt-0 sm:p-12 sm:pt-0">
+            <div class="w-full max-w-3xl">
+                <!-- Actions -->
+                <div
+                    class="flex items-center -mx-6 sm:-mx-12 py-4 pr-6 pl-6 sm:pr-12 sm:pl-12 border-t bg-gray-100 dark:bg-transparent rounded-t-none rounded-b-2xl">
+                    <button mat-stroked-button (click)="toggleEditMode(true)">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'"></mat-icon>
+                        <span class="ml-1">Editar</span>
+                    </button>
+                    <button mat-stroked-button class="ml-auto" [matTooltip]="'Cerrar'" [routerLink]="['../']">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                        <span class="ml-1">Cerrar</span>
+                    </button>
+                </div>
+                <div class="flex flex-col mt-4 pt-6 space-y-8">
+                    <!-- name_plugin_item -->
+                    <ng-container *ngIf="pluginItem.name_plugin_item">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{pluginItem.name_plugin_item}}</div>
+                        </div>
+                    </ng-container> <!-- description_plugin_item -->
+                    <ng-container *ngIf="pluginItem.description_plugin_item">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
+                            <div class="ml-6 leading-6">{{pluginItem.description_plugin_item}}</div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Edit mode -->
+    <ng-container *ngIf="editMode">
+        <!-- Header -->
+        <div class="relative w-full h-40 flex items-center bg-accent-100 dark:bg-accent-700 place-content-center">
+            <!-- Background -->
+            <div class="w-full h-40 bg-black z-10 opacity-25">
+            </div>
+            <h1 class="absolute z-20 text-dark text-3xl">{{nameEntity}}
+            </h1>
+            <!-- Light version -->
+            <img class="dark:hidden absolute inset-0 object-cover w-full h-full" src="assets/images/background.svg">
+            <!-- Dark version -->
+            <img class="hidden dark:flex absolute inset-0 object-cover w-full h-full"
+                src="assets/images/background-on-dark.svg">
+        </div>
+        <!-- form -->
+        <div class="relative flex flex-col flex-auto items-center px-6 sm:px-12">
+            <div class="w-full max-w-3xl">
+                <!-- Actions -->
+                <div
+                    class="flex items-center -mx-6 sm:-mx-12 py-4 pr-6 pl-6 sm:pr-12 sm:pl-12 border-t bg-gray-100 dark:bg-transparent rounded-t-none rounded-b-2xl">
+                    <!-- Save -->
+                    <button mat-flat-button [color]="'primary'" [disabled]="pluginItemForm.invalid"
+                        [matTooltip]="'Guardar'" (click)="updatePluginItem()">
+                        Guardar
+                    </button>
+                    <!-- Delete -->
+                    <button mat-stroked-button class="ml-2" [color]="'warn'" [matTooltip]="'Eliminar'"
+                        (click)="deletePluginItem()">
+                        Eliminar
+                    </button>
+                    <!-- Cancel -->
+                    <button mat-stroked-button class="ml-2 mr-2" [matTooltip]="'Cancelar'"
+                        (click)="toggleEditMode(false)">
+                        Cancelar
+                    </button>
+
+                    <button mat-stroked-button class="ml-auto" [matTooltip]="'Cerrar'" [routerLink]="['../']">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                        <span class="ml-1">Cerrar</span>
+                    </button>
+                </div>
+                <form [formGroup]="pluginItemForm" class="mb-8">
+                    <!-- Alert -->
+                    <angel-alert class="mt-8" *ngIf="pluginItemForm.invalid || showAlert" [appearance]="'outline'"
+                        [showIcon]="false" [type]="alert.type" [@shake]="alert.type === 'error'">
+                        <!-- MessageAPI if alert is actived for the component -->
+                        {{alert.message}}
+                        <!-- name_plugin_item -->
+                        <mat-error *ngIf="pluginItemForm.get('name_plugin_item')?.hasError('required')">
+                            • Ingrese name_plugin_item
+                        </mat-error>
+                        <!-- description_plugin_item -->
+                        <mat-error *ngIf="pluginItemForm.get('description_plugin_item')?.hasError('required')">
+                            • Ingrese description_plugin_item
+                        </mat-error>
+                    </angel-alert>
+                    <!-- Alert -->
+                    <!-- name_plugin_item -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>namePluginItem</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput maxlength="100" [formControlName]="'name_plugin_item'"
+                                [placeholder]="'name_plugin_item'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div> <!-- description_plugin_item -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>descriptionPluginItem</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                [svgIcon]="'heroicons_solid:credit-card'"></mat-icon>
+                            <input matInput maxlength="250" [formControlName]="'description_plugin_item'"
+                                [placeholder]="'description_plugin_item'" [spellcheck]="false">
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Attacheds -->
+                    <div class="mt-8">
+                        <div class="space-y-4">
+                            <ng-container
+                                *ngFor="let attached of formArrayColumns.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                                <div class="relative flex">
+                                    <mat-form-field class="angel-mat-no-subscript w-full mr-3">
+                                        <mat-label *ngIf="first">Columnas</mat-label>
+                                        <input matInput maxlength="100"
+                                            [formControl]="getFromControl(formArrayColumns, i, 'name_plugin_item_column')"
+                                            [placeholder]="'name_plugin_item_column'" [spellcheck]="true">
+                                    </mat-form-field>
+                                    <mat-form-field class="angel-mat-no-subscript w-20">
+                                        <mat-label *ngIf="first">Longitud</mat-label>
+                                        <input matInput maxlength="10"
+                                            [formControl]="getFromControl(formArrayColumns, i, 'lenght_plugin_item_column')"
+                                            [placeholder]="'lenght_plugin_item_column'" [spellcheck]="false">
+                                    </mat-form-field>
+                                    <ng-container *ngIf="!(first && last)">
+                                        <div class="flex items-center w-10 pl-2" [ngClass]="{'mt-6': first}">
+                                            <button class="w-8 h-8 min-h-8" mat-icon-button
+                                                (click)="deletePluginItemColumn(i)" matTooltip="Eliminar">
+                                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'">
+                                                </mat-icon>
+                                            </button>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <div class="group inline-flex items-center mt-2 -ml-4 py-2 px-4 rounded cursor-pointer"
+                            (click)="createPluginItemColumn()">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                            <span class="ml-2 font-medium text-secondary group-hover:underline">Añadir columna</span>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </ng-container>
+</div>

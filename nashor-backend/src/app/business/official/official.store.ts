@@ -201,7 +201,7 @@ export const dml_official_update = (official: Official) => {
 			'${official.user.person.phone_person}',
 			'${official.user.person.academic.title_academic}',
 			'${official.user.person.academic.abbreviation_academic}',
-			'${official.user.person.academic.nivel_academic}',
+			'${official.user.person.academic.level_academic}',
 			'${official.user.person.job.name_job}',
 			'${official.user.person.job.address_job}',
 			'${official.user.person.job.phone_job}',

@@ -14,5 +14,5 @@
       "required": ["name", "value"]
     }
   ],
-  "minItems": 3
+  "minItems": 2
 }

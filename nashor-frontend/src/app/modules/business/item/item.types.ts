@@ -7,7 +7,6 @@ export interface Item {
   item_category: ItemCategory;
   name_item: string;
   description_item: string;
-  cpc_item: string;
   deleted_item: boolean;
 
   isSelected?: boolean;

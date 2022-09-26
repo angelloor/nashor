@@ -670,7 +670,7 @@ ALTER FUNCTION core.dml_profile_navigation_update_modified(numeric, numeric, num
 
 CREATE OR REPLACE FUNCTION core.dml_user_create_modified(
 	id_user_ numeric)
-    RETURNS TABLE(id_user numeric, id_company numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, deleted_user boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_profile numeric, name_type_user character varying, description_type_user character varying, status_type_user boolean, title_academic character varying, abbreviation_academic character varying, nivel_academic character varying, name_job character varying, address_job character varying, phone_job character varying, position_job character varying) 
+    RETURNS TABLE(id_user numeric, id_company numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, deleted_user boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_profile numeric, name_type_user character varying, description_type_user character varying, status_type_user boolean, title_academic character varying, abbreviation_academic character varying, level_academic character varying, name_job character varying, address_job character varying, phone_job character varying, position_job character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -762,12 +762,12 @@ CREATE OR REPLACE FUNCTION core.dml_user_update_modified(
 	_phone_person character varying,
 	_title_academic character varying,
 	_abbreviation_academic character varying,
-	_nivel_academic character varying,
+	_level_academic character varying,
 	_name_job character varying,
 	_address_job character varying,
 	_phone_job character varying,
 	_position_job character varying)
-    RETURNS TABLE(id_user numeric, id_company numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, deleted_user boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_profile numeric, name_type_user character varying, description_type_user character varying, status_type_user boolean, title_academic character varying, abbreviation_academic character varying, nivel_academic character varying, name_job character varying, address_job character varying, phone_job character varying, position_job character varying) 
+    RETURNS TABLE(id_user numeric, id_company numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, deleted_user boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_profile numeric, name_type_user character varying, description_type_user character varying, status_type_user boolean, title_academic character varying, abbreviation_academic character varying, level_academic character varying, name_job character varying, address_job character varying, phone_job character varying, position_job character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -781,7 +781,7 @@ DECLARE
 	_UPDATE_USER BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
-	_UPDATE_ACADEMIC = (select * from core.dml_academic_update(id_user_, _id_academic, _title_academic, _abbreviation_academic, _nivel_academic, false));
+	_UPDATE_ACADEMIC = (select * from core.dml_academic_update(id_user_, _id_academic, _title_academic, _abbreviation_academic, _level_academic, false));
 	
 	IF (_UPDATE_ACADEMIC) THEN
 		_UPDATE_JOB = (select * from core.dml_job_update(id_user_, _id_job, _name_job, _address_job, _phone_job, _position_job, false));

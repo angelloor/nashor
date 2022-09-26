@@ -223,8 +223,11 @@ export class TemplateControl {
 					documentation_profile: {
 						id_documentation_profile: item.id_documentation_profile,
 					},
-					plugin_item_process: item.plugin_item_process,
+					plugin_item: {
+						id_plugin_item: item.id_plugin_item,
+					},
 					plugin_attached_process: item.plugin_attached_process,
+					plugin_item_process: item.plugin_item_process,
 					name_template: item.name_template,
 					description_template: item.description_template,
 					status_template: item.status_template,
@@ -257,8 +260,9 @@ export class TemplateControl {
 			delete _templateControl.id_template;
 			delete _templateControl.id_company;
 			delete _templateControl.id_documentation_profile;
-			delete _templateControl.plugin_item_process;
+			delete _templateControl.id_plugin_item;
 			delete _templateControl.plugin_attached_process;
+			delete _templateControl.plugin_item_process;
 			delete _templateControl.name_template;
 			delete _templateControl.description_template;
 			delete _templateControl.status_template;

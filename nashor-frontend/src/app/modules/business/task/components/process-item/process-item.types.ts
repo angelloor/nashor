@@ -11,7 +11,4 @@ export interface ProcessItem {
   task: Task;
   level: Level;
   item: Item;
-  amount_process_item: number;
-  features_process_item: string;
-  entry_date_process_item: string;
 }

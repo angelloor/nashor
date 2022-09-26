@@ -5,6 +5,6 @@ export const academic: Academic = {
   id_academic: ' ',
   title_academic: ' ',
   abbreviation_academic: ' ',
-  nivel_academic: ' ',
+  level_academic: ' ',
   deleted_academic: false,
 };

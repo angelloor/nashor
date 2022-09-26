@@ -288,7 +288,7 @@ CREATE OR REPLACE VIEW core.view_user_inner_join
     cvtu.status_type_user,
     cva.title_academic,
     cva.abbreviation_academic,
-    cva.nivel_academic,
+    cva.level_academic,
     cvj.name_job,
     cvj.address_job,
     cvj.phone_job,

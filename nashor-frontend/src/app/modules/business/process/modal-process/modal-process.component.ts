@@ -147,8 +147,6 @@ export class ModalProcessComponent implements OnInit {
           .subscribe((flows: Flow[]) => {
             this.listFlow = flows;
 
-            console.log(this.process.flow_version);
-
             this.selectedFlow = this.listFlow.find(
               (item) =>
                 item.id_flow ==

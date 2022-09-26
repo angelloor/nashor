@@ -479,30 +479,36 @@
                                                 "icon"
                                               ]
                                             }
-                                          ]
+                                          ],
+                                          "maxItems": 30
                                         }
                                       },
                                       "required": ["id", "title", "type"]
                                     }
-                                  ]
+                                  ],
+                                  "maxItems": 30
                                 }
                               },
                               "required": ["id", "title", "type"]
                             }
-                          ]
+                          ],
+                          "maxItems": 30
                         }
                       },
                       "required": ["id", "title", "type"]
                     }
-                  ]
+                  ],
+                  "maxItems": 30
                 }
               },
               "required": ["id", "title", "type"]
             }
-          ]
+          ],
+          "maxItems": 30
         }
       },
       "required": ["id", "title", "type"]
     }
-  ]
+  ],
+  "maxItems": 30
 }
