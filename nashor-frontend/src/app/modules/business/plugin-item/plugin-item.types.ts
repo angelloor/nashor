@@ -5,4 +5,5 @@ export interface PluginItem {
   company: Company;
   name_plugin_item: string;
   description_plugin_item: string;
+  select_plugin_item: boolean;
 }

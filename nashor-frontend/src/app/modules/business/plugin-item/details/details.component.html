@@ -42,7 +42,34 @@
                             <mat-icon [svgIcon]="'heroicons_outline:credit-card'"></mat-icon>
                             <div class="ml-6 leading-6">{{pluginItem.description_plugin_item}}</div>
                         </div>
+                    </ng-container> <!-- select_plugin_item -->
+                    <ng-container>
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:status-online'"></mat-icon>
+                            <div *ngIf="pluginItem.select_plugin_item"
+                                class="ml-6 mt-1 w-3 h-3 bg-green-700 rounded-full">
+                            </div>
+                            <div *ngIf="!pluginItem.select_plugin_item"
+                                class="ml-6 mt-1 w-3 h-3 bg-red-600 rounded-full">
+                            </div>
+                        </div>
                     </ng-container>
+                    <div class="flex flex-col mt-4 pt-6 border-t space-y-8">
+                        <!-- columns -->
+                        <ng-container *ngIf="pluginItemColumn.length">
+                            <div class="flex">
+                                <mat-icon [svgIcon]="'heroicons_outline:menu'"></mat-icon>
+                                <div class="min-w-0 ml-6 space-y-1">
+                                    <ng-container *ngFor="let _column of pluginItemColumn; trackBy: trackByFn">
+                                        <div class="flex items-center leading-6">
+                                            <div>{{_column.name_plugin_item_column}} -
+                                                {{_column.lenght_plugin_item_column}} Caracteres</div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
                 </div>
             </div>
         </div>
@@ -124,8 +151,16 @@
                             <input matInput maxlength="250" [formControlName]="'description_plugin_item'"
                                 [placeholder]="'description_plugin_item'" [spellcheck]="false">
                         </mat-form-field>
+                    </div> <!-- select_plugin_item -->
+                    <div class="mt-8">
+                        <mat-form-field class="angel-mat-no-subscript w-full">
+                            <mat-label>SelectPluginItem</mat-label>
+                            <mat-select [formControlName]="'select_plugin_item'">
+                                <mat-option [value]=" true">Activo</mat-option>
+                                <mat-option [value]="false">Inactivo</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
-
                     <!-- Attacheds -->
                     <div class="mt-8">
                         <div class="space-y-4">
@@ -136,12 +171,14 @@
                                         <mat-label *ngIf="first">Columnas</mat-label>
                                         <input matInput maxlength="100"
                                             [formControl]="getFromControl(formArrayColumns, i, 'name_plugin_item_column')"
+                                            (change)="updatePluginItemColumn(i)"
                                             [placeholder]="'name_plugin_item_column'" [spellcheck]="true">
                                     </mat-form-field>
                                     <mat-form-field class="angel-mat-no-subscript w-20">
                                         <mat-label *ngIf="first">Longitud</mat-label>
                                         <input matInput maxlength="10"
                                             [formControl]="getFromControl(formArrayColumns, i, 'lenght_plugin_item_column')"
+                                            (change)="updatePluginItemColumn(i)"
                                             [placeholder]="'lenght_plugin_item_column'" [spellcheck]="false">
                                     </mat-form-field>
                                     <ng-container *ngIf="!(first && last)">

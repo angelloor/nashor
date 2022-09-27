@@ -34,7 +34,6 @@ import { taskRoutes } from './task.routing';
     TaskListComponent,
     TaskComponent,
     ModalSelectTaskComponent,
-    // ContainerModalTaskComponent,
     ModalTaskComponent,
     ModalTaskRealizeComponent,
   ],

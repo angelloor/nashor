@@ -16,19 +16,22 @@ export class PluginItem {
 	public company: Company;
 	public name_plugin_item?: string;
 	public description_plugin_item?: string;
+	public select_plugin_item?: boolean;
 	/** Constructor */
 	constructor(
 		id_user_: number = 0,
 		id_plugin_item: number = 0,
 		company: Company = _company,
 		name_plugin_item: string = '',
-		description_plugin_item: string = ''
+		description_plugin_item: string = '',
+		select_plugin_item: boolean = false
 	) {
 		this.id_user_ = id_user_;
 		this.id_plugin_item = id_plugin_item;
 		this.company = company;
 		this.name_plugin_item = name_plugin_item;
 		this.description_plugin_item = description_plugin_item;
+		this.select_plugin_item = select_plugin_item;
 	}
 	/** Setters and Getters */
 	set _id_user_(id_user_: number) {
@@ -64,6 +67,13 @@ export class PluginItem {
 	}
 	get _description_plugin_item() {
 		return this.description_plugin_item!;
+	}
+
+	set _select_plugin_item(select_plugin_item: boolean) {
+		this.select_plugin_item = select_plugin_item;
+	}
+	get _select_plugin_item() {
+		return this.select_plugin_item!;
 	}
 
 	/** Methods */

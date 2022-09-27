@@ -21,7 +21,7 @@ export class ModalTemplatePreviewService {
       minHeight: 'inherit',
       maxHeight: '90vh',
       height: 'auto',
-      width: '50rem',
+      width: '80rem',
       maxWidth: '',
       panelClass: ['mat-dialog-cont'],
       data: { id_template, editMode },

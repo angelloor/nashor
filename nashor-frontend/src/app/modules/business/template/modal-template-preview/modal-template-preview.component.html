@@ -38,33 +38,33 @@
                                     <ng-container
                                         *ngFor="let items of ['one']; let i = index; let first = first; let last = last; trackBy: trackByFn">
                                         <div class="relative flex">
-                                            <mat-form-field class="angel-mat-no-subscript w-full max-w-40">
-                                                <mat-label *ngIf="first">Elemento</mat-label>
-                                                <mat-select>
-                                                    <mat-option *ngFor="let item of categoriesItem; trackBy: trackByFn"
-                                                        [value]="item.name_item" matTooltip="{{item.description_item}}">
-                                                        {{item.name_item}}
-                                                    </mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                            <mat-form-field class="angel-mat-no-subscript flex-auto ml-2 sm:ml-4">
-                                                <mat-label *ngIf="first">Cantidad</mat-label>
-                                                <mat-icon matPrefix class="hidden sm:flex icon-size-5"
-                                                    [svgIcon]="'heroicons_solid:tag'">
-                                                </mat-icon>
-                                                <input matInput maxlength="5" type="number" min="1" max="99999">
-                                            </mat-form-field>
-                                            <mat-form-field
-                                                class="angel-mat-no-subscript flex-auto w-full ml-2 sm:ml-4">
-                                                <mat-label *ngIf="first">Características</mat-label>
-                                                <mat-icon matPrefix class="hidden sm:flex icon-size-5"
-                                                    [svgIcon]="'heroicons_solid:tag'">
-                                                </mat-icon>
-                                                <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
-                                                    [cdkAutosizeMinRows]="2" [cdkAutosizeMaxRows]="30"></textarea>
-                                            </mat-form-field>
+                                            <ng-container *ngIf="select_plugin_item">
+                                                <mat-form-field class="angel-mat-no-subscript w-full max-w-40 mr-2">
+                                                    <mat-label *ngIf="first">Elemento</mat-label>
+                                                    <mat-select>
+                                                        <mat-option
+                                                            *ngFor="let item of categoriesItem; trackBy: trackByFn"
+                                                            [value]="item.name_item"
+                                                            matTooltip="{{item.description_item}}">
+                                                            {{item.name_item}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </ng-container>
+                                            <ng-container
+                                                *ngFor="let column of pluginItemColumns; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                                                <mat-form-field class="angel-mat-no-subscript flex-auto mr-2 sm:mr-2">
+                                                    <mat-label>{{column.name_plugin_item_column}}</mat-label>
+                                                    <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                                        [svgIcon]="'heroicons_solid:tag'">
+                                                    </mat-icon>
+                                                    <textarea matInput cdkTextareaAutosize
+                                                        #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="2"
+                                                        [cdkAutosizeMaxRows]="30"></textarea>
+                                                </mat-form-field>
+                                            </ng-container>
                                             <ng-container>
-                                                <div class="flex items-center w-10 pl-2 self-start"
+                                                <div class="flex items-center w-10 self-start"
                                                     [ngClass]="{'mt-6': first}">
                                                     <button class="w-8 h-8 min-h-8" mat-icon-button
                                                         matTooltip="Eliminar">

@@ -23,8 +23,13 @@ export class TaskService {
     'Content-Type': 'application/json',
   });
 
+  private initialStatus: boolean = false;
+
   private _task: BehaviorSubject<Task> = new BehaviorSubject(task);
   private _tasks: BehaviorSubject<Task[]> = new BehaviorSubject(tasks);
+  private _statusLoad: BehaviorSubject<boolean> = new BehaviorSubject(
+    this.initialStatus
+  );
 
   constructor(private _httpClient: HttpClient) {
     this._url = environment.urlBackend + '/app/business/task';

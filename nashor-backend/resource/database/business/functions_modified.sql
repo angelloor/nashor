@@ -873,7 +873,7 @@ BEGIN
 	_ID_ITEM_CATEGORY = (select bvic.id_item_category from business.view_item_category bvic where bvic.id_company = _id_company order by bvic.id_item_category asc limit 1);
 	
 	IF (_ID_ITEM_CATEGORY >= 1) THEN
-		_ID_ITEM = (select * from business.dml_item_create(id_user_, _id_company, _ID_ITEM_CATEGORY, 'Nuevo articulo', '', '', false));
+		_ID_ITEM = (select * from business.dml_item_create(id_user_, _id_company, _ID_ITEM_CATEGORY, 'Nuevo articulo', '', false));
 		
 		IF (_ID_ITEM >= 1) THEN
 			RETURN QUERY select * from business.view_item_inner_join bviij 
@@ -1299,7 +1299,7 @@ ALTER FUNCTION business.dml_control_delete_cascade(numeric, numeric)
 CREATE OR REPLACE FUNCTION business.dml_plugin_item_create_modified(
 	id_user_ numeric,
 	_id_company numeric)
-    RETURNS TABLE(id_plugin_item numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
+    RETURNS TABLE(id_plugin_item numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying, select_plugin_item boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -1310,7 +1310,7 @@ DECLARE
 	_ID_PLUGIN_ITEM NUMERIC;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
-	_ID_PLUGIN_ITEM = (select * from business.dml_plugin_item_create(id_user_, _id_company, 'Nuevo plugin item', ''));
+	_ID_PLUGIN_ITEM = (select * from business.dml_plugin_item_create(id_user_, _id_company, 'Nuevo plugin item', '', false));
 	
 	IF (_ID_PLUGIN_ITEM >= 1) THEN
 		RETURN QUERY select * from business.view_plugin_item_inner_join bvpiij 
@@ -1340,8 +1340,9 @@ CREATE OR REPLACE FUNCTION business.dml_plugin_item_update_modified(
 	_id_plugin_item numeric,
 	_id_company numeric,
 	_name_plugin_item character varying,
-	_description_plugin_item character varying)
-    RETURNS TABLE(id_plugin_item numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
+	_description_plugin_item character varying,
+	_select_plugin_item boolean)
+    RETURNS TABLE(id_plugin_item numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying, select_plugin_item boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -1352,7 +1353,7 @@ DECLARE
  	_UPDATE_PLUGIN_ITEM BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
- 	_UPDATE_PLUGIN_ITEM = (select * from business.dml_plugin_item_update(id_user_, _id_plugin_item, _id_company, _name_plugin_item, _description_plugin_item));
+ 	_UPDATE_PLUGIN_ITEM = (select * from business.dml_plugin_item_update(id_user_, _id_plugin_item, _id_company, _name_plugin_item, _description_plugin_item, _select_plugin_item));
 
  	IF (_UPDATE_PLUGIN_ITEM) THEN
 		RETURN QUERY select * from business.view_plugin_item_inner_join bvpiij 
@@ -1371,7 +1372,7 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_plugin_item_update_modified(numeric, numeric, numeric, character varying, character varying)
+ALTER FUNCTION business.dml_plugin_item_update_modified(numeric, numeric, numeric, character varying, character varying, boolean)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_plugin_item_column_create_modified(numeric, numeric)
@@ -1380,7 +1381,7 @@ ALTER FUNCTION business.dml_plugin_item_update_modified(numeric, numeric, numeri
 CREATE OR REPLACE FUNCTION business.dml_plugin_item_column_create_modified(
 	id_user_ numeric,
 	_id_plugin_item numeric)
-    RETURNS TABLE(id_plugin_item_column numeric, id_plugin_item numeric, name_plugin_item_column character varying, lenght_plugin_item_column numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying) 
+    RETURNS TABLE(id_plugin_item_column numeric, id_plugin_item numeric, name_plugin_item_column character varying, lenght_plugin_item_column numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying, select_plugin_item boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -1422,7 +1423,7 @@ CREATE OR REPLACE FUNCTION business.dml_plugin_item_column_update_modified(
 	_id_plugin_item numeric,
 	_name_plugin_item_column character varying,
 	_lenght_plugin_item_column numeric)
-    RETURNS TABLE(id_plugin_item_column numeric, id_plugin_item numeric, name_plugin_item_column character varying, lenght_plugin_item_column numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying) 
+    RETURNS TABLE(id_plugin_item_column numeric, id_plugin_item numeric, name_plugin_item_column character varying, lenght_plugin_item_column numeric, id_company numeric, name_plugin_item character varying, description_plugin_item character varying, select_plugin_item boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3736,7 +3737,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_item_create_modified(
 	_id_task numeric,
 	_id_level numeric)
     RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying) 
-    LANGUAGE 'plpgsql'
+	LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
     ROWS 1000
@@ -3756,7 +3757,7 @@ BEGIN
 		on items.id_item = assignedItems.id_item where assignedItems.id_item IS NULL order by items.id_item asc limit 1);
 
 	IF (_ID_ITEM >= 1) THEN
-		_ID_PROCESS_ITEM = (select * from business.dml_process_item_create(id_user_, _id_official, _id_process, _id_task, _id_level, _ID_ITEM, 1, '', now()::timestamp));
+		_ID_PROCESS_ITEM = (select * from business.dml_process_item_create(id_user_, _id_official, _id_process, _id_task, _id_level, _ID_ITEM));
 	
 		IF (_ID_PROCESS_ITEM >= 1) THEN
 			RETURN QUERY select * from business.view_process_item_inner_join bvpiij 
@@ -3780,6 +3781,187 @@ END;
 $BODY$;
 
 ALTER FUNCTION business.dml_process_item_create_modified(numeric, numeric, numeric, numeric, numeric)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_process_item_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_process_item_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_process_item_update_modified(
+	id_user_ numeric,
+	_id_process_item numeric,
+	_id_official numeric,
+	_id_process numeric,
+	_id_task numeric,
+	_id_level numeric,
+	_id_item numeric)
+    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+ 	_UPDATE_PROCESS_ITEM BOOLEAN;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+ 	_UPDATE_PROCESS_ITEM = (select * from business.dml_process_item_update(id_user_, _id_process_item, _id_official, _id_process, _id_task, _id_level, _id_item));
+
+ 	IF (_UPDATE_PROCESS_ITEM) THEN
+		RETURN QUERY select * from business.view_process_item_inner_join bvpiij 
+			where bvpiij.id_process_item = _id_process_item;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al actualizar process_item';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_process_item_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_process_item_update_modified(numeric, numeric, numeric, numeric, numeric, numeric, numeric)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_process_item_delete_modified(numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_process_item_delete_modified(numeric, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_process_item_delete_modified(
+	id_user_ numeric,
+	_id_process_item numeric)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+	_X RECORD;
+	_COUNT_COLUMN_PROCESS_ITEM NUMERIC DEFAULT 0;
+	_DELETE_COLUMN_PROCESS_ITEM BOOLEAN DEFAULT false;
+	_DELETE_PROCESS_ITEM BOOLEAN;
+BEGIN
+	FOR _X IN select bvcpi.id_column_process_item from business.view_column_process_item bvcpi where bvcpi.id_process_item = _id_process_item LOOP
+		_DELETE_COLUMN_PROCESS_ITEM = (select * from business.dml_column_process_item_delete(id_user_, _X.id_column_process_item));
+		_COUNT_COLUMN_PROCESS_ITEM = _COUNT_COLUMN_PROCESS_ITEM + 1;
+	END LOOP;
+	
+	IF (_COUNT_COLUMN_PROCESS_ITEM = 0) THEN
+		_DELETE_COLUMN_PROCESS_ITEM = true;
+	END IF;
+	
+	IF (_DELETE_COLUMN_PROCESS_ITEM) THEN
+		_DELETE_PROCESS_ITEM = (select * from business.dml_process_item_delete(id_user_, _id_process_item));
+		
+		IF (_DELETE_PROCESS_ITEM) THEN
+			RETURN true;
+		ELSE
+			_EXCEPTION = 'Ocurrió un error al eliminar process item';
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al eliminar columns process item';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_process_item_delete_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_process_item_delete_modified(numeric, numeric)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_column_process_item_create_modified(numeric, numeric, numeric, character varying)
+-- DROP FUNCTION IF EXISTS business.dml_column_process_item_create_modified(numeric, numeric, numeric, character varying);
+
+CREATE OR REPLACE FUNCTION business.dml_column_process_item_create_modified(
+	id_user_ numeric,
+	_id_plugin_item_column numeric,
+	_id_process_item numeric,
+	_value_column_process_item character varying)
+    RETURNS TABLE(id_column_process_item numeric, id_plugin_item_column numeric, id_process_item numeric, value_column_process_item text, entry_date_column_process_item timestamp without time zone, id_plugin_item numeric, name_plugin_item_column character varying, lenght_plugin_item_column numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+	_ID_COLUMN_PROCESS_ITEM NUMERIC;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+	_ID_COLUMN_PROCESS_ITEM = (select * from business.dml_column_process_item_create(id_user_, _id_plugin_item_column, _id_process_item, _value_column_process_item, now()::timestamp));
+	
+	IF (_ID_COLUMN_PROCESS_ITEM >= 1) THEN
+		RETURN QUERY select * from business.view_column_process_item_inner_join bvcpiij 
+			where bvcpiij.id_column_process_item = _ID_COLUMN_PROCESS_ITEM;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al ingresar column_process_item';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_column_process_item_create_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_column_process_item_create_modified(numeric, numeric, numeric, character varying)
+    OWNER TO postgres;
+
+-- FUNCTION: business.dml_column_process_item_update_modified(numeric, numeric, numeric, numeric, text, timestamp without time zone)
+-- DROP FUNCTION IF EXISTS business.dml_column_process_item_update_modified(numeric, numeric, numeric, numeric, text, timestamp without time zone);
+
+CREATE OR REPLACE FUNCTION business.dml_column_process_item_update_modified(
+	id_user_ numeric,
+	_id_column_process_item numeric,
+	_id_plugin_item_column numeric,
+	_id_process_item numeric,
+	_value_column_process_item text,
+	_entry_date_column_process_item timestamp without time zone)
+    RETURNS TABLE(id_column_process_item numeric, id_plugin_item_column numeric, id_process_item numeric, value_column_process_item text, entry_date_column_process_item timestamp without time zone, id_plugin_item numeric, name_plugin_item_column character varying, lenght_plugin_item_column numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+ 	_UPDATE_COLUMN_PROCESS_ITEM BOOLEAN;
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN
+ 	_UPDATE_COLUMN_PROCESS_ITEM = (select * from business.dml_column_process_item_update(id_user_, _id_column_process_item, _id_plugin_item_column, _id_process_item, _value_column_process_item, _entry_date_column_process_item));
+
+ 	IF (_UPDATE_COLUMN_PROCESS_ITEM) THEN
+		RETURN QUERY select * from business.view_column_process_item_inner_join bvcpiij 
+			where bvcpiij.id_column_process_item = _id_column_process_item;
+	ELSE
+		_EXCEPTION = 'Ocurrió un error al actualizar column_process_item';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_column_process_item_update_modified -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_column_process_item_update_modified(numeric, numeric, numeric, numeric, text, timestamp without time zone)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_template_update_modified(numeric, numeric, numeric, numeric, numeric, boolean, boolean, character varying, character varying, boolean, timestamp without time zone, boolean, boolean)

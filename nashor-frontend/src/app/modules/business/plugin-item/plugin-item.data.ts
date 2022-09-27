@@ -7,4 +7,5 @@ export const pluginItem: PluginItem = {
   company: company,
   name_plugin_item: ' ',
   description_plugin_item: ' ',
+  select_plugin_item: false,
 };

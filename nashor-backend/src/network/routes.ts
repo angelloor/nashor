@@ -1,5 +1,6 @@
 import { routerArea } from '../app/business/area/area.network';
 import { routerAttached } from '../app/business/attached/attached.network';
+import { routerColumnProcessItem } from '../app/business/column_process_item/column_process_item.network';
 import { routerControl } from '../app/business/control/control.network';
 import { routerDocumentationProfile } from '../app/business/documentation_profile/documentation_profile.network';
 import { routerDocumentationProfileAttached } from '../app/business/documentation_profile/documentation_profile_attached/documentation_profile_attached.network';
@@ -91,7 +92,7 @@ export const appRoutes = (app: any) => {
 	app.use('/app/business/process', routerProcess);
 	app.use('/app/business/task', routerTask);
 	app.use('/app/business/process_item', routerProcessItem);
-
+	app.use('/app/business/column_process_item', routerColumnProcessItem);
 	app.use('/app/business/process_attached', routerProcessAttached);
 	app.use('/app/business/process_control', routerProcessControl);
 	app.use('/app/business/process_comment', routerProcessComment);

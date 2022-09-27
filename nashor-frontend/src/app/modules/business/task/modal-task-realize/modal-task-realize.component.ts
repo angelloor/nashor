@@ -26,6 +26,8 @@ import { saveAs } from 'file-saver';
 import { cloneDeep } from 'lodash';
 import { FileInput, FileValidator } from 'ngx-material-file-input';
 import { Subject, takeUntil } from 'rxjs';
+import { ColumnProcessItemService } from '../../column-process-item/column-process-item.service';
+import { ColumnProcessItem } from '../../column-process-item/column-process-item.types';
 import { TYPE_CONTROL } from '../../control/control.types';
 import { DocumentationProfileAttachedService } from '../../documentation-profile/documentation-profile-attached/documentation-profile-attached.service';
 import { DocumentationProfileAttached } from '../../documentation-profile/documentation-profile-attached/documentation-profile-attached.types';
@@ -33,6 +35,10 @@ import { documentationProfile } from '../../documentation-profile/documentation-
 import { DocumentationProfile } from '../../documentation-profile/documentation-profile.types';
 import { ItemService } from '../../item/item.service';
 import { Item } from '../../item/item.types';
+import { PluginItemColumnService } from '../../plugin-item/plugin-item-column/plugin-item-column.service';
+import { PluginItemColumn } from '../../plugin-item/plugin-item-column/plugin-item-column.types';
+import { PluginItemService } from '../../plugin-item/plugin-item.service';
+import { PluginItem } from '../../plugin-item/plugin-item.types';
 import { TemplateControlService } from '../../template/template-control/template-control.service';
 import { TemplateControl } from '../../template/template-control/template-control.types';
 import { TemplateService } from '../../template/template.service';
@@ -73,7 +79,7 @@ export class ModalTaskRealizeComponent implements OnInit {
   template!: Template;
   private data!: AppInitialData;
 
-  templateControl!: TemplateControl[];
+  templateControl: TemplateControl[] = [];
 
   processItem: ProcessItem[] = [];
   processControl: ProcessControl[] = [];
@@ -96,6 +102,9 @@ export class ModalTaskRealizeComponent implements OnInit {
   /**
    * Alert
    */
+  select_plugin_item: boolean = false;
+  pluginItemColumns: PluginItemColumn[] = [];
+
   /**
    * isOpenModal
    */
@@ -121,14 +130,16 @@ export class ModalTaskRealizeComponent implements OnInit {
     private _processAttachedService: ProcessAttachedService,
     private _notificationService: NotificationService,
     private _taskService: TaskService,
-    private _angelConfirmationService: AngelConfirmationService
+    private _angelConfirmationService: AngelConfirmationService,
+    private _pluginItemService: PluginItemService,
+    private _pluginItemColumnService: PluginItemColumnService,
+    private _columnProcessItemService: ColumnProcessItemService
   ) {}
 
   ngOnInit(): void {
     this.task = this._data.task;
     this.id_template = this._data.id_template;
 
-    console.log(this.task);
     /**
      * readAllItem
      */
@@ -185,6 +196,235 @@ export class ModalTaskRealizeComponent implements OnInit {
          * Get the template
          */
         this.template = _template;
+        /**
+         * Render PluginItem
+         */
+        if (this.template) {
+          var id_plugin_item = this.template.plugin_item.id_plugin_item;
+
+          if (id_plugin_item && id_plugin_item != ' ') {
+            this._pluginItemService
+              .specificRead(id_plugin_item)
+              .pipe(takeUntil(this._unsubscribeAll))
+              .subscribe((pluginItem: PluginItem) => {
+                this.select_plugin_item = pluginItem.select_plugin_item;
+
+                this._pluginItemColumnService
+                  .byPluginItemQueryRead(id_plugin_item, '*')
+                  .pipe(takeUntil(this._unsubscribeAll))
+                  .subscribe((pluginItemColumn: PluginItemColumn[]) => {
+                    this.pluginItemColumns = pluginItemColumn;
+
+                    // ------------------------------------------------------------------------
+                    /**
+                     * ProcessItem byLevelRead
+                     */
+                    this._processItemService
+                      .byTaskRead(this.task.id_task)
+                      .pipe(takeUntil(this._unsubscribeAll))
+                      .subscribe();
+                    /**
+                     * Get the processItems
+                     */
+                    this._processItemService.processItems$
+                      .pipe(takeUntil(this._unsubscribeAll))
+                      .subscribe((_processItem: ProcessItem[]) => {
+                        this.processItem = _processItem;
+                        if (this.processItem.length > 0) {
+                        }
+
+                        if (this.processItem.length == this.listItem.length) {
+                          this.isSelectedAllProcessItem = true;
+                        } else {
+                          this.isSelectedAllProcessItem = false;
+                        }
+                        /**
+                         * Filter select
+                         */
+                        /**
+                         * Reset the selection
+                         * 1) add attribute isSelected
+                         * 2) [disabled]="entity.isSelected" in mat-option
+                         */
+                        this.listItem.map((item: Item, index: number) => {
+                          item = {
+                            ...item,
+                            isSelected: false,
+                          };
+                          this.listItem[index] = item;
+                        });
+
+                        let filterListItems: Item[] = cloneDeep(this.listItem);
+                        /**
+                         * Selected Items
+                         */
+                        this.processItem.map((itemOne: ProcessItem) => {
+                          /**
+                           * All Items
+                           */
+                          filterListItems.map(
+                            (itemTwo: Item, index: number) => {
+                              if (itemTwo.id_item == itemOne.item!.id_item) {
+                                itemTwo = {
+                                  ...itemTwo,
+                                  isSelected: true,
+                                };
+
+                                filterListItems[index] = itemTwo;
+                              }
+                            }
+                          );
+                        });
+
+                        this.listItem = filterListItems;
+                        /**
+                         * Filter select
+                         */
+                        /**
+                         * Clear the processItems form arrays
+                         */
+                        (
+                          this.taskRealizeForm.get('processItems') as FormArray
+                        ).clear();
+
+                        const lotItemFormGroups: any = [];
+                        /**
+                         * Iterate through them
+                         */
+
+                        this.processItem.forEach(
+                          (_processItem: ProcessItem, indexOne: number) => {
+                            /**
+                             * Crear los controles para los inputs horizontales
+                             */
+
+                            this.pluginItemColumns.forEach(
+                              async (_pluginItemColumn: PluginItemColumn) => {
+                                /**
+                                 * Creamos los controles
+                                 */
+                                this.taskRealizeForm.addControl(
+                                  `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`,
+                                  new FormControl('', [
+                                    Validators.required,
+                                    Validators.maxLength(
+                                      _pluginItemColumn.lenght_plugin_item_column
+                                    ),
+                                  ])
+                                );
+                                /**
+                                 * Buscar el valor de la columna
+                                 */
+                                this._columnProcessItemService
+                                  .byPluginItemColumnAndProcessItemRead(
+                                    _pluginItemColumn.id_plugin_item_column,
+                                    _processItem.id_process_item
+                                  )
+                                  .pipe(takeUntil(this._unsubscribeAll))
+                                  .subscribe(
+                                    (columnProcessItem: ColumnProcessItem) => {
+                                      if (columnProcessItem) {
+                                        /**
+                                         * Creamos los controles
+                                         */
+                                        this.taskRealizeForm.addControl(
+                                          `column${_pluginItemColumn.name_plugin_item_column}${indexOne}`,
+                                          new FormControl(columnProcessItem, [
+                                            Validators.required,
+                                          ])
+                                        );
+
+                                        this.taskRealizeForm
+                                          .get(
+                                            `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`
+                                          )
+                                          ?.patchValue(
+                                            columnProcessItem.value_column_process_item
+                                          );
+                                      }
+                                    }
+                                  );
+                              }
+                            );
+
+                            lotItemFormGroups.push(
+                              this._formBuilder.group({
+                                id_process_item: _processItem.id_process_item,
+                                official: [
+                                  {
+                                    value: _processItem.official,
+                                    disabled: false,
+                                  },
+                                  [Validators.required],
+                                ],
+                                process: [
+                                  {
+                                    value: _processItem.process,
+                                    disabled: false,
+                                  },
+                                  [Validators.required],
+                                ],
+                                task: [
+                                  {
+                                    value: _processItem.task,
+                                    disabled: false,
+                                  },
+                                  [Validators.required],
+                                ],
+                                level: [
+                                  {
+                                    value: _processItem.level,
+                                    disabled: false,
+                                  },
+                                  [Validators.required],
+                                ],
+                                item: [
+                                  {
+                                    value: _processItem.item,
+                                    disabled: false,
+                                  },
+                                  [Validators.required],
+                                ],
+                                id_item: [
+                                  {
+                                    value: _processItem.item.id_item,
+                                    disabled:
+                                      this.processItem.length != indexOne + 1 ||
+                                      this.isSelectedAllProcessItem,
+                                  },
+                                  [Validators.required],
+                                ],
+                                editMode: [
+                                  {
+                                    value: false,
+                                    disabled: false,
+                                  },
+                                ],
+                                isOwner: [
+                                  this.data.user.id_user ==
+                                    _processItem.official.user.id_user,
+                                ],
+                              })
+                            );
+                          }
+                        );
+                        /**
+                         * Add the element form groups to the element form array
+                         */
+                        lotItemFormGroups.forEach((_lotItemFormGroup: any) => {
+                          (
+                            this.taskRealizeForm.get(
+                              'processItems'
+                            ) as FormArray
+                          ).push(_lotItemFormGroup);
+                        });
+                      });
+
+                    // ------------------------------------------------------------------------
+                  });
+              });
+          }
+        }
         /**
          * processControl byLevelRead
          */
@@ -638,164 +878,9 @@ export class ModalTaskRealizeComponent implements OnInit {
          */
         this._changeDetectorRef.markForCheck();
       });
-
     /**
      * Components
      */
-    // ------------------------------------------------------------------------
-    /**
-     * ProcessItem byLevelRead
-     */
-    this._processItemService
-      .byTaskRead(this.task.id_task)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe();
-    /**
-     * Get the processItems
-     */
-    this._processItemService.processItems$
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((_processItem: ProcessItem[]) => {
-        this.processItem = _processItem;
-        if (this.processItem.length > 0) {
-        }
-
-        if (this.processItem.length == this.listItem.length) {
-          this.isSelectedAllProcessItem = true;
-        } else {
-          this.isSelectedAllProcessItem = false;
-        }
-        /**
-         * Filter select
-         */
-        /**
-         * Reset the selection
-         * 1) add attribute isSelected
-         * 2) [disabled]="entity.isSelected" in mat-option
-         */
-        this.listItem.map((item: Item, index: number) => {
-          item = {
-            ...item,
-            isSelected: false,
-          };
-          this.listItem[index] = item;
-        });
-
-        let filterListItems: Item[] = cloneDeep(this.listItem);
-        /**
-         * Selected Items
-         */
-        this.processItem.map((itemOne: ProcessItem) => {
-          /**
-           * All Items
-           */
-          filterListItems.map((itemTwo: Item, index: number) => {
-            if (itemTwo.id_item == itemOne.item!.id_item) {
-              itemTwo = {
-                ...itemTwo,
-                isSelected: true,
-              };
-
-              filterListItems[index] = itemTwo;
-            }
-          });
-        });
-
-        this.listItem = filterListItems;
-        /**
-         * Filter select
-         */
-        /**
-         * Clear the processItems form arrays
-         */
-        (this.taskRealizeForm.get('processItems') as FormArray).clear();
-
-        const lotItemFormGroups: any = [];
-        /**
-         * Iterate through them
-         */
-
-        this.processItem.forEach((_processItem: ProcessItem, index: number) => {
-          /**
-           * Create an element form group
-           */
-
-          lotItemFormGroups.push(
-            this._formBuilder.group({
-              id_process_item: _processItem.id_process_item,
-              official: [
-                {
-                  value: _processItem.official,
-                  disabled: false,
-                },
-                [Validators.required],
-              ],
-              process: [
-                {
-                  value: _processItem.process,
-                  disabled: false,
-                },
-                [Validators.required],
-              ],
-              task: [
-                {
-                  value: _processItem.task,
-                  disabled: false,
-                },
-                [Validators.required],
-              ],
-              level: [
-                {
-                  value: _processItem.level,
-                  disabled: false,
-                },
-                [Validators.required],
-              ],
-              item: [
-                {
-                  value: _processItem.item,
-                  disabled: false,
-                },
-                [Validators.required],
-              ],
-              id_item: [
-                {
-                  value: _processItem.item.id_item,
-                  disabled:
-                    this.processItem.length != index + 1 ||
-                    this.isSelectedAllProcessItem,
-                },
-                [Validators.required],
-              ],
-              // features_process_item: [
-              //   {
-              //     value: _processItem.features_process_item,
-              //     disabled: false,
-              //   },
-              //   [Validators.required],
-              // ],
-              editMode: [
-                {
-                  value: false,
-                  disabled: false,
-                },
-              ],
-              isOwner: [
-                this.data.user.id_user == _processItem.official.user.id_user,
-              ],
-            })
-          );
-        });
-        /**
-         * Add the element form groups to the element form array
-         */
-        lotItemFormGroups.forEach((_lotItemFormGroup: any) => {
-          (this.taskRealizeForm.get('processItems') as FormArray).push(
-            _lotItemFormGroup
-          );
-        });
-      });
-    // ------------------------------------------------------------------------
   }
 
   get formArrayProcessItems(): FormArray {
@@ -974,7 +1059,6 @@ export class ModalTaskRealizeComponent implements OnInit {
       id_user_: parseInt(id_user_),
       id_process_item: parseInt(processItem.id_process_item),
       official: {
-        // id_official: parseInt(processItem.official.id_official),
         id_official: parseInt(this.task.official.id_official),
       },
       process: {
@@ -987,9 +1071,8 @@ export class ModalTaskRealizeComponent implements OnInit {
         id_level: parseInt(processItem.level.id_level),
       },
       item: {
-        id_item: parseInt(processItem.id_item),
+        id_item: parseInt(processItem.item.id_item),
       },
-      // features_process_item: processItem.features_process_item.trim(),
     };
 
     this._processItemService
@@ -1024,10 +1107,21 @@ export class ModalTaskRealizeComponent implements OnInit {
    * deleteProcessItem
    * @param index
    */
-  deleteProcessItem(index: number) {
+  deleteProcessItem(index: number, pluginItemColumns: PluginItemColumn[]) {
     const elementProcessItemFormArray = this.taskRealizeForm.get(
       'processItems'
     ) as FormArray;
+    /**
+     * Delete control of columns
+     */
+    pluginItemColumns.forEach((pluginItemColumn: PluginItemColumn) => {
+      this.taskRealizeForm.removeControl(
+        `formControl${pluginItemColumn.name_plugin_item_column}${index}`
+      );
+      this.taskRealizeForm.removeControl(
+        `column${pluginItemColumn.name_plugin_item_column}${index}`
+      );
+    });
 
     const id_process_item =
       elementProcessItemFormArray.getRawValue()[index].id_process_item;
@@ -1506,5 +1600,129 @@ export class ModalTaskRealizeComponent implements OnInit {
    */
   trackByFn(index: number, item: any): any {
     return item.id || index;
+  }
+  /**
+   * Update the columnProcessItem
+   */
+  updateColumnProcessItem(
+    name_plugin_item_column: string,
+    index: number,
+    column: PluginItemColumn
+  ): void {
+    const elementProcessItemFormArray = this.taskRealizeForm.get(
+      'processItems'
+    ) as FormArray;
+
+    let processItem = elementProcessItemFormArray.getRawValue()[index];
+
+    const id_user_ = this.data.user.id_user;
+    const formControl = this.taskRealizeForm.get(
+      `formControl${name_plugin_item_column}${index}`
+    );
+
+    const hasErrorLength: boolean = formControl?.hasError('maxlength')!;
+
+    const valueFormControl = formControl?.value;
+    /**
+     * Get the columnProcessItem
+     */
+    let columnProcessItem = this.taskRealizeForm.get(
+      `column${name_plugin_item_column}${index}`
+    )?.value;
+
+    if (!hasErrorLength) {
+      if (columnProcessItem) {
+        /**
+         * Delete whitespace (trim() the atributes type string)
+         */
+        columnProcessItem = {
+          ...columnProcessItem,
+          id_user_: parseInt(id_user_),
+          id_column_process_item: parseInt(
+            columnProcessItem.id_column_process_item
+          ),
+          plugin_item_column: {
+            id_plugin_item_column: parseInt(
+              columnProcessItem.plugin_item_column.id_plugin_item_column
+            ),
+          },
+          process_item: {
+            id_process_item: parseInt(
+              columnProcessItem.process_item.id_process_item
+            ),
+          },
+          value_column_process_item: valueFormControl,
+        };
+        /**
+         * Update
+         */
+        this._columnProcessItemService
+          .update(columnProcessItem)
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe({
+            next: (_columnProcessItem: ColumnProcessItem) => {
+              if (_columnProcessItem) {
+                this._notificationService.success(
+                  'Column process item actualizada correctamente'
+                );
+              } else {
+                this._notificationService.error(
+                  '¡Error interno!, consulte al administrador.'
+                );
+              }
+            },
+            error: (error: { error: MessageAPI }) => {
+              this._notificationService.error(
+                !error.error
+                  ? '¡Error interno!, consulte al administrador.'
+                  : !error.error.description
+                  ? '¡Error interno!, consulte al administrador.'
+                  : error.error.description
+              );
+            },
+          });
+      } else {
+        /**
+         * Create the column_process_item
+         */
+        this._columnProcessItemService
+          .create(
+            id_user_,
+            column.id_plugin_item_column,
+            processItem.id_process_item,
+            valueFormControl
+          )
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe({
+            next: (_columnProcessItem: ColumnProcessItem) => {
+              if (_columnProcessItem) {
+                this._notificationService.success(
+                  'Column process item agregada correctamente'
+                );
+              } else {
+                this._notificationService.error(
+                  '¡Error interno!, consulte al administrador.'
+                );
+              }
+            },
+            error: (error: { error: MessageAPI }) => {
+              this._notificationService.error(
+                !error.error
+                  ? '¡Error interno!, consulte al administrador.'
+                  : !error.error.description
+                  ? '¡Error interno!, consulte al administrador.'
+                  : error.error.description
+              );
+            },
+          });
+      }
+      this._processItemService.$processItems = this.processItem;
+    } else {
+      this._notificationService.error(`
+        La columna 
+        ${column.name_plugin_item_column} en la fila ${index + 1} ha
+        excedido los caracteres máximos (${column.lenght_plugin_item_column}
+        caracteres)`);
+    }
   }
 }

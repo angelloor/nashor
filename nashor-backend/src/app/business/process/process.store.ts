@@ -6,7 +6,7 @@ export const dml_process_create = (process: Process) => {
 	return new Promise<Process[]>(async (resolve, reject) => {
 		const query = `select * from business.dml_process_create_modified(${process.id_user_}, ${process.flow_version.id_flow_version})`;
 
-		console.log(query);
+		// console.log(query);
 
 		try {
 			const response = await clientNASHORPostgreSQL.query(query);

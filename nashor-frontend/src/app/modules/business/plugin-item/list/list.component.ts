@@ -369,7 +369,6 @@ export class PluginItemListComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_pluginItem: PluginItem) => {
-                console.log(_pluginItem);
                 if (_pluginItem) {
                   this._notificationService.success(
                     'Plugin Item agregada correctamente'
@@ -385,7 +384,6 @@ export class PluginItemListComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

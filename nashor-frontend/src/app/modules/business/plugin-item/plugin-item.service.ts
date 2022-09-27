@@ -9,7 +9,7 @@ import {
   switchMap,
   take,
   tap,
-  throwError,
+  throwError
 } from 'rxjs';
 import { pluginItem, pluginItems } from './plugin-item.data';
 import { PluginItem } from './plugin-item.types';
@@ -71,7 +71,6 @@ export class PluginItemService {
                * check the response body to match with the type
                */
               const _pluginItem: PluginItem = response.body;
-              console.log(_pluginItem);
               /**
                * Update the pluginItem in the store
                */
@@ -133,7 +132,7 @@ export class PluginItemService {
       .pipe(
         tap((pluginItem: PluginItem) => {
           this._pluginItem.next(pluginItem);
-          return pluginItems;
+          return pluginItem;
         })
       );
   }
@@ -187,14 +186,12 @@ export class PluginItemService {
                * check the response body to match with the type
                */
               const _pluginItem: PluginItem = response.body;
-              console.log(_pluginItem);
               /**
                * Find the index of the updated pluginItem
                */
               const index = pluginItems.findIndex(
                 (item) => item.id_plugin_item == pluginItem.id_plugin_item
               );
-              console.log(index);
               /**
                * Update the pluginItem
                */
@@ -237,7 +234,6 @@ export class PluginItemService {
                 const index = pluginItems.findIndex(
                   (item) => item.id_plugin_item == id_plugin_item
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

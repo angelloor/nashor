@@ -9,7 +9,7 @@ import {
   switchMap,
   take,
   tap,
-  throwError,
+  throwError
 } from 'rxjs';
 import { pluginItemColumn, pluginItemColumns } from './plugin-item-column.data';
 import { PluginItemColumn } from './plugin-item-column.types';
@@ -69,13 +69,12 @@ export class PluginItemColumnService {
                * check the response body to match with the type
                */
               const _pluginItemColumn: PluginItemColumn = response.body;
-              console.log(_pluginItemColumn);
               /**
                * Update the pluginItemColumn in the store
                */
               this._pluginItemColumns.next([
-                _pluginItemColumn,
                 ...pluginItemColumns,
+                _pluginItemColumn,
               ]);
 
               return of(_pluginItemColumn);
@@ -195,7 +194,6 @@ export class PluginItemColumnService {
                * check the response body to match with the type
                */
               const _pluginItemColumn: PluginItemColumn = response.body;
-              console.log(_pluginItemColumn);
               /**
                * Find the index of the updated pluginItemColumn
                */
@@ -204,7 +202,6 @@ export class PluginItemColumnService {
                   item.id_plugin_item_column ==
                   pluginItemColumn.id_plugin_item_column
               );
-              console.log(index);
               /**
                * Update the pluginItemColumn
                */
@@ -247,7 +244,6 @@ export class PluginItemColumnService {
                 const index = pluginItemColumns.findIndex(
                   (item) => item.id_plugin_item_column == id_plugin_item_column
                 );
-                console.log(index);
                 /**
                  * Delete the object of array
                  */

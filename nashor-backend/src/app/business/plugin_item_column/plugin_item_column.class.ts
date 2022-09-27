@@ -182,6 +182,7 @@ export class PluginItemColumn {
 					company: { id_company: item.id_company },
 					name_plugin_item: item.name_plugin_item,
 					description_plugin_item: item.description_plugin_item,
+					select_plugin_item: item.select_plugin_item,
 				},
 				/**
 				 * Generate structure of second level the entity (is important add the ids of entity)
@@ -196,6 +197,7 @@ export class PluginItemColumn {
 			delete _pluginItemColumn.id_company;
 			delete _pluginItemColumn.name_plugin_item;
 			delete _pluginItemColumn.description_plugin_item;
+			delete _pluginItemColumn.select_plugin_item;
 
 			_pluginItemColumns.push(_pluginItemColumn);
 		});

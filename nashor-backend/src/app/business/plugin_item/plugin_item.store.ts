@@ -106,7 +106,8 @@ export const dml_plugin_item_update = (plugin_item: PluginItem) => {
 			${plugin_item.id_plugin_item},
 			${plugin_item.company.id_company},
 			'${plugin_item.name_plugin_item}',
-			'${plugin_item.description_plugin_item}')`;
+			'${plugin_item.description_plugin_item}',
+			${plugin_item.select_plugin_item})`;
 
 		// console.log(query);
 

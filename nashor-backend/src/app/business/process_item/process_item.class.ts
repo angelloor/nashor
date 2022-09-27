@@ -17,7 +17,7 @@ import {
 	view_process_item_by_official_read,
 	view_process_item_by_process_read,
 	view_process_item_by_task_read,
-	view_process_item_specific_read,
+	view_process_item_specific_read
 } from './process_item.store';
 
 export class ProcessItem {

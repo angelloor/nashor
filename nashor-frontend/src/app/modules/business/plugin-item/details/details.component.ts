@@ -128,6 +128,7 @@ export class PluginItemDetailsComponent implements OnInit {
         '',
         [Validators.required, Validators.maxLength(250)],
       ],
+      select_plugin_item: ['', [Validators.required]],
       columns: this._formBuilder.array([]),
     });
     /**
@@ -245,7 +246,6 @@ export class PluginItemDetailsComponent implements OnInit {
     )
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((keyUpOrKeyDown) => {
-        console.log(keyUpOrKeyDown);
         /**
          * Shortcut Escape
          */
@@ -353,7 +353,6 @@ export class PluginItemDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (_pluginItemColumn: PluginItemColumn) => {
-                console.log(_pluginItemColumn);
                 if (_pluginItemColumn) {
                   this._notificationService.success(
                     'Item Plugin Column agregada correctamente'
@@ -365,7 +364,6 @@ export class PluginItemDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'
@@ -377,6 +375,61 @@ export class PluginItemDetailsComponent implements OnInit {
             });
         }
         this._layoutService.setOpenModal(false);
+      });
+  }
+  /**
+   * Update the pluginItemColumn
+   */
+  updatePluginItemColumn(index: number): void {
+    /**
+     * Get the pluginItemColumn
+     */
+    const id_user_ = this.data.user.id_user;
+    const columnsFormArray = this.pluginItemForm.get('columns') as FormArray;
+    let pluginItemColumn = columnsFormArray.getRawValue()[index];
+
+    /**
+     * Delete whitespace (trim() the atributes type string)
+     */
+    pluginItemColumn = {
+      ...pluginItemColumn,
+      id_user_: parseInt(id_user_),
+      lenght_plugin_item_column: parseInt(
+        pluginItemColumn.lenght_plugin_item_column
+      ),
+      id_plugin_item_column: parseInt(pluginItemColumn.id_plugin_item_column),
+      plugin_item: {
+        id_plugin_item: parseInt(pluginItemColumn.plugin_item.id_plugin_item),
+      },
+    };
+
+    /**
+     * Update
+     */
+    this._pluginItemColumnService
+      .update(pluginItemColumn)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (_pluginItemColumn: PluginItemColumn) => {
+          if (_pluginItemColumn) {
+            this._notificationService.success(
+              'Item Plugin Column actualizada correctamente'
+            );
+          } else {
+            this._notificationService.error(
+              '¡Error interno!, consulte al administrador.'
+            );
+          }
+        },
+        error: (error: { error: MessageAPI }) => {
+          this._notificationService.error(
+            !error.error
+              ? '¡Error interno!, consulte al administrador.'
+              : !error.error.description
+              ? '¡Error interno!, consulte al administrador.'
+              : error.error.description
+          );
+        },
       });
   }
   /**
@@ -396,36 +449,43 @@ export class PluginItemDetailsComponent implements OnInit {
           /**
            * Delete
            */
-          // this._pluginItemColumnService
-          //   .delete(id_user_, id_plugin_item_column)
-          //   .pipe(takeUntil(this._unsubscribeAll))
-          //   .subscribe({
-          //     next: (response: boolean) => {
-          //       console.log(response);
-          //       if (response) {
-          //         /**
-          //          * Return if the pluginItemColumn wasn't deleted...
-          //          */
-          //         this._notificationService.success(
-          //           'Item Plugin Column eliminada correctamente'
-          //         );
-          //       } else {
-          //         this._notificationService.error(
-          //           '¡Error interno!, consulte al administrador.'
-          //         );
-          //       }
-          //     },
-          //     error: (error: { error: MessageAPI }) => {
-          //       console.log(error);
-          //       this._notificationService.error(
-          //         !error.error
-          //           ? '¡Error interno!, consulte al administrador.'
-          //           : !error.error.description
-          //           ? '¡Error interno!, consulte al administrador.'
-          //           : error.error.description
-          //       );
-          //     },
-          //   });
+          const id_user = this.data.user.id_user;
+
+          const columnsFormArray = this.pluginItemForm.get(
+            'columns'
+          ) as FormArray;
+
+          const id_plugin_item_column =
+            columnsFormArray.getRawValue()[index].id_plugin_item_column;
+
+          this._pluginItemColumnService
+            .delete(id_user, id_plugin_item_column)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe({
+              next: (response: boolean) => {
+                if (response) {
+                  /**
+                   * Return if the pluginItemColumn wasn't deleted...
+                   */
+                  this._notificationService.success(
+                    'Item Plugin Column eliminada correctamente'
+                  );
+                } else {
+                  this._notificationService.error(
+                    '¡Error interno!, consulte al administrador.'
+                  );
+                }
+              },
+              error: (error: { error: MessageAPI }) => {
+                this._notificationService.error(
+                  !error.error
+                    ? '¡Error interno!, consulte al administrador.'
+                    : !error.error.description
+                    ? '¡Error interno!, consulte al administrador.'
+                    : error.error.description
+                );
+              },
+            });
           /**
            * Mark for check
            */
@@ -462,7 +522,6 @@ export class PluginItemDetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_pluginItem: PluginItem) => {
-          console.log(_pluginItem);
           if (_pluginItem) {
             this._notificationService.success(
               'Plugin Item actualizada correctamente'
@@ -478,7 +537,6 @@ export class PluginItemDetailsComponent implements OnInit {
           }
         },
         error: (error: { error: MessageAPI }) => {
-          console.log(error);
           this._notificationService.error(
             !error.error
               ? '¡Error interno!, consulte al administrador.'
@@ -531,7 +589,6 @@ export class PluginItemDetailsComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
               next: (response: boolean) => {
-                console.log(response);
                 if (response) {
                   /**
                    * Return if the pluginItem wasn't deleted...
@@ -570,7 +627,6 @@ export class PluginItemDetailsComponent implements OnInit {
                 }
               },
               error: (error: { error: MessageAPI }) => {
-                console.log(error);
                 this._notificationService.error(
                   !error.error
                     ? '¡Error interno!, consulte al administrador.'

@@ -1,7 +1,7 @@
 import { AngelAlertType } from '@angel/components/alert';
 import {
   ActionAngelConfirmation,
-  AngelConfirmationService
+  AngelConfirmationService,
 } from '@angel/services/confirmation';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { OverlayRef } from '@angular/cdk/overlay';
@@ -11,14 +11,14 @@ import {
   Component,
   Inject,
   OnInit,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -31,6 +31,10 @@ import { DocumentationProfileAttachedService } from '../../documentation-profile
 import { DocumentationProfileAttached } from '../../documentation-profile/documentation-profile-attached/documentation-profile-attached.types';
 import { ItemService } from '../../item/item.service';
 import { Item } from '../../item/item.types';
+import { PluginItemColumnService } from '../../plugin-item/plugin-item-column/plugin-item-column.service';
+import { PluginItemColumn } from '../../plugin-item/plugin-item-column/plugin-item-column.types';
+import { PluginItemService } from '../../plugin-item/plugin-item.service';
+import { PluginItem } from '../../plugin-item/plugin-item.types';
 import { ModalTemplateService } from '../modal-template/modal-template.service';
 import { ModalTemplateControlService } from '../template-control/modal-template-control/modal-template-control.service';
 import { TemplateControlService } from '../template-control/template-control.service';
@@ -81,6 +85,8 @@ export class ModalTemplatePreviewComponent implements OnInit {
    * isOpenModal
    */
   templateControl!: TemplateControl[];
+  select_plugin_item: boolean = false;
+  pluginItemColumns: PluginItemColumn[] = [];
   /**
    * Constructor
    */
@@ -98,7 +104,9 @@ export class ModalTemplatePreviewComponent implements OnInit {
     private _itemService: ItemService,
     private _documentationProfileAttachedService: DocumentationProfileAttachedService,
     private _modalTemplatePreviewService: ModalTemplatePreviewService,
-    private _modalTemplateControlService: ModalTemplateControlService
+    private _modalTemplateControlService: ModalTemplateControlService,
+    private _pluginItemService: PluginItemService,
+    private _pluginItemColumnService: PluginItemColumnService
   ) {}
 
   /** ----------------------------------------------------------------------------------------------------- */
@@ -180,6 +188,29 @@ export class ModalTemplatePreviewComponent implements OnInit {
           .byTemplateRead(this.id_template)
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe();
+        /**
+         * Render PluginItem
+         */
+        if (this.template) {
+          var id_plugin_item = this.template.plugin_item.id_plugin_item;
+
+          if (id_plugin_item && id_plugin_item != ' ') {
+            this._pluginItemService
+              .specificRead(id_plugin_item)
+              .pipe(takeUntil(this._unsubscribeAll))
+              .subscribe((pluginItem: PluginItem) => {
+                this.select_plugin_item = pluginItem.select_plugin_item;
+
+                this._pluginItemColumnService
+                  .byPluginItemQueryRead(id_plugin_item, '*')
+                  .pipe(takeUntil(this._unsubscribeAll))
+                  .subscribe((pluginItemColumn: PluginItemColumn[]) => {
+                    this.pluginItemColumns = pluginItemColumn;
+                  });
+              });
+          }
+        }
+
         /**
          * Subscribe templateControls$
          */

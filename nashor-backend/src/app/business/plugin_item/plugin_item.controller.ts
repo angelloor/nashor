@@ -68,6 +68,17 @@ export const validation = (
 							});
 						}
 
+						if (url == '/update') {
+							attributeValidate(
+								'select_plugin_item',
+								plugin_item.select_plugin_item,
+								'boolean'
+							).catch((err) => {
+								validationStatus = true;
+								reject(err);
+							});
+						}
+
 						/**
 						 * Validation company
 						 */
@@ -173,6 +184,8 @@ export const validation = (
 								_plugin_item.name_plugin_item = plugin_item.name_plugin_item;
 								_plugin_item.description_plugin_item =
 									plugin_item.description_plugin_item;
+								_plugin_item.select_plugin_item =
+									plugin_item.select_plugin_item;
 								await _plugin_item
 									.update()
 									.then((_pluginItem: PluginItem) => {

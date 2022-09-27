@@ -753,15 +753,19 @@ select * from business.dml_documentation_profile_attached_create(1, 2 ,2);
 select * from business.dml_documentation_profile_attached_create(1, 3 ,3);
 select * from business.dml_documentation_profile_attached_create(1, 4 ,4);
 
-select * from business.dml_template_create(1, 1, 1, true, true, 'SM - Solicitud', 'Plantilla para la solicitud de materiales', true, '2022-09-22 10:41:23.053169', false, false);
-select * from business.dml_template_create(1, 1, 1, false, false, 'SM - Fiscalización equipos informáticos', 'Plantilla para la fiscalización de equipos informáticos', true, '2022-09-22 10:58:09.283', false, false);
-select * from business.dml_template_create(1, 1, 1, false, false, 'SM - Revisión (bodega)', 'Plantilla para la revisión de bodega', true, '2022-09-22 10:15:31.320818', false, false);
-select * from business.dml_template_create(1, 1, 1, false, false, 'SM - Aprobación Administrativo', 'Plantilla la aprobación de administrativo', true, '2022-09-22 10:10:09.216223', false, false);
-select * from business.dml_template_create(1, 1, 2, false, true, 'SM - Compras públicas (subida)', 'Plantilla para la subida de información en compras públicas', true, '2022-09-22 10:11:00.383672', false, false);
-select * from business.dml_template_create(1, 1, 1, false, false, 'SM - Alcaldía (autorización proceso)', 'Plantilla la autorización del proceso en alcaldía', true, '2022-09-22 10:11:00.383672', false, false);
-select * from business.dml_template_create(1, 1, 3, false, true, 'SM - Financiero (partida presupuestaria)', 'Plantilla para la subida de partida presupuestaria en financiero', true, '2022-09-22 15:11:00.383672', false, false);
-select * from business.dml_template_create(1, 1, 1, false, false, 'SM - Alcaldía (autorización compra)', 'Plantilla para la autorización de la compra en alcaldía', true, '2022-09-22 10:11:00.383672', false, false);
-select * from business.dml_template_create(1, 1, 4, false, true, 'SM - Compras públicas (orden de compra)', 'Plantilla para la generación de la orden de compra en compras públicas', true, '2022-09-22 10:11:00.383672', false, false);
+select * from business.dml_plugin_item_create(1, 1, 'Plugin para compras publicas', 'Este plugin es para que compras publicas pueda seleccionar cantidad y poner el CPC', true);
+select * from business.dml_plugin_item_column_create(1, 1, 'CANTIDAD', '5');
+select * from business.dml_plugin_item_column_create(1, 1, 'CPC', '20');
+
+select * from business.dml_template_create(1, 1, 1, 1, true, true, 'SM - Solicitud', 'Plantilla para la solicitud de materiales', true, '2022-09-22 10:41:23.053169', false, false);
+select * from business.dml_template_create(1, 1, 1, 1, false, false, 'SM - Fiscalización equipos informáticos', 'Plantilla para la fiscalización de equipos informáticos', true, '2022-09-22 10:58:09.283', false, false);
+select * from business.dml_template_create(1, 1, 1, 1, false, false, 'SM - Revisión (bodega)', 'Plantilla para la revisión de bodega', true, '2022-09-22 10:15:31.320818', false, false);
+select * from business.dml_template_create(1, 1, 1, 1, false, false, 'SM - Aprobación Administrativo', 'Plantilla la aprobación de administrativo', true, '2022-09-22 10:10:09.216223', false, false);
+select * from business.dml_template_create(1, 1, 2, 1, true, false, 'SM - Compras públicas (subida)', 'Plantilla para la subida de información en compras públicas', true, '2022-09-22 10:11:00.383672', false, false);
+select * from business.dml_template_create(1, 1, 1, 1, false, false, 'SM - Alcaldía (autorización proceso)', 'Plantilla la autorización del proceso en alcaldía', true, '2022-09-22 10:11:00.383672', false, false);
+select * from business.dml_template_create(1, 1, 3, 1, true, false, 'SM - Financiero (partida presupuestaria)', 'Plantilla para la subida de partida presupuestaria en financiero', true, '2022-09-22 15:11:00.383672', false, false);
+select * from business.dml_template_create(1, 1, 1, 1, false, false, 'SM - Alcaldía (autorización compra)', 'Plantilla para la autorización de la compra en alcaldía', true, '2022-09-22 10:11:00.383672', false, false);
+select * from business.dml_template_create(1, 1, 4, 1, true, false, 'SM - Compras públicas (orden de compra)', 'Plantilla para la generación de la orden de compra en compras públicas', true, '2022-09-22 10:11:00.383672', false, false);
 
 select * from business.dml_control_create(1, 1, 'radioButton', 'Seleccione el tipo de solicitud', 'tipo_solicitud', '', true, 1, 1, '', false, '[{"name":"Bienes","value":"bienes"},{"name":"Servicios","value":"servicios"}]', true, false);
 select * from business.dml_control_create(1, 1, 'radioButton', 'Desea aprobar la entrega?', 'aprobacion_entrega', '', true, 1, 1, '', false, '[{"name":"Si","value":"si"},{"name":"No","value":"no"}]', true, false);
@@ -771,9 +775,9 @@ select * from business.dml_control_create(1, 1, 'radioButton', 'Desea aprobar la
 
 select * from business.dml_item_category_create(1, 1, 'Equipos de informática', 'categoría para equipos de informática', false);
 
-select * from business.dml_item_create(1, 1, 1, 'Mouse', 'Este es un mouse', '5', false);
-select * from business.dml_item_create(1, 1, 1, 'Teclado', 'Este es un teclado', '10', false);
-select * from business.dml_item_create(1, 1, 1, 'Impresora', 'Esta es una impresora', '15', false);
+select * from business.dml_item_create(1, 1, 1, 'Mouse', 'Este es un mouse', false);
+select * from business.dml_item_create(1, 1, 1, 'Teclado', 'Este es un teclado', false);
+select * from business.dml_item_create(1, 1, 1, 'Impresora', 'Esta es una impresora', false);
 
 select * from business.dml_template_control_create(1, 2, 1, 1);
 select * from business.dml_template_control_create(1, 4, 2, 1);

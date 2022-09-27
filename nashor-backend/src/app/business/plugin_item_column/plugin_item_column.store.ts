@@ -34,7 +34,7 @@ export const view_plugin_item_column_query_read = (
 			plugin_item_column.name_plugin_item_column != '*'
 				? ` where lower(bvpicij.name_plugin_item_column) LIKE '%${plugin_item_column.name_plugin_item_column}%'`
 				: ``
-		} order by bvpicij.id_plugin_item_column desc`;
+		} order by bvpicij.id_plugin_item_column asc`;
 
 		// console.log(query);
 
@@ -62,7 +62,7 @@ export const view_plugin_item_column_by_plugin_item_query_read = (
 			plugin_item_column.name_plugin_item_column != '*'
 				? ` where lower(bvpicij.name_plugin_item_column) LIKE '%${plugin_item_column.name_plugin_item_column}%' and bvpicij.id_plugin_item = ${plugin_item_column.plugin_item}`
 				: ` where bvpicij.id_plugin_item = ${plugin_item_column.plugin_item}`
-		} order by bvpicij.id_plugin_item_column desc`;
+		} order by bvpicij.id_plugin_item_column asc`;
 
 		// console.log(query);
 

@@ -142,7 +142,7 @@ export const dml_template_update = (template: Template) => {
 			${template.in_use},
 			${template.deleted_template})`;
 
-		console.log(query);
+		// console.log(query);
 
 		try {
 			const response = await clientNASHORPostgreSQL.query(query);

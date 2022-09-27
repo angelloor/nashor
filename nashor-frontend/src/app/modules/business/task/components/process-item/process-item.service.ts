@@ -9,7 +9,7 @@ import {
   switchMap,
   take,
   tap,
-  throwError,
+  throwError
 } from 'rxjs';
 import { processItem, processItems } from './process-item.data';
 import { ProcessItem } from './process-item.types';
@@ -38,6 +38,12 @@ export class ProcessItemService {
    */
   get processItem$(): Observable<ProcessItem> {
     return this._processItem.asObservable();
+  }
+  /**
+   * Setter
+   */
+  set $processItems(processItem:ProcessItem[]) {
+    this._processItems.next(processItem);
   }
   /**
    * Getter for _processItems
