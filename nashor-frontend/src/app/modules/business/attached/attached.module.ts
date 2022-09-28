@@ -25,6 +25,7 @@ import { AttachedComponent } from './attached.component';
 import { attachedRoutes } from './attached.routing';
 import { AttachedDetailsComponent } from './details/details.component';
 import { AttachedListComponent } from './list/list.component';
+import { ModalAttachedsComponent } from './modal-attacheds/modal-attacheds.component';
 import { ModalSelectAttachedComponent } from './modal-select-attached/modal-select-attached.component';
 
 @NgModule({
@@ -33,6 +34,7 @@ import { ModalSelectAttachedComponent } from './modal-select-attached/modal-sele
     AttachedDetailsComponent,
     AttachedComponent,
     ModalSelectAttachedComponent,
+    ModalAttachedsComponent,
   ],
   imports: [
     RouterModule.forChild(attachedRoutes),

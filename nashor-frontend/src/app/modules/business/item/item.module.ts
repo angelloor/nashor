@@ -25,6 +25,8 @@ import { ItemDetailsComponent } from './details/details.component';
 import { ItemComponent } from './item.component';
 import { itemRoutes } from './item.routing';
 import { ItemListComponent } from './list/list.component';
+import { ModalItemComponent } from './modal-item/modal-item.component';
+import { ModalItemsComponent } from './modal-items/modal-items.component';
 import { ModalSelectItemComponent } from './modal-select-item/modal-select-item.component';
 
 @NgModule({
@@ -33,6 +35,8 @@ import { ModalSelectItemComponent } from './modal-select-item/modal-select-item.
     ItemDetailsComponent,
     ItemComponent,
     ModalSelectItemComponent,
+    ModalItemsComponent,
+    ModalItemComponent,
   ],
   imports: [
     RouterModule.forChild(itemRoutes),

@@ -16,7 +16,13 @@
                     <div class="mt-2 rounded-xl bg-gray-400 bg-opacity-12 dark:bg-transparent dark:border p-3">
                         <div>
                             <ng-container *ngIf="template.plugin_item_process">
-                                <div class="text-2xl mt-4">Items</div>
+                                <div class="flex mt-3 mb-3">
+                                    <div class="text-2xl">Items</div>
+                                    <button class="ml-auto" mat-flat-button [color]="'primary'"
+                                        (click)="openModalItems()" [matTooltip]="'Guardar'">
+                                        Items
+                                    </button>
+                                </div>
                                 <!-- Items -->
                                 <div class="space-y-4 mt-5 mb-5">
                                     <ng-container
@@ -24,7 +30,7 @@
                                         <div class="relative flex">
                                             <button mat-icon-button class="self-center" class="self-start"
                                                 [ngClass]="first ? 'self-center' : 'self-start'"
-                                                [matTooltip]="formArrayProcessItems.getRawValue()[indexOne].official.user.person.name_person + ' ' + formArrayProcessItems.getRawValue()[indexOne].official.user.person.last_name_person + ' - '">
+                                                [matTooltip]="formArrayProcessItems.getRawValue()[indexOne].official.user.person.name_person + ' ' + formArrayProcessItems.getRawValue()[indexOne].official.user.person.last_name_person + ' - ' ">
                                                 <span class="relative">
                                                     <img class="w-7 h-7 rounded-full"
                                                         *ngIf="formArrayProcessItems.getRawValue()[indexOne].official.user.avatar_user"
@@ -290,7 +296,13 @@
                             <!-- Attacheds -->
                             <ng-container
                                 *ngIf="template.plugin_attached_process && template.documentation_profile.id_documentation_profile">
-                                <div class="text-2xl mt-4">Anexos</div>
+                                <div class="flex mt-3 mb-3">
+                                    <div class="text-2xl">Anexos</div>
+                                    <button class="ml-auto" mat-flat-button [color]="'primary'"
+                                        [matTooltip]="'Guardar'">
+                                        Perfil de documentación
+                                    </button>
+                                </div>
                                 <div class="space-y-4">
                                     <ng-container
                                         *ngFor="let atacheds of formArrayProcessAttacheds.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
