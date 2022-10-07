@@ -57,6 +57,28 @@ export const view_control_by_company_query_read = (control: Control) => {
 	});
 };
 
+export const view_control_by_position_level_read = (control: Control) => {
+	return new Promise<Control[]>(async (resolve, reject) => {
+		const query = `select * from business.dml_control_by_position_level(${control.id_user_}, ${control.form_name_control})`;
+
+		// console.log(query);
+
+		try {
+			const response = await clientNASHORPostgreSQL.query(query);
+			resolve(response.rows);
+		} catch (error: any) {
+			if (error.detail == '_database') {
+				reject({
+					..._messages[3],
+					description: error.toString().slice(7),
+				});
+			} else {
+				reject(error.toString());
+			}
+		}
+	});
+};
+
 export const view_control_specific_read = (control: Control) => {
 	return new Promise<Control[]>(async (resolve, reject) => {
 		const query = `select * from business.view_control_inner_join bvcij where bvcij.id_control = ${control.id_control}`;

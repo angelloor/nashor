@@ -81,8 +81,8 @@ export class DocumentationProfileAttachedService {
                * Update the documentationProfileAttached in the store
                */
               this._documentationProfileAttacheds.next([
-                _documentationProfileAttached,
                 ...documentationProfileAttacheds,
+                _documentationProfileAttached,
               ]);
 
               return of(_documentationProfileAttached);

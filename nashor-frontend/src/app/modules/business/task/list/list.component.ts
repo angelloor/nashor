@@ -438,7 +438,8 @@ export class TaskListComponent implements OnInit {
    * Navigate to the entity detail page
    */
   openModalTask(id_task: string): void {
-    this._modalTaskService.openModalTask(id_task, false);
+    const sourceProcess: boolean = false;
+    this._modalTaskService.openModalTask(id_task, sourceProcess);
   }
   /**
    * @param time

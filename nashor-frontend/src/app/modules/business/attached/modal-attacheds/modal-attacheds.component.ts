@@ -13,6 +13,7 @@ import { Observable, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { AttachedService } from '../attached.service';
 import { Attached } from '../attached.types';
+import { ModalAttachedService } from '../modal-attached/modal-attached.service';
 import { ModalAttachedsService } from './modal-attacheds.service';
 
 @Component({
@@ -46,7 +47,8 @@ export class ModalAttachedsComponent implements OnInit {
     private _angelConfirmationService: AngelConfirmationService,
     private _layoutService: LayoutService,
     private _authService: AuthService,
-    private _modalAttachedsService: ModalAttachedsService
+    private _modalAttachedsService: ModalAttachedsService,
+    private _modalAttachedService: ModalAttachedService
   ) {}
 
   ngOnInit(): void {
@@ -206,5 +208,11 @@ export class ModalAttachedsComponent implements OnInit {
    */
   closeModalAttacheds(): void {
     this._modalAttachedsService.closeModalAttacheds();
+  }
+  /**
+   * openModalAttached
+   */
+  openModalAttached(id_attached: string): void {
+    this._modalAttachedService.openModalAttached(id_attached);
   }
 }

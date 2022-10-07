@@ -1293,6 +1293,50 @@ $BODY$;
 ALTER FUNCTION business.dml_control_delete_cascade(numeric, numeric)
     OWNER TO postgres;
 
+-- FUNCTION: business.dml_control_by_position_level(numeric, numeric)
+-- DROP FUNCTION IF EXISTS business.dml_control_by_position_level(numeric, numeric);
+
+CREATE OR REPLACE FUNCTION business.dml_control_by_position_level(
+	id_user_ numeric,
+	_position_level numeric)
+    RETURNS TABLE(id_control numeric, id_company numeric, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean, deleted_control boolean, id_setting numeric, name_company character varying, acronym_company character varying, address_company character varying, status_company boolean) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
+BEGIN 
+	IF (_position_level > 0) THEN
+		RETURN QUERY select tc.id_control, tc.id_company, tc.type_control, tc.title_control, tc.form_name_control, tc.initial_value_control, tc.required_control, tc.min_length_control, tc.max_length_control, tc.placeholder_control, tc.spell_check_control, tc.options_control, tc.in_use, tc.deleted_control, tc.id_setting, tc.name_company, tc.acronym_company, tc.address_company, tc.status_company from (select 
+			bvtc.id_template, bvc.*, cvc.id_setting, cvc.name_company, cvc.acronym_company, cvc.address_company, cvc.status_company 
+			from business.view_template_control bvtc
+			inner join business.view_control bvc on bvc.id_control = bvtc.id_control
+			inner join core.view_company cvc on cvc.id_company = bvc.id_company) as tc 
+			LEFT JOIN (select DISTINCT bvt.id_template from business.view_flow_version_level bvfvl
+			inner join business.view_level bvl on bvl.id_level = bvfvl.id_level
+			inner join business.view_template bvt on bvt.id_template = bvl.id_template
+			where bvfvl.position_level < _position_level) as fvl 
+		on tc.id_template = fvl.id_template where fvl.id_template IS NOT NULL order by tc.id_control asc;
+	ELSE
+		_EXCEPTION = 'El _position_level '||_position_level||' es incorrecto';
+		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+	END IF;
+	exception when others then 
+		-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%', 'dml_control_create -> '||SQLERRM||'' USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION business.dml_control_by_position_level(numeric, numeric)
+    OWNER TO postgres;
+
 -- FUNCTION: business.dml_plugin_item_create_modified(numeric, numeric)
 -- DROP FUNCTION IF EXISTS business.dml_plugin_item_create_modified(numeric, numeric);
 
@@ -3583,6 +3627,7 @@ ALTER FUNCTION business.dml_task_reasign(numeric, numeric, numeric, numeric, num
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
+
 -- DROP FUNCTION IF EXISTS business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean);
 
 CREATE OR REPLACE FUNCTION business.dml_task_send(
@@ -3621,6 +3666,8 @@ DECLARE
 	_NUMBER_PROCESS CHARACTER VARYING;
 	_ACRONYM_TASK CHARACTER VARYING;
 	_NUMBER_TASK_NEW_TASK CHARACTER VARYING;
+
+	_VALUE_PROCESS_CONTROL TEXT;
 
 	_ID_NEW_TASK NUMERIC DEFAULT 0;
 	_X RECORD;
@@ -3701,9 +3748,92 @@ BEGIN
 					RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 				END IF;
 			ELSE
-				-- IS CONDITIONAL
-				_EXCEPTION = 'IS CONDITIONAL';
-				RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+				IF (_TYPE_ELEMENT_NEXT_LEVEL = 'conditional') THEN
+					-- IS CONDITIONAL
+					_VALUE_PROCESS_CONTROL = (select bvpc.value_process_control from business.view_process_control bvpc where bvpc.id_process = _id_process and bvpc.id_level = _id_level and bvpc.id_control = _ID_CONTROL_NEXT_LEVEL::numeric);
+							
+					--_EXCEPTION = _VALUE_PROCESS_CONTROL;
+					-- RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+					
+					-- Evaluar los tipos de operadores
+					IF (_OPERATOR_NEXT_LEVEL = '==') THEN
+						IF (_VALUE_PROCESS_CONTROL = _VALUE_AGAINST_NEXT_LEVEL) THEN
+							_POSITION_LEVEL_NEXT_LEVEL = (select bvfvl.id_level from business.view_flow_version_level bvfvl where bvfvl.position_level_father = _POSITION_LEVEL_NEXT_LEVEL and bvfvl.option_true = true);						
+						
+							-- Obtener el perfil del nivel de acuerdo al nivel
+							_LEVEL_PROFILE_NEXT_LEVEL = (select bvl.id_level_profile from business.view_level bvl where bvl.id_level = _POSITION_LEVEL_NEXT_LEVEL);
+
+							-- Obtener el funcionario de acuerdo al perfil del nivel (Se selecciona el funcionario que tenga menos tareas)								
+							_OFFICIAL_NEXT_LEVEL =  (select bvlpoij.id_official from business.view_level_profile_official_inner_join bvlpoij where bvlpoij.id_level_profile = _LEVEL_PROFILE_NEXT_LEVEL order by bvlpoij.number_task asc limit 1);
+							RAISE NOTICE '%', _OFFICIAL_NEXT_LEVEL;
+							
+							IF (_OFFICIAL_NEXT_LEVEL > 0) THEN
+								_NUMBER_PROCESS = (select bvp.number_process from business.view_process bvp where bvp.id_process = _id_process);
+
+								_ACRONYM_TASK = (select bvf.acronym_task from business.view_process bvp
+									inner join business.view_flow_version bvfv on bvp.id_flow_version = bvfv.id_flow_version
+									inner join business.view_flow bvf on bvfv.id_flow = bvf.id_flow
+									where bvp.id_process = _id_process);
+
+								_NUMBER_TASK_NEW_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
+
+								_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _OFFICIAL_NEXT_LEVEL, _POSITION_LEVEL_NEXT_LEVEL, _NUMBER_TASK_NEW_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
+
+								IF (_ID_NEW_TASK > 0) THEN
+									RETURN QUERY select * from business.view_task_inner_join bvtij 
+										where bvtij.id_task = _id_task;
+								ELSE
+									_EXCEPTION = 'Ocurrió un error al generar la tarea';
+									RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+								END IF;
+							ELSE
+								_EXCEPTION = 'El siguiente nivel no tiene funcionarios registrados en su perfil del nivel';
+								RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+							END IF;
+						ELSE
+							_POSITION_LEVEL_NEXT_LEVEL = (select bvfvl.id_level from business.view_flow_version_level bvfvl where bvfvl.position_level_father = _POSITION_LEVEL_NEXT_LEVEL and bvfvl.option_true = true);						
+						
+							-- Obtener el perfil del nivel de acuerdo al nivel
+							_LEVEL_PROFILE_NEXT_LEVEL = (select bvl.id_level_profile from business.view_level bvl where bvl.id_level = _POSITION_LEVEL_NEXT_LEVEL);
+
+							-- Obtener el funcionario de acuerdo al perfil del nivel (Se selecciona el funcionario que tenga menos tareas)								
+							_OFFICIAL_NEXT_LEVEL =  (select bvlpoij.id_official from business.view_level_profile_official_inner_join bvlpoij where bvlpoij.id_level_profile = _LEVEL_PROFILE_NEXT_LEVEL order by bvlpoij.number_task asc limit 1);
+							RAISE NOTICE '%', _OFFICIAL_NEXT_LEVEL;
+							
+							IF (_OFFICIAL_NEXT_LEVEL > 0) THEN
+								_NUMBER_PROCESS = (select bvp.number_process from business.view_process bvp where bvp.id_process = _id_process);
+
+								_ACRONYM_TASK = (select bvf.acronym_task from business.view_process bvp
+									inner join business.view_flow_version bvfv on bvp.id_flow_version = bvfv.id_flow_version
+									inner join business.view_flow bvf on bvfv.id_flow = bvf.id_flow
+									where bvp.id_process = _id_process);
+
+								_NUMBER_TASK_NEW_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
+
+								_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _OFFICIAL_NEXT_LEVEL, _POSITION_LEVEL_NEXT_LEVEL, _NUMBER_TASK_NEW_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
+
+								IF (_ID_NEW_TASK > 0) THEN
+									RETURN QUERY select * from business.view_task_inner_join bvtij 
+										where bvtij.id_task = _id_task;
+								ELSE
+									_EXCEPTION = 'Ocurrió un error al generar la tarea';
+									RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+								END IF;
+							ELSE
+								_EXCEPTION = 'El siguiente nivel no tiene funcionarios registrados en su perfil del nivel';
+								RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+							END IF;
+						END IF;
+					ELSE
+						-- IS OPERATOR DISTINCT ==
+						_EXCEPTION = 'IS OPERATOR DISTINCT ==';
+						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';	
+					END IF;
+				ELSE
+					-- IS CONDITIONAL
+					_EXCEPTION = 'IS FINISH';
+					RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';				
+				END IF;
 			END IF;
 		ELSE
 			_EXCEPTION = 'El nivel actual no tiene niveles siguientes enlazados';
@@ -3737,7 +3867,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_item_create_modified(
 	_id_task numeric,
 	_id_level numeric)
     RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying) 
-	LANGUAGE 'plpgsql'
+    LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
     ROWS 1000
@@ -3747,14 +3877,32 @@ DECLARE
 	_ID_COMPANY NUMERIC;
 	_ID_ITEM NUMERIC;
 	_ID_PROCESS_ITEM NUMERIC;
+	_PLUGIN_ITEM_PROCESS BOOLEAN;
+	_SELECT_PLUGIN_ITEM BOOLEAN DEFAULT FALSE;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
 	-- Get the id company _ID_COMPANY
 	_ID_COMPANY = (select vu.id_company from core.view_user vu where vu.id_user = id_user_); 
 
-	_ID_ITEM = (select items.id_item from (select * from business.view_item bvi where bvi.id_company = _ID_COMPANY) as items
+	-- Obtener el estado del plugin item con el id_level
+	_PLUGIN_ITEM_PROCESS = (select bvt.plugin_item_process from business.view_level bvl 
+		inner join business.view_template bvt on bvt.id_template = bvl.id_template
+		where bvl.id_level = 1);
+		
+	IF (_PLUGIN_ITEM_PROCESS) THEN
+	 	_SELECT_PLUGIN_ITEM = (select bvpi.select_plugin_item from business.view_level bvl 
+			inner join business.view_template bvt on bvt.id_template = bvl.id_template
+			inner join business.view_plugin_item bvpi on bvpi.id_plugin_item = bvt.id_plugin_item
+			where bvl.id_level = 1);
+	END IF;
+		
+	IF (_SELECT_PLUGIN_ITEM) THEN
+		_ID_ITEM = (select items.id_item from (select * from business.view_item bvi where bvi.id_company = _ID_COMPANY) as items
 		LEFT JOIN (select distinct bvpi.id_item from business.view_process_item bvpi where bvpi.id_level = _id_level) as assignedItems
 		on items.id_item = assignedItems.id_item where assignedItems.id_item IS NULL order by items.id_item asc limit 1);
+	ELSE
+		_ID_ITEM = (select bvi.id_item from business.view_item bvi order by bvi.id_item asc limit 1);
+	END IF;
 
 	IF (_ID_ITEM >= 1) THEN
 		_ID_PROCESS_ITEM = (select * from business.dml_process_item_create(id_user_, _id_official, _id_process, _id_task, _id_level, _ID_ITEM));

@@ -4,7 +4,6 @@ import {
   AngelConfirmationService,
 } from '@angel/services/confirmation';
 import { OverlayRef } from '@angular/cdk/overlay';
-import { DOCUMENT } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -16,7 +15,7 @@ import { NotificationService } from 'app/shared/notification/notification.servic
 import { Subject, takeUntil } from 'rxjs';
 import { AttachedService } from '../attached.service';
 import { Attached } from '../attached.types';
-import { AttachedListComponent } from '../list/list.component';
+import { ModalAttachedService } from './modal-attached.service';
 
 @Component({
   selector: 'app-modal-attached',
@@ -61,15 +60,14 @@ export class ModalAttachedComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public _data: any,
     private _store: Store<{ global: AppInitialData }>,
     private _changeDetectorRef: ChangeDetectorRef,
-    private _attachedListComponent: AttachedListComponent,
     private _attachedService: AttachedService,
-    @Inject(DOCUMENT) private _document: any,
     private _formBuilder: FormBuilder,
     private _activatedRoute: ActivatedRoute,
     private _router: Router,
     private _notificationService: NotificationService,
     private _angelConfirmationService: AngelConfirmationService,
-    private _layoutService: LayoutService
+    private _layoutService: LayoutService,
+    private _modalAttachedService: ModalAttachedService
   ) {}
 
   /** ----------------------------------------------------------------------------------------------------- */
@@ -99,10 +97,6 @@ export class ModalAttachedComponent implements OnInit {
       this.data = state.global;
     });
     /**
-     * Open the drawer
-     */
-    this._attachedListComponent.matDrawer.open();
-    /**
      * Create the attached form
      */
     this.attachedForm = this._formBuilder.group({
@@ -129,10 +123,6 @@ export class ModalAttachedComponent implements OnInit {
     this._attachedService.attached$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((attached: Attached) => {
-        /**
-         * Open the drawer in case it is closed
-         */
-        this._attachedListComponent.matDrawer.open();
         /**
          * Get the attached
          */
@@ -349,5 +339,11 @@ export class ModalAttachedComponent implements OnInit {
         }
         this._layoutService.setOpenModal(false);
       });
+  }
+  /**
+   * closeModalAttached
+   */
+  closeModalAttached(): void {
+    this._modalAttachedService.closeModalAttached();
   }
 }

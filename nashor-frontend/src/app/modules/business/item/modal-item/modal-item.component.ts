@@ -2,7 +2,7 @@ import { angelAnimations } from '@angel/animations';
 import { AngelAlertType } from '@angel/components/alert';
 import {
   ActionAngelConfirmation,
-  AngelConfirmationService,
+  AngelConfirmationService
 } from '@angel/services/confirmation';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
@@ -85,7 +85,6 @@ export class ModalItemComponent implements OnInit {
    */
   ngOnInit(): void {
     this.id_item = this._data.id_item;
-    console.log(this.id_item);
     /**
      * isOpenModal
      */
@@ -131,7 +130,6 @@ export class ModalItemComponent implements OnInit {
          * Get the item
          */
         this.item = item;
-        console.log(this.item.item_category);
 
         // ItemCategory
         this._itemCategoryService

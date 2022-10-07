@@ -31,6 +31,7 @@ import { ColumnProcessItem } from '../../column-process-item/column-process-item
 import { TYPE_CONTROL } from '../../control/control.types';
 import { DocumentationProfileAttachedService } from '../../documentation-profile/documentation-profile-attached/documentation-profile-attached.service';
 import { DocumentationProfileAttached } from '../../documentation-profile/documentation-profile-attached/documentation-profile-attached.types';
+import { ModalDocumentationProfileAttachedsService } from '../../documentation-profile/documentation-profile-attached/modal-documentation-profile-attacheds/modal-documentation-profile-attacheds.service';
 import { documentationProfile } from '../../documentation-profile/documentation-profile.data';
 import { DocumentationProfile } from '../../documentation-profile/documentation-profile.types';
 import { ItemService } from '../../item/item.service';
@@ -135,7 +136,8 @@ export class ModalTaskRealizeComponent implements OnInit {
     private _pluginItemService: PluginItemService,
     private _pluginItemColumnService: PluginItemColumnService,
     private _columnProcessItemService: ColumnProcessItemService,
-    private _modalItemsService: ModalItemsService
+    private _modalItemsService: ModalItemsService,
+    private _modalDocumentationProfileAttachedsService: ModalDocumentationProfileAttachedsService
   ) {}
 
   ngOnInit(): void {
@@ -198,6 +200,7 @@ export class ModalTaskRealizeComponent implements OnInit {
          * Get the template
          */
         this.template = _template;
+
         /**
          * Render PluginItem
          */
@@ -307,7 +310,7 @@ export class ModalTaskRealizeComponent implements OnInit {
                                  */
                                 this.taskRealizeForm.addControl(
                                   `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`,
-                                  new FormControl(' ', [
+                                  new FormControl('', [
                                     Validators.required,
                                     Validators.maxLength(
                                       _pluginItemColumn.lenght_plugin_item_column
@@ -1731,5 +1734,13 @@ export class ModalTaskRealizeComponent implements OnInit {
    */
   openModalItems(): void {
     this._modalItemsService.openModalItems(this.id_company);
+  }
+  /**
+   * openModalDocumentationProfileAttacheds
+   */
+  openModalDocumentationProfileAttacheds(): void {
+    this._modalDocumentationProfileAttachedsService.openModalDocumentationProfileAttacheds(
+      this.template.documentation_profile.id_documentation_profile
+    );
   }
 }

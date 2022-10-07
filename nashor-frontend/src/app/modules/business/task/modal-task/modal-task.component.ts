@@ -67,6 +67,7 @@ export class ModalTaskComponent implements OnInit {
   _urlPathAvatar: string = environment.urlBackend + '/resource/img/avatar/';
 
   id_task: string = '';
+  id_process: string = '';
   sourceProcess: boolean = false;
 
   listProcess: Process[] = [];
@@ -178,10 +179,13 @@ export class ModalTaskComponent implements OnInit {
    */
   ngOnInit(): void {
     this.id_task = this._data.id_task;
+    this.id_process = this._data.id_process;
+    console.log(this.id_task);
+
     this.sourceProcess = this._data.sourceProcess;
 
     this._taskService
-      .specificReadInLocal(this.id_task)
+      .specificRead(this.id_task)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe();
     /**
@@ -239,6 +243,13 @@ export class ModalTaskComponent implements OnInit {
          * Get the task
          */
         this.task = task;
+        console.log(this.task);
+
+        if (this.task.id_task == ' ') {
+          return;
+        }
+
+        console.log(this.task);
 
         this._processCommentService
           .byProcessRead(this.task.process.id_process)

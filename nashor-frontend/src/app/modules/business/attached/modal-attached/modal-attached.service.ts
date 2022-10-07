@@ -19,7 +19,7 @@ export class ModalAttachedService {
       minHeight: 'inherit',
       maxHeight: 'inherit',
       height: 'auto',
-      width: '50rem',
+      width: '45rem',
       maxWidth: '',
       panelClass: ['mat-dialog-cont'],
       disableClose: true,

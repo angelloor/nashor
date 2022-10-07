@@ -22,6 +22,7 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from 'app/shared/shared.module';
 import * as moment from 'moment';
 import { DocumentationProfileDetailsComponent } from './details/details.component';
+import { ModalDocumentationProfileAttachedsComponent } from './documentation-profile-attached/modal-documentation-profile-attacheds/modal-documentation-profile-attacheds.component';
 import { DocumentationProfileComponent } from './documentation-profile.component';
 import { documentationProfileRoutes } from './documentation-profile.routing';
 import { DocumentationProfileListComponent } from './list/list.component';
@@ -33,6 +34,7 @@ import { ModalSelectDocumentationProfileComponent } from './modal-select-documen
     DocumentationProfileDetailsComponent,
     DocumentationProfileComponent,
     ModalSelectDocumentationProfileComponent,
+    ModalDocumentationProfileAttachedsComponent,
   ],
   imports: [
     RouterModule.forChild(documentationProfileRoutes),

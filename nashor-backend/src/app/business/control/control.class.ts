@@ -6,6 +6,7 @@ import {
 	dml_control_delete_cascade,
 	dml_control_update,
 	view_control_by_company_query_read,
+	view_control_by_position_level_read,
 	view_control_query_read,
 	view_control_specific_read,
 } from './control.store';
@@ -188,6 +189,23 @@ export class Control {
 	byCompanyQueryRead() {
 		return new Promise<Control[]>(async (resolve, reject) => {
 			await view_control_by_company_query_read(this)
+				.then((controls: Control[]) => {
+					/**
+					 * Mutate response
+					 */
+					const _controls = this.mutateResponse(controls);
+
+					resolve(_controls);
+				})
+				.catch((error: any) => {
+					reject(error);
+				});
+		});
+	}
+
+	byPositionLevel() {
+		return new Promise<Control[]>(async (resolve, reject) => {
+			await view_control_by_position_level_read(this)
 				.then((controls: Control[]) => {
 					/**
 					 * Mutate response

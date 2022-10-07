@@ -76,6 +76,13 @@ select * from core.dml_navigation_create(1, 1, 'Administrador (Por defecto)', 'N
 				"icon": "mat_outline:ballot",
 				"children": [
 					{
+						"id": "business.plugin-item",
+						"title": "Categoría del artículo",
+						"type": "basic",
+						"icon": "mat_outline:category",
+						"link": "/business/plugin-item"
+					},
+					{
 						"id": "business.item-category",
 						"title": "Categoría del artículo",
 						"type": "basic",
@@ -233,6 +240,13 @@ select * from core.dml_navigation_create(1, 1, 'Administrador (Futurista)', 'Nav
 				"type": "collapsable",
 				"icon": "mat_outline:ballot",
 				"children": [
+					{
+						"id": "business.plugin-item",
+						"title": "Categoría del artículo",
+						"type": "basic",
+						"icon": "mat_outline:category",
+						"link": "/business/plugin-item"
+					},
 					{
 						"id": "business.item-category",
 						"title": "Categoría del artículo",
@@ -507,6 +521,13 @@ select * from core.dml_navigation_create(1, 1, 'Gestor de inventario (Por defect
 				"icon": "mat_outline:ballot",
 				"children": [
 					{
+						"id": "business.plugin-item",
+						"title": "Categoría del artículo",
+						"type": "basic",
+						"icon": "mat_outline:category",
+						"link": "/business/plugin-item"
+					},
+					{
 						"id": "business.item-category",
 						"title": "Categoría del artículo",
 						"type": "basic",
@@ -578,6 +599,13 @@ select * from core.dml_navigation_create(1, 1, 'Gestor de inventario (Futurista)
 				"type": "collapsable",
 				"icon": "mat_outline:ballot",
 				"children": [
+					{
+						"id": "business.plugin-item",
+						"title": "Categoría del artículo",
+						"type": "basic",
+						"icon": "mat_outline:category",
+						"link": "/business/plugin-item"
+					},
 					{
 						"id": "business.item-category",
 						"title": "Categoría del artículo",
@@ -753,7 +781,7 @@ select * from business.dml_documentation_profile_attached_create(1, 2 ,2);
 select * from business.dml_documentation_profile_attached_create(1, 3 ,3);
 select * from business.dml_documentation_profile_attached_create(1, 4 ,4);
 
-select * from business.dml_plugin_item_create(1, 1, 'Plugin para compras publicas', 'Este plugin es para que compras publicas pueda seleccionar cantidad y poner el CPC', true);
+select * from business.dml_plugin_item_create(1, 1, 'Plugin para compras publicas', 'Este plugin es para que compras publicas pueda seleccionar cantidad y poner el CPC', false);
 select * from business.dml_plugin_item_column_create(1, 1, 'CANTIDAD', '5');
 select * from business.dml_plugin_item_column_create(1, 1, 'CPC', '20');
 
@@ -819,7 +847,6 @@ select * from business.dml_flow_version_level_create(1, 1, 3, 4, 3, 'level', '0'
 select * from business.dml_flow_version_level_create(1, 1, 5, 5, 3, 'level', '0', '==', '', false, 663, 511);
 select * from business.dml_flow_version_level_create(1, 1, 4, 6, 4, 'level', '0', '==', '', false, 126, 750);
 select * from business.dml_flow_version_level_create(1, 1, 4, 7, 6, 'conditional', '2', '==', 'si', false, 121, 974);
-select * from business.dml_flow_version_level_create(1, 1, 1, 8, 1, 'level', '0', '==', '', true, -20, 1180);
 
 select * from core.dml_academic_create(1, '', '', '', false);
 select * from core.dml_academic_create(1, '', '', '', false);

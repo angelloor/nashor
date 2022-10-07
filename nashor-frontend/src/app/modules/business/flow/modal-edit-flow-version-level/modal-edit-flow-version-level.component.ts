@@ -22,7 +22,6 @@ import {
   _typeElements,
   _typeOperators,
 } from '../flow-version/flow-version-level/flow-version-level.types';
-import { FlowVersionService } from '../flow-version/flow-version.service';
 import { FlowVersion } from '../flow-version/flow-version.types';
 import { ModalEditFlowVersionLevelService } from './modal-edit-flow-version-level.service';
 
@@ -93,7 +92,6 @@ export class ModalEditFlowVersionLevelComponent implements OnInit {
     private _modalEditFlowVersionLevelService: ModalEditFlowVersionLevelService,
     private _flowVersionLevelService: FlowVersionLevelService,
     private _notificationService: NotificationService,
-    private _flowVersionService: FlowVersionService,
     private _levelService: LevelService,
     private _controlService: ControlService
   ) {}
@@ -191,7 +189,16 @@ export class ModalEditFlowVersionLevelComponent implements OnInit {
             }
           });
 
-        this.byCompanyQueryRead();
+        this._controlService
+          .byPositionLevel(this.id_user_, this.flowVersionLevel.position_level)
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe(() => {
+            this._controlService.controls$
+              .pipe(takeUntil(this._unsubscribeAll))
+              .subscribe((_controls: Control[]) => {
+                this.listControls = _controls;
+              });
+          });
 
         this.toggleEditMode(false);
       });
@@ -259,21 +266,6 @@ export class ModalEditFlowVersionLevelComponent implements OnInit {
     const type_element: TYPE_ELEMENT =
       this.flowVersionLevelForm.getRawValue().type_element;
     this.typeElement = type_element;
-  }
-  /**
-   * byCompanyQueryRead
-   */
-  byCompanyQueryRead(): void {
-    this._controlService
-      .byCompanyQueryRead(this.id_company, '*')
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this._controlService.controls$
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((_controls: Control[]) => {
-            this.listControls = _controls;
-          });
-      });
   }
   /**
    * Update the flowVersionLevel

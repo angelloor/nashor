@@ -13,7 +13,7 @@ export class ModalAttachedsService {
   ) {}
   _dialogRef: any;
 
-  openModalAttacheds(id_company: string) {
+  openModalAttacheds() {
     this._layoutService.setOpenModal(true);
     return (this._dialogRef = this._dialog.open(ModalAttachedsComponent, {
       minHeight: 'inherit',
@@ -23,9 +23,6 @@ export class ModalAttachedsService {
       maxWidth: '',
       panelClass: ['mat-dialog-cont'],
       disableClose: true,
-      data: {
-        id_company,
-      },
     }));
   }
 

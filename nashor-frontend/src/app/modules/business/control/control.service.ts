@@ -116,6 +116,29 @@ export class ControlService {
       );
   }
   /**
+   * byPositionLevel
+   * @param id_user_
+   * @param position_level
+   */
+  byPositionLevel(
+    id_user_: string,
+    position_level: number
+  ): Observable<Control[]> {
+    return this._httpClient
+      .get<Control[]>(
+        this._url + `/byPositionLevel/${id_user_}/${position_level}`
+      )
+      .pipe(
+        tap((controls: Control[]) => {
+          if (controls) {
+            this._controls.next(controls);
+          } else {
+            this._controls.next([]);
+          }
+        })
+      );
+  }
+  /**
    * specificRead
    * @param id_control
    */

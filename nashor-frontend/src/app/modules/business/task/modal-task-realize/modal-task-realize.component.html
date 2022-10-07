@@ -16,13 +16,13 @@
                     <div class="mt-2 rounded-xl bg-gray-400 bg-opacity-12 dark:bg-transparent dark:border p-3">
                         <div>
                             <ng-container *ngIf="template.plugin_item_process">
-                                <div class="flex mt-3 mb-3">
+                                <!-- <div class="flex mt-3 mb-3">
                                     <div class="text-2xl">Items</div>
                                     <button class="ml-auto" mat-flat-button [color]="'primary'"
                                         (click)="openModalItems()" [matTooltip]="'Guardar'">
                                         Items
                                     </button>
-                                </div>
+                                </div> -->
                                 <!-- Items -->
                                 <div class="space-y-4 mt-5 mb-5">
                                     <ng-container
@@ -87,7 +87,14 @@
                                     </ng-container>
                                 </div>
                                 <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
-                                    *ngIf="!isSelectedAllProcessItem">
+                                    *ngIf="(select_plugin_item && !isSelectedAllProcessItem)">
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                                    <span class="ml-2 font-medium text-secondary group-hover:underline"
+                                        (click)="createProcessItem()">Añadir
+                                        elemento</span>
+                                </div>
+                                <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
+                                    *ngIf="!select_plugin_item">
                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
                                     <span class="ml-2 font-medium text-secondary group-hover:underline"
                                         (click)="createProcessItem()">Añadir
@@ -298,10 +305,10 @@
                                 *ngIf="template.plugin_attached_process && template.documentation_profile.id_documentation_profile">
                                 <div class="flex mt-3 mb-3">
                                     <div class="text-2xl">Anexos</div>
-                                    <button class="ml-auto" mat-flat-button [color]="'primary'"
-                                        [matTooltip]="'Guardar'">
+                                    <!-- <button class="ml-auto" mat-flat-button [color]="'primary'"
+                                        (click)="openModalDocumentationProfileAttacheds()" [matTooltip]="'Guardar'">
                                         Perfil de documentación
-                                    </button>
+                                    </button> -->
                                 </div>
                                 <div class="space-y-4">
                                     <ng-container

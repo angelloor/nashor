@@ -226,6 +226,30 @@ export const validation = (control: Control, url: string, token: string) => {
 										),
 									});
 								}
+							} else if (url.substring(0, 16) == '/byPositionLevel') {
+								const id_user_: any = control.id_user_;
+
+								if (id_user_ >= 1) {
+									/** set required attributes for action */
+									_control.id_user_ = control.id_user_;
+									_control.form_name_control = control.form_name_control;
+									await _control
+										.byPositionLevel()
+										.then((_controls: Control[]) => {
+											resolve(_controls);
+										})
+										.catch((error: any) => {
+											reject(error);
+										});
+								} else {
+									reject({
+										..._messages[11],
+										description: _messages[11].description.replace(
+											'name_entity',
+											'user'
+										),
+									});
+								}
 							} else if (url.substring(0, 13) == '/specificRead') {
 								const id_control: any = control.id_control;
 

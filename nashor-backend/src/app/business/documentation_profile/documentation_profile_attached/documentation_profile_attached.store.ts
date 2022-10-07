@@ -32,7 +32,7 @@ export const view_documentation_profile_attached_by_documentation_profile_read =
 	(documentation_profile_attached: DocumentationProfileAttached) => {
 		return new Promise<DocumentationProfileAttached[]>(
 			async (resolve, reject) => {
-				const query = `select * from business.view_documentation_profile_attached_inner_join bvdpaij where bvdpaij.id_documentation_profile = ${documentation_profile_attached.documentation_profile}`;
+				const query = `select * from business.view_documentation_profile_attached_inner_join bvdpaij where bvdpaij.id_documentation_profile = ${documentation_profile_attached.documentation_profile} order by bvdpaij.id_documentation_profile_attached asc`;
 
 				// console.log(query);
 

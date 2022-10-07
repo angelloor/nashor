@@ -5,7 +5,7 @@ import {
   Component,
   Inject,
   OnInit,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -22,7 +22,7 @@ import {
   switchMap,
   takeUntil,
   takeWhile,
-  tap
+  tap,
 } from 'rxjs/operators';
 import { ModalSelectFlowService } from '../../flow/modal-select-flow/modal-select-flow.service';
 import { official } from '../../official/official.data';
@@ -395,8 +395,12 @@ export class ProcessListComponent implements OnInit {
                   .pipe(takeUntil(this._unsubscribeAll))
                   .subscribe((tasks: Task[]) => {
                     let id_task = tasks[0].id_task;
+                    const sourceProcess: boolean = true;
 
-                    this._modalTaskService.openModalTask(id_task, true);
+                    this._modalTaskService.openModalTask(
+                      id_task,
+                      sourceProcess
+                    );
                   });
               },
               error: (error: { error: MessageAPI }) => {
