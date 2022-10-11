@@ -43,6 +43,7 @@ import { PluginItemService } from '../../plugin-item/plugin-item.service';
 import { PluginItem } from '../../plugin-item/plugin-item.types';
 import { TemplateControlService } from '../../template/template-control/template-control.service';
 import { TemplateControl } from '../../template/template-control/template-control.types';
+import { template } from '../../template/template.data';
 import { TemplateService } from '../../template/template.service';
 import { Template } from '../../template/template.types';
 import { processAttached } from '../components/process-attached/process-attached.data';
@@ -53,6 +54,7 @@ import { ProcessControlService } from '../components/process-control/process-con
 import { ProcessControl } from '../components/process-control/process-control.types';
 import { ProcessItemService } from '../components/process-item/process-item.service';
 import { ProcessItem } from '../components/process-item/process-item.types';
+import { task } from '../task.data';
 import { TaskService } from '../task.service';
 import { Task } from '../task.types';
 import { ModalTaskRealizeService } from './modal-task-realize.service';
@@ -66,10 +68,12 @@ import { ModalTaskRealizeService } from './modal-task-realize.service';
 export class ModalTaskRealizeComponent implements OnInit {
   _urlPathAvatar: string = environment.urlBackend + '/resource/img/avatar/';
 
-  task!: Task;
+  task: Task = task;
+  id_task: string = '';
   id_template: string = '';
   taskRealizeForm!: FormGroup;
   id_company: string = '';
+  finished: boolean = false;
 
   listDocumentationProfile: DocumentationProfile[] = [];
   selectedDocumentationProfile: DocumentationProfile = documentationProfile;
@@ -78,7 +82,7 @@ export class ModalTaskRealizeComponent implements OnInit {
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  template!: Template;
+  template: Template = template;
   private data!: AppInitialData;
 
   templateControl: TemplateControl[] = [];
@@ -141,18 +145,8 @@ export class ModalTaskRealizeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.task = this._data.task;
+    this.id_task = this._data.id_task;
     this.id_template = this._data.id_template;
-
-    /**
-     * readAllItem
-     */
-    this._itemService
-      .queryRead('*')
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((items: Item[]) => {
-        this.listItem = items;
-      });
 
     /**
      * Subscribe to user changes of state
@@ -184,707 +178,804 @@ export class ModalTaskRealizeComponent implements OnInit {
      * isOpenModal
      */
     /**
-     * Get the template
+     * readAllItem
      */
-    this._templateService
-      .specificRead(this.id_template)
+    this._itemService
+      .queryRead('*')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((items: Item[]) => {
+        this.listItem = items;
+      });
+
+    this._taskService
+      .specificRead(this.id_task)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe();
-    /**
-     * Get the template
-     */
-    this._templateService.template$
+
+    this._taskService.task$
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((_template: Template) => {
-        /**
-         * Get the template
-         */
-        this.template = _template;
+      .subscribe((task: Task) => {
+        this.task = task;
 
-        /**
-         * Render PluginItem
-         */
-        if (this.template) {
-          var id_plugin_item = this.template.plugin_item.id_plugin_item;
+        this.finished = task.type_status_task === 'finished';
 
-          if (id_plugin_item && id_plugin_item != ' ') {
-            this._pluginItemService
-              .specificRead(id_plugin_item)
-              .pipe(takeUntil(this._unsubscribeAll))
-              .subscribe((pluginItem: PluginItem) => {
-                this.select_plugin_item = pluginItem.select_plugin_item;
+        if (this.task.id_task != ' ') {
+          this._templateService
+            .specificRead(this.id_template)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((_template: Template) => {
+              /**
+               * Get the template
+               */
+              this.template = _template;
 
-                this._pluginItemColumnService
-                  .byPluginItemQueryRead(id_plugin_item, '*')
-                  .pipe(takeUntil(this._unsubscribeAll))
-                  .subscribe((pluginItemColumn: PluginItemColumn[]) => {
-                    this.pluginItemColumns = pluginItemColumn;
+              /**
+               * Render PluginItem
+               */
+              if (this.template) {
+                var id_plugin_item = this.template.plugin_item.id_plugin_item;
 
-                    // ------------------------------------------------------------------------
-                    /**
-                     * ProcessItem byLevelRead
-                     */
-                    this._processItemService
-                      .byTaskRead(this.task.id_task)
-                      .pipe(takeUntil(this._unsubscribeAll))
-                      .subscribe();
-                    /**
-                     * Get the processItems
-                     */
-                    this._processItemService.processItems$
-                      .pipe(takeUntil(this._unsubscribeAll))
-                      .subscribe((_processItem: ProcessItem[]) => {
-                        this.processItem = _processItem;
-                        if (this.processItem.length > 0) {
-                        }
+                if (id_plugin_item && id_plugin_item != ' ') {
+                  this._pluginItemService
+                    .specificRead(id_plugin_item)
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe((pluginItem: PluginItem) => {
+                      this.select_plugin_item = pluginItem.select_plugin_item;
 
-                        if (this.processItem.length == this.listItem.length) {
-                          this.isSelectedAllProcessItem = true;
-                        } else {
-                          this.isSelectedAllProcessItem = false;
-                        }
-                        /**
-                         * Filter select
-                         */
-                        /**
-                         * Reset the selection
-                         * 1) add attribute isSelected
-                         * 2) [disabled]="entity.isSelected" in mat-option
-                         */
-                        this.listItem.map((item: Item, index: number) => {
-                          item = {
-                            ...item,
-                            isSelected: false,
-                          };
-                          this.listItem[index] = item;
-                        });
+                      this._pluginItemColumnService
+                        .byPluginItemQueryRead(id_plugin_item, '*')
+                        .pipe(takeUntil(this._unsubscribeAll))
+                        .subscribe((pluginItemColumn: PluginItemColumn[]) => {
+                          this.pluginItemColumns = pluginItemColumn;
 
-                        let filterListItems: Item[] = cloneDeep(this.listItem);
-                        /**
-                         * Selected Items
-                         */
-                        this.processItem.map((itemOne: ProcessItem) => {
+                          // ------------------------------------------------------------------------
                           /**
-                           * All Items
+                           * ProcessItem byLevelRead
                            */
-                          filterListItems.map(
-                            (itemTwo: Item, index: number) => {
-                              if (itemTwo.id_item == itemOne.item!.id_item) {
-                                itemTwo = {
-                                  ...itemTwo,
-                                  isSelected: true,
-                                };
-
-                                filterListItems[index] = itemTwo;
+                          this._processItemService
+                            .byTaskRead(this.task.id_task)
+                            .pipe(takeUntil(this._unsubscribeAll))
+                            .subscribe();
+                          /**
+                           * Get the processItems
+                           */
+                          this._processItemService.processItems$
+                            .pipe(takeUntil(this._unsubscribeAll))
+                            .subscribe((_processItem: ProcessItem[]) => {
+                              this.processItem = _processItem;
+                              if (this.processItem.length > 0) {
                               }
-                            }
-                          );
-                        });
 
-                        this.listItem = filterListItems;
+                              if (
+                                this.processItem.length == this.listItem.length
+                              ) {
+                                this.isSelectedAllProcessItem = true;
+                              } else {
+                                this.isSelectedAllProcessItem = false;
+                              }
+                              /**
+                               * Filter select
+                               */
+                              /**
+                               * Reset the selection
+                               * 1) add attribute isSelected
+                               * 2) [disabled]="entity.isSelected" in mat-option
+                               */
+                              this.listItem.map((item: Item, index: number) => {
+                                item = {
+                                  ...item,
+                                  isSelected: false,
+                                };
+                                this.listItem[index] = item;
+                              });
+
+                              let filterListItems: Item[] = cloneDeep(
+                                this.listItem
+                              );
+                              /**
+                               * Selected Items
+                               */
+                              this.processItem.map((itemOne: ProcessItem) => {
+                                /**
+                                 * All Items
+                                 */
+                                filterListItems.map(
+                                  (itemTwo: Item, index: number) => {
+                                    if (
+                                      itemTwo.id_item == itemOne.item!.id_item
+                                    ) {
+                                      itemTwo = {
+                                        ...itemTwo,
+                                        isSelected: true,
+                                      };
+
+                                      filterListItems[index] = itemTwo;
+                                    }
+                                  }
+                                );
+                              });
+
+                              this.listItem = filterListItems;
+                              /**
+                               * Filter select
+                               */
+                              /**
+                               * Clear the processItems form arrays
+                               */
+                              (
+                                this.taskRealizeForm.get(
+                                  'processItems'
+                                ) as FormArray
+                              ).clear();
+
+                              const lotItemFormGroups: any = [];
+                              /**
+                               * Iterate through them
+                               */
+
+                              this.processItem.forEach(
+                                (
+                                  _processItem: ProcessItem,
+                                  indexOne: number
+                                ) => {
+                                  /**
+                                   * Crear los controles para los inputs horizontales
+                                   */
+
+                                  this.pluginItemColumns.forEach(
+                                    async (
+                                      _pluginItemColumn: PluginItemColumn
+                                    ) => {
+                                      /**
+                                       * Creamos los controles
+                                       */
+                                      this.taskRealizeForm.addControl(
+                                        `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`,
+                                        new FormControl(
+                                          {
+                                            value: '',
+                                            disabled: this.finished,
+                                          },
+                                          [
+                                            Validators.required,
+                                            Validators.maxLength(
+                                              _pluginItemColumn.lenght_plugin_item_column
+                                            ),
+                                          ]
+                                        )
+                                      );
+                                      /**
+                                       * Buscar el valor de la columna
+                                       */
+                                      this._columnProcessItemService
+                                        .byPluginItemColumnAndProcessItemRead(
+                                          _pluginItemColumn.id_plugin_item_column,
+                                          _processItem.id_process_item
+                                        )
+                                        .pipe(takeUntil(this._unsubscribeAll))
+                                        .subscribe(
+                                          (
+                                            columnProcessItem: ColumnProcessItem
+                                          ) => {
+                                            if (columnProcessItem) {
+                                              /**
+                                               * Creamos los controles
+                                               */
+                                              this.taskRealizeForm.addControl(
+                                                `column${_pluginItemColumn.name_plugin_item_column}${indexOne}`,
+                                                new FormControl(
+                                                  {
+                                                    value: columnProcessItem,
+                                                    disabled: this.finished,
+                                                  },
+                                                  [Validators.required]
+                                                )
+                                              );
+
+                                              this.taskRealizeForm
+                                                .get(
+                                                  `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`
+                                                )
+                                                ?.patchValue(
+                                                  columnProcessItem.value_column_process_item
+                                                );
+                                            }
+                                          }
+                                        );
+                                    }
+                                  );
+
+                                  lotItemFormGroups.push(
+                                    this._formBuilder.group({
+                                      id_process_item:
+                                        _processItem.id_process_item,
+                                      official: [
+                                        {
+                                          value: _processItem.official,
+                                          disabled: false,
+                                        },
+                                        [Validators.required],
+                                      ],
+                                      process: [
+                                        {
+                                          value: _processItem.process,
+                                          disabled: false,
+                                        },
+                                        [Validators.required],
+                                      ],
+                                      task: [
+                                        {
+                                          value: _processItem.task,
+                                          disabled: false,
+                                        },
+                                        [Validators.required],
+                                      ],
+                                      level: [
+                                        {
+                                          value: _processItem.level,
+                                          disabled: false,
+                                        },
+                                        [Validators.required],
+                                      ],
+                                      item: [
+                                        {
+                                          value: _processItem.item,
+                                          disabled: false,
+                                        },
+                                        [Validators.required],
+                                      ],
+                                      id_item: [
+                                        {
+                                          value: _processItem.item.id_item,
+                                          disabled:
+                                            this.processItem.length !=
+                                              indexOne + 1 ||
+                                            this.isSelectedAllProcessItem,
+                                        },
+                                        [Validators.required],
+                                      ],
+                                      editMode: [
+                                        {
+                                          value: false,
+                                          disabled: false,
+                                        },
+                                      ],
+                                      isOwner: [
+                                        this.data.user.id_user ==
+                                          _processItem.official.user.id_user,
+                                      ],
+                                    })
+                                  );
+                                }
+                              );
+                              /**
+                               * Add the element form groups to the element form array
+                               */
+                              lotItemFormGroups.forEach(
+                                (_lotItemFormGroup: any) => {
+                                  (
+                                    this.taskRealizeForm.get(
+                                      'processItems'
+                                    ) as FormArray
+                                  ).push(_lotItemFormGroup);
+                                }
+                              );
+                            });
+
+                          // ------------------------------------------------------------------------
+                        });
+                    });
+                }
+              }
+              /**
+               * processControl byLevelRead
+               */
+              this._processControlService
+                .byLevelRead(this.task.level.id_level)
+                .pipe(takeUntil(this._unsubscribeAll))
+                .subscribe();
+              /**
+               * Subscribe byTemplateRead
+               */
+              if (
+                this.template.id_template &&
+                this.template.id_template != ' '
+              ) {
+                this._templateControlService
+                  .byTemplateRead(this.template.id_template)
+                  .pipe(takeUntil(this._unsubscribeAll))
+                  .subscribe((_templateControl: TemplateControl[]) => {
+                    this.templateControl = _templateControl;
+                    /**
+                     * Get the processControls
+                     */
+                    this._processControlService.processControls$
+                      .pipe(takeUntil(this._unsubscribeAll))
+                      .subscribe((_processControl: ProcessControl[]) => {
+                        this.processControl = _processControl;
                         /**
-                         * Filter select
-                         */
-                        /**
-                         * Clear the processItems form arrays
+                         * Clear the processControls form arrays
                          */
                         (
-                          this.taskRealizeForm.get('processItems') as FormArray
+                          this.taskRealizeForm.get(
+                            'processControls'
+                          ) as FormArray
                         ).clear();
 
-                        const lotItemFormGroups: any = [];
+                        const lotControlFormGroups: any = [];
+
                         /**
                          * Iterate through them
                          */
-
-                        this.processItem.forEach(
-                          (_processItem: ProcessItem, indexOne: number) => {
-                            /**
-                             * Crear los controles para los inputs horizontales
-                             */
-
-                            this.pluginItemColumns.forEach(
-                              async (_pluginItemColumn: PluginItemColumn) => {
-                                /**
-                                 * Creamos los controles
-                                 */
+                        this.templateControl.forEach((_templateControl) => {
+                          /**
+                           * Set controls
+                           */
+                          if (
+                            _templateControl.control.type_control === 'input' ||
+                            _templateControl.control.type_control ===
+                              'textArea' ||
+                            _templateControl.control.type_control ===
+                              'radioButton' ||
+                            _templateControl.control.type_control ===
+                              'select' ||
+                            _templateControl.control.type_control === 'date'
+                          ) {
+                            this.taskRealizeForm.addControl(
+                              _templateControl.control.form_name_control,
+                              new FormControl(
+                                {
+                                  value:
+                                    _templateControl.control
+                                      .initial_value_control,
+                                  disabled: this.finished,
+                                },
+                                [
+                                  _templateControl.control.required_control
+                                    ? Validators.required
+                                    : Validators.min(0),
+                                ]
+                              )
+                            );
+                          } else if (
+                            _templateControl.control.type_control === 'checkBox'
+                          ) {
+                            _templateControl.control.options_control.map(
+                              (item: any) => {
                                 this.taskRealizeForm.addControl(
-                                  `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`,
-                                  new FormControl('', [
-                                    Validators.required,
-                                    Validators.maxLength(
-                                      _pluginItemColumn.lenght_plugin_item_column
-                                    ),
-                                  ])
+                                  `${_templateControl.control.form_name_control}${item.value}`,
+                                  new FormControl(null)
                                 );
-                                /**
-                                 * Buscar el valor de la columna
-                                 */
-                                this._columnProcessItemService
-                                  .byPluginItemColumnAndProcessItemRead(
-                                    _pluginItemColumn.id_plugin_item_column,
-                                    _processItem.id_process_item
-                                  )
-                                  .pipe(takeUntil(this._unsubscribeAll))
-                                  .subscribe(
-                                    (columnProcessItem: ColumnProcessItem) => {
-                                      if (columnProcessItem) {
-                                        /**
-                                         * Creamos los controles
-                                         */
-                                        this.taskRealizeForm.addControl(
-                                          `column${_pluginItemColumn.name_plugin_item_column}${indexOne}`,
-                                          new FormControl(columnProcessItem, [
-                                            Validators.required,
-                                          ])
-                                        );
-
-                                        this.taskRealizeForm
-                                          .get(
-                                            `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`
-                                          )
-                                          ?.patchValue(
-                                            columnProcessItem.value_column_process_item
-                                          );
-                                      }
-                                    }
-                                  );
                               }
                             );
-
-                            lotItemFormGroups.push(
-                              this._formBuilder.group({
-                                id_process_item: _processItem.id_process_item,
-                                official: [
-                                  {
-                                    value: _processItem.official,
-                                    disabled: false,
-                                  },
-                                  [Validators.required],
-                                ],
-                                process: [
-                                  {
-                                    value: _processItem.process,
-                                    disabled: false,
-                                  },
-                                  [Validators.required],
-                                ],
-                                task: [
-                                  {
-                                    value: _processItem.task,
-                                    disabled: false,
-                                  },
-                                  [Validators.required],
-                                ],
-                                level: [
-                                  {
-                                    value: _processItem.level,
-                                    disabled: false,
-                                  },
-                                  [Validators.required],
-                                ],
-                                item: [
-                                  {
-                                    value: _processItem.item,
-                                    disabled: false,
-                                  },
-                                  [Validators.required],
-                                ],
-                                id_item: [
-                                  {
-                                    value: _processItem.item.id_item,
-                                    disabled:
-                                      this.processItem.length != indexOne + 1 ||
-                                      this.isSelectedAllProcessItem,
-                                  },
-                                  [Validators.required],
-                                ],
-                                editMode: [
-                                  {
-                                    value: false,
-                                    disabled: false,
-                                  },
-                                ],
-                                isOwner: [
-                                  this.data.user.id_user ==
-                                    _processItem.official.user.id_user,
-                                ],
-                              })
+                          } else if (
+                            _templateControl.control.type_control ===
+                            'dateRange'
+                          ) {
+                            this.taskRealizeForm.addControl(
+                              `${_templateControl.control.form_name_control}StartDate`,
+                              new FormControl(
+                                {
+                                  value:
+                                    _templateControl.control
+                                      .initial_value_control,
+                                  disabled: this.finished,
+                                },
+                                [
+                                  _templateControl.control.required_control
+                                    ? Validators.required
+                                    : Validators.min(0),
+                                ]
+                              )
+                            );
+                            this.taskRealizeForm.addControl(
+                              `${_templateControl.control.form_name_control}EndDate`,
+                              new FormControl(
+                                {
+                                  value:
+                                    _templateControl.control
+                                      .initial_value_control,
+                                  disabled: this.finished,
+                                },
+                                [
+                                  _templateControl.control.required_control
+                                    ? Validators.required
+                                    : Validators.min(0),
+                                ]
+                              )
                             );
                           }
-                        );
+                          /**
+                           * Set controls
+                           */
+                          let _processControl: ProcessControl =
+                            this.processControl.find(
+                              (_processControl: ProcessControl) =>
+                                _processControl.control.id_control ===
+                                _templateControl.control.id_control
+                            )!;
+
+                          if (_processControl) {
+                            if (
+                              _templateControl.control.type_control ===
+                                'input' ||
+                              _templateControl.control.type_control ===
+                                'textArea' ||
+                              _templateControl.control.type_control ===
+                                'radioButton' ||
+                              _templateControl.control.type_control ===
+                                'select' ||
+                              _templateControl.control.type_control === 'date'
+                            ) {
+                              this.taskRealizeForm
+                                .get(_templateControl.control.form_name_control)
+                                ?.patchValue(
+                                  _processControl.value_process_control
+                                );
+                            } else if (
+                              _templateControl.control.type_control ===
+                              'checkBox'
+                            ) {
+                              _templateControl.control.options_control.map(
+                                (option: any) => {
+                                  const _form_name_control = `${_templateControl.control.form_name_control}${option.value}`;
+                                  let checkeds: string[] = [];
+
+                                  if (
+                                    _processControl.value_process_control !=
+                                      undefined &&
+                                    _processControl.value_process_control !=
+                                      'undefined' &&
+                                    _processControl.value_process_control !=
+                                      ' ' &&
+                                    _processControl.value_process_control !=
+                                      null
+                                  ) {
+                                    checkeds = JSON.parse(
+                                      _processControl.value_process_control
+                                    );
+                                  }
+
+                                  const isChecked = checkeds.find(
+                                    (item: string) =>
+                                      item === _form_name_control
+                                  );
+
+                                  this.taskRealizeForm
+                                    .get(_form_name_control)
+                                    ?.patchValue(isChecked ? true : null);
+                                }
+                              );
+                            } else if (
+                              _templateControl.control.type_control ===
+                              'dateRange'
+                            ) {
+                              let value: any;
+                              let startDate: string = '';
+                              let endDate: string = '';
+
+                              if (
+                                _processControl.value_process_control !=
+                                  undefined &&
+                                _processControl.value_process_control !=
+                                  'undefined' &&
+                                _processControl.value_process_control != ' ' &&
+                                _processControl.value_process_control != null
+                              ) {
+                                value = JSON.parse(
+                                  _processControl.value_process_control
+                                );
+
+                                startDate = value.startDate;
+                                endDate = value.endDate;
+                              }
+
+                              /**
+                               * Set values date
+                               */
+                              this.taskRealizeForm
+                                .get(
+                                  `${_templateControl.control.form_name_control}StartDate`
+                                )
+                                ?.patchValue(startDate);
+
+                              this.taskRealizeForm
+                                .get(
+                                  `${_templateControl.control.form_name_control}EndDate`
+                                )
+                                ?.patchValue(endDate);
+                            }
+                            /**
+                             * Set the value if haved
+                             */
+                          } else {
+                            _processControl = this._processControl;
+                          }
+                          /**
+                           * Create an element form group
+                           */
+                          lotControlFormGroups.push(
+                            this._formBuilder.group({
+                              id_template_control:
+                                _templateControl.id_template_control,
+                              template: _templateControl.template,
+                              control: _templateControl.control,
+                              ordinal_position:
+                                _templateControl.ordinal_position,
+                              /**
+                               * Upload properties
+                               */
+                              isComplete:
+                                _processControl.id_process_control != ' '
+                                  ? true
+                                  : false,
+                              id_process_control: _processControl
+                                ? _processControl.id_process_control
+                                : '',
+                              official: _processControl
+                                ? _processControl.official
+                                : '',
+                              process: _processControl
+                                ? _processControl.process
+                                : '',
+                              task: _processControl ? _processControl.task : '',
+                              level: _processControl
+                                ? _processControl.level
+                                : '',
+                              value_process_control: _processControl
+                                ? _processControl.value_process_control
+                                : '',
+                              last_change_process_control: _processControl
+                                ? _processControl.last_change_process_control
+                                : '',
+                              isOwner: [
+                                this.data.user.id_user ==
+                                  _processControl.official.user.id_user,
+                              ],
+                            })
+                          );
+                        });
                         /**
                          * Add the element form groups to the element form array
                          */
-                        lotItemFormGroups.forEach((_lotItemFormGroup: any) => {
-                          (
-                            this.taskRealizeForm.get(
-                              'processItems'
-                            ) as FormArray
-                          ).push(_lotItemFormGroup);
-                        });
-                      });
-
-                    // ------------------------------------------------------------------------
-                  });
-              });
-          }
-        }
-        /**
-         * processControl byLevelRead
-         */
-        this._processControlService
-          .byLevelRead(this.task.level.id_level)
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe();
-        /**
-         * Subscribe byTemplateRead
-         */
-        if (this.template.id_template && this.template.id_template != ' ') {
-          this._templateControlService
-            .byTemplateRead(this.template.id_template)
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((_templateControl: TemplateControl[]) => {
-              this.templateControl = _templateControl;
-              /**
-               * Get the processControls
-               */
-              this._processControlService.processControls$
-                .pipe(takeUntil(this._unsubscribeAll))
-                .subscribe((_processControl: ProcessControl[]) => {
-                  this.processControl = _processControl;
-                  /**
-                   * Clear the processControls form arrays
-                   */
-                  (
-                    this.taskRealizeForm.get('processControls') as FormArray
-                  ).clear();
-
-                  const lotControlFormGroups: any = [];
-
-                  /**
-                   * Iterate through them
-                   */
-                  this.templateControl.forEach((_templateControl) => {
-                    /**
-                     * Set controls
-                     */
-                    if (
-                      _templateControl.control.type_control === 'input' ||
-                      _templateControl.control.type_control === 'textArea' ||
-                      _templateControl.control.type_control === 'radioButton' ||
-                      _templateControl.control.type_control === 'select' ||
-                      _templateControl.control.type_control === 'date'
-                    ) {
-                      this.taskRealizeForm.addControl(
-                        _templateControl.control.form_name_control,
-                        new FormControl(
-                          _templateControl.control.initial_value_control,
-                          [
-                            _templateControl.control.required_control
-                              ? Validators.required
-                              : Validators.min(0),
-                          ]
-                        )
-                      );
-                    } else if (
-                      _templateControl.control.type_control === 'checkBox'
-                    ) {
-                      _templateControl.control.options_control.map(
-                        (item: any) => {
-                          this.taskRealizeForm.addControl(
-                            `${_templateControl.control.form_name_control}${item.value}`,
-                            new FormControl(null)
-                          );
-                        }
-                      );
-                    } else if (
-                      _templateControl.control.type_control === 'dateRange'
-                    ) {
-                      this.taskRealizeForm.addControl(
-                        `${_templateControl.control.form_name_control}StartDate`,
-                        new FormControl(
-                          _templateControl.control.initial_value_control,
-                          [
-                            _templateControl.control.required_control
-                              ? Validators.required
-                              : Validators.min(0),
-                          ]
-                        )
-                      );
-                      this.taskRealizeForm.addControl(
-                        `${_templateControl.control.form_name_control}EndDate`,
-                        new FormControl(
-                          _templateControl.control.initial_value_control,
-                          [
-                            _templateControl.control.required_control
-                              ? Validators.required
-                              : Validators.min(0),
-                          ]
-                        )
-                      );
-                    }
-                    /**
-                     * Set controls
-                     */
-                    let _processControl: ProcessControl =
-                      this.processControl.find(
-                        (_processControl: ProcessControl) =>
-                          _processControl.control.id_control ===
-                          _templateControl.control.id_control
-                      )!;
-
-                    if (_processControl) {
-                      if (
-                        _templateControl.control.type_control === 'input' ||
-                        _templateControl.control.type_control === 'textArea' ||
-                        _templateControl.control.type_control ===
-                          'radioButton' ||
-                        _templateControl.control.type_control === 'select' ||
-                        _templateControl.control.type_control === 'date'
-                      ) {
-                        this.taskRealizeForm
-                          .get(_templateControl.control.form_name_control)
-                          ?.patchValue(_processControl.value_process_control);
-                      } else if (
-                        _templateControl.control.type_control === 'checkBox'
-                      ) {
-                        _templateControl.control.options_control.map(
-                          (option: any) => {
-                            const _form_name_control = `${_templateControl.control.form_name_control}${option.value}`;
-                            let checkeds: string[] = [];
-
-                            if (
-                              _processControl.value_process_control !=
-                                undefined &&
-                              _processControl.value_process_control !=
-                                'undefined' &&
-                              _processControl.value_process_control != ' ' &&
-                              _processControl.value_process_control != null
-                            ) {
-                              checkeds = JSON.parse(
-                                _processControl.value_process_control
-                              );
-                            }
-
-                            const isChecked = checkeds.find(
-                              (item: string) => item === _form_name_control
-                            );
-
-                            this.taskRealizeForm
-                              .get(_form_name_control)
-                              ?.patchValue(isChecked ? true : null);
+                        lotControlFormGroups.forEach(
+                          (_lotControlFormGroup: any) => {
+                            (
+                              this.taskRealizeForm.get(
+                                'processControls'
+                              ) as FormArray
+                            ).push(_lotControlFormGroup);
                           }
                         );
-                      } else if (
-                        _templateControl.control.type_control === 'dateRange'
-                      ) {
-                        let value: any;
-                        let startDate: string = '';
-                        let endDate: string = '';
-
-                        if (
-                          _processControl.value_process_control != undefined &&
-                          _processControl.value_process_control !=
-                            'undefined' &&
-                          _processControl.value_process_control != ' ' &&
-                          _processControl.value_process_control != null
-                        ) {
-                          value = JSON.parse(
-                            _processControl.value_process_control
-                          );
-
-                          startDate = value.startDate;
-                          endDate = value.endDate;
-                        }
-
-                        /**
-                         * Set values date
-                         */
-                        this.taskRealizeForm
-                          .get(
-                            `${_templateControl.control.form_name_control}StartDate`
-                          )
-                          ?.patchValue(startDate);
-
-                        this.taskRealizeForm
-                          .get(
-                            `${_templateControl.control.form_name_control}EndDate`
-                          )
-                          ?.patchValue(endDate);
-                      }
-                      /**
-                       * Set the value if haved
-                       */
-                    } else {
-                      _processControl = this._processControl;
-                    }
-                    /**
-                     * Create an element form group
-                     */
-                    lotControlFormGroups.push(
-                      this._formBuilder.group({
-                        id_template_control:
-                          _templateControl.id_template_control,
-                        template: _templateControl.template,
-                        control: _templateControl.control,
-                        ordinal_position: _templateControl.ordinal_position,
-                        /**
-                         * Upload properties
-                         */
-                        isComplete:
-                          _processControl.id_process_control != ' '
-                            ? true
-                            : false,
-                        id_process_control: _processControl
-                          ? _processControl.id_process_control
-                          : '',
-                        official: _processControl
-                          ? _processControl.official
-                          : '',
-                        process: _processControl ? _processControl.process : '',
-                        task: _processControl ? _processControl.task : '',
-                        level: _processControl ? _processControl.level : '',
-                        value_process_control: _processControl
-                          ? _processControl.value_process_control
-                          : '',
-                        last_change_process_control: _processControl
-                          ? _processControl.last_change_process_control
-                          : '',
-                        isOwner: [
-                          this.data.user.id_user ==
-                            _processControl.official.user.id_user,
-                        ],
-                      })
-                    );
-                  });
-                  /**
-                   * Add the element form groups to the element form array
-                   */
-                  lotControlFormGroups.forEach((_lotControlFormGroup: any) => {
-                    (
-                      this.taskRealizeForm.get('processControls') as FormArray
-                    ).push(_lotControlFormGroup);
-                  });
-                });
-            });
-        }
-
-        /**
-         * Attached
-         */
-        if (this.template.plugin_attached_process) {
-          /**
-           * processAttached byLevelRead
-           */
-          this._processAttachedService
-            .byTaskRead(this.task.id_task)
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe();
-          /**
-           * Render plugin_attached_process
-           */
-          this._documentationProfileAttachedService
-            .byDocumentationProfileRead(
-              this.template.documentation_profile.id_documentation_profile
-            )
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(
-              (
-                _documentationProfileAttacheds: DocumentationProfileAttached[]
-              ) => {
-                this.documentationProfileAttacheds =
-                  _documentationProfileAttacheds;
-                /**
-                 * Get the processAttacheds
-                 */
-                this._processAttachedService.processAttacheds$
-                  .pipe(takeUntil(this._unsubscribeAll))
-                  .subscribe((_processAttached: ProcessAttached[]) => {
-                    this.processAttached = _processAttached;
-                    /**
-                     * Clear the lotAttached form arrays
-                     */
-                    (
-                      this.taskRealizeForm.get('processAttacheds') as FormArray
-                    ).clear();
-
-                    const lotAttachedFormGroups: any = [];
-                    /**
-                     * Iterate through them
-                     */
-                    this.documentationProfileAttacheds.forEach(
-                      (
-                        _documentationProfileAttached: DocumentationProfileAttached,
-                        index: number
-                      ) => {
-                        /**
-                         * Add control for the input file
-                         */
-                        this.taskRealizeForm.addControl(
-                          'removablefile' + index,
-                          new FormControl(
-                            {
-                              value: '',
-                              disabled: false,
-                            },
-                            [
-                              FileValidator.maxContentSize(
-                                _documentationProfileAttached.attached
-                                  .length_mb_attached *
-                                  1024 *
-                                  1024
-                              ),
-                              _documentationProfileAttached.attached
-                                .required_attached
-                                ? Validators.required
-                                : Validators.min(0),
-                            ]
-                          )
-                        );
-                        let _processAttached: ProcessAttached =
-                          this.processAttached.find(
-                            (_processAttached: ProcessAttached) =>
-                              _processAttached.attached.id_attached ===
-                              _documentationProfileAttached.attached.id_attached
-                          )!;
-
-                        let _matTooltip = ``;
-
-                        if (_processAttached) {
-                          /**
-                           * Creamos un objeto file para ponerlo dentro del imput para que no lo puedan remplazar
-                           */
-
-                          const file = new File(
-                            ['attached'],
-                            this.getNameFile(_processAttached.server_path),
-                            {
-                              type: 'application/pdf',
-                            }
-                          );
-                          this.taskRealizeForm
-                            .get('removablefile' + index)
-                            ?.patchValue(new FileInput([file]));
-
-                          this.taskRealizeForm
-                            .get('removablefile' + index)
-                            ?.disable();
-                          /**
-                           * Set _matTooltip
-                           */
-                          _matTooltip = `${_processAttached.length_mb} MB`;
-                        } else {
-                          _processAttached = this._processAttached;
-                        }
-
-                        /**
-                         * Create a element form group
-                         */
-                        lotAttachedFormGroups.push(
-                          this._formBuilder.group({
-                            id_documentation_profile_attached:
-                              _documentationProfileAttached.id_documentation_profile_attached,
-                            id_attached:
-                              _documentationProfileAttached.attached
-                                .id_attached,
-                            name_attached:
-                              _documentationProfileAttached.attached
-                                .name_attached,
-                            description_attached:
-                              _documentationProfileAttached.attached
-                                .description_attached,
-                            length_mb_attached:
-                              _documentationProfileAttached.attached
-                                .length_mb_attached,
-                            required_attached:
-                              _documentationProfileAttached.attached
-                                .required_attached,
-                            documentation_profile:
-                              _documentationProfileAttached.documentation_profile,
-                            matTooltip: _matTooltip,
-                            /**
-                             * Upload properties
-                             */
-                            isUpload:
-                              _processAttached.id_process_attached != ' '
-                                ? true
-                                : false,
-                            id_process_attached: _processAttached
-                              ? _processAttached.id_process_attached
-                              : '',
-                            official: _processAttached
-                              ? _processAttached.official
-                              : '',
-                            process: _processAttached
-                              ? _processAttached.process
-                              : '',
-                            task: _processAttached ? _processAttached.task : '',
-                            level: _processAttached
-                              ? _processAttached.level
-                              : '',
-                            attached: _processAttached
-                              ? _processAttached.attached
-                              : '',
-                            file_name: [
-                              _processAttached.file_name != ' ' &&
-                              _processAttached.file_name != null &&
-                              _processAttached.file_name != undefined
-                                ? _processAttached.file_name
-                                : '',
-                              _documentationProfileAttached.attached
-                                .required_attached
-                                ? Validators.required
-                                : Validators.min(0),
-                            ],
-                            length_mb: _processAttached
-                              ? _processAttached.length_mb
-                              : '',
-                            extension: _processAttached
-                              ? _processAttached.extension
-                              : '',
-                            server_path: _processAttached
-                              ? _processAttached.server_path
-                              : '',
-                            alfresco_path: _processAttached
-                              ? _processAttached.alfresco_path
-                              : '',
-                            upload_date: _processAttached
-                              ? _processAttached.upload_date
-                              : '',
-                            isOwner: [
-                              this.data.user.id_user ==
-                                _processAttached.official.user.id_user,
-                            ],
-                          })
-                        );
-                      }
-                    );
-                    /**
-                     * Add the element form groups to the element form array
-                     */
-                    lotAttachedFormGroups.forEach(
-                      (lotAttachedFormGroup: any) => {
-                        (
-                          this.taskRealizeForm.get(
-                            'processAttacheds'
-                          ) as FormArray
-                        ).push(lotAttachedFormGroup);
-                      }
-                    );
+                      });
                   });
               }
-            );
-        }
 
-        /**
-         * Mark for check
-         */
-        this._changeDetectorRef.markForCheck();
+              /**
+               * Attached
+               */
+              if (this.template.plugin_attached_process) {
+                /**
+                 * processAttached byLevelRead
+                 */
+                this._processAttachedService
+                  .byTaskRead(this.task.id_task)
+                  .pipe(takeUntil(this._unsubscribeAll))
+                  .subscribe();
+                /**
+                 * Render plugin_attached_process
+                 */
+                this._documentationProfileAttachedService
+                  .byDocumentationProfileRead(
+                    this.template.documentation_profile.id_documentation_profile
+                  )
+                  .pipe(takeUntil(this._unsubscribeAll))
+                  .subscribe(
+                    (
+                      _documentationProfileAttacheds: DocumentationProfileAttached[]
+                    ) => {
+                      this.documentationProfileAttacheds =
+                        _documentationProfileAttacheds;
+                      /**
+                       * Get the processAttacheds
+                       */
+                      this._processAttachedService.processAttacheds$
+                        .pipe(takeUntil(this._unsubscribeAll))
+                        .subscribe((_processAttached: ProcessAttached[]) => {
+                          this.processAttached = _processAttached;
+                          /**
+                           * Clear the lotAttached form arrays
+                           */
+                          (
+                            this.taskRealizeForm.get(
+                              'processAttacheds'
+                            ) as FormArray
+                          ).clear();
+
+                          const lotAttachedFormGroups: any = [];
+                          /**
+                           * Iterate through them
+                           */
+                          this.documentationProfileAttacheds.forEach(
+                            (
+                              _documentationProfileAttached: DocumentationProfileAttached,
+                              index: number
+                            ) => {
+                              /**
+                               * Add control for the input file
+                               */
+                              this.taskRealizeForm.addControl(
+                                'removablefile' + index,
+                                new FormControl(
+                                  {
+                                    value: '',
+                                    disabled: this.finished,
+                                  },
+                                  [
+                                    FileValidator.maxContentSize(
+                                      _documentationProfileAttached.attached
+                                        .length_mb_attached *
+                                        1024 *
+                                        1024
+                                    ),
+                                    _documentationProfileAttached.attached
+                                      .required_attached
+                                      ? Validators.required
+                                      : Validators.min(0),
+                                  ]
+                                )
+                              );
+                              let _processAttached: ProcessAttached =
+                                this.processAttached.find(
+                                  (_processAttached: ProcessAttached) =>
+                                    _processAttached.attached.id_attached ===
+                                    _documentationProfileAttached.attached
+                                      .id_attached
+                                )!;
+
+                              let _matTooltip = ``;
+
+                              if (_processAttached) {
+                                /**
+                                 * Creamos un objeto file para ponerlo dentro del imput para que no lo puedan remplazar
+                                 */
+
+                                const file = new File(
+                                  ['attached'],
+                                  this.getNameFile(
+                                    _processAttached.server_path
+                                  ),
+                                  {
+                                    type: 'application/pdf',
+                                  }
+                                );
+
+                                this.taskRealizeForm
+                                  .get('removablefile' + index)
+                                  ?.patchValue(new FileInput([file]));
+                                /**
+                                 * Verificar si la tarea esta enviada  y bloquear removablefile + index
+                                 */
+                                if (this.finished) {
+                                  this.taskRealizeForm
+                                    .get('removablefile' + index)
+                                    ?.disable();
+                                }
+                                /**
+                                 * Set _matTooltip
+                                 */
+                                _matTooltip = `${_processAttached.length_mb} MB`;
+                              } else {
+                                _processAttached = this._processAttached;
+                              }
+
+                              /**
+                               * Create a element form group
+                               */
+                              lotAttachedFormGroups.push(
+                                this._formBuilder.group({
+                                  id_documentation_profile_attached:
+                                    _documentationProfileAttached.id_documentation_profile_attached,
+                                  id_attached:
+                                    _documentationProfileAttached.attached
+                                      .id_attached,
+                                  name_attached:
+                                    _documentationProfileAttached.attached
+                                      .name_attached,
+                                  description_attached:
+                                    _documentationProfileAttached.attached
+                                      .description_attached,
+                                  length_mb_attached:
+                                    _documentationProfileAttached.attached
+                                      .length_mb_attached,
+                                  required_attached:
+                                    _documentationProfileAttached.attached
+                                      .required_attached,
+                                  documentation_profile:
+                                    _documentationProfileAttached.documentation_profile,
+                                  matTooltip: _matTooltip,
+                                  /**
+                                   * Upload properties
+                                   */
+                                  isUpload:
+                                    _processAttached.id_process_attached != ' '
+                                      ? true
+                                      : false,
+                                  id_process_attached: _processAttached
+                                    ? _processAttached.id_process_attached
+                                    : '',
+                                  official: _processAttached
+                                    ? _processAttached.official
+                                    : '',
+                                  process: _processAttached
+                                    ? _processAttached.process
+                                    : '',
+                                  task: _processAttached
+                                    ? _processAttached.task
+                                    : '',
+                                  level: _processAttached
+                                    ? _processAttached.level
+                                    : '',
+                                  attached: _processAttached
+                                    ? _processAttached.attached
+                                    : '',
+                                  file_name: [
+                                    _processAttached.file_name != ' ' &&
+                                    _processAttached.file_name != null &&
+                                    _processAttached.file_name != undefined
+                                      ? _processAttached.file_name
+                                      : '',
+                                    _documentationProfileAttached.attached
+                                      .required_attached
+                                      ? Validators.required
+                                      : Validators.min(0),
+                                  ],
+                                  length_mb: _processAttached
+                                    ? _processAttached.length_mb
+                                    : '',
+                                  extension: _processAttached
+                                    ? _processAttached.extension
+                                    : '',
+                                  server_path: _processAttached
+                                    ? _processAttached.server_path
+                                    : '',
+                                  alfresco_path: _processAttached
+                                    ? _processAttached.alfresco_path
+                                    : '',
+                                  upload_date: _processAttached
+                                    ? _processAttached.upload_date
+                                    : '',
+                                  isOwner: [
+                                    this.data.user.id_user ==
+                                      _processAttached.official.user.id_user,
+                                  ],
+                                })
+                              );
+                            }
+                          );
+                          /**
+                           * Add the element form groups to the element form array
+                           */
+                          lotAttachedFormGroups.forEach(
+                            (lotAttachedFormGroup: any) => {
+                              (
+                                this.taskRealizeForm.get(
+                                  'processAttacheds'
+                                ) as FormArray
+                              ).push(lotAttachedFormGroup);
+                            }
+                          );
+                        });
+                    }
+                  );
+              }
+              /**
+               * Mark for check
+               */
+              this._changeDetectorRef.markForCheck();
+            });
+        }
       });
-    /**
-     * Components
-     */
   }
 
   get formArrayProcessItems(): FormArray {
@@ -981,7 +1072,6 @@ export class ModalTaskRealizeComponent implements OnInit {
                     'Tarea enviada correctamente'
                   );
 
-                  this.task = _task;
                   /**
                    * closeModalTaskRealize
                    */

@@ -71,7 +71,7 @@
                                             </ng-container>
                                             <!-- Render horizontal columns -->
 
-                                            <ng-container>
+                                            <ng-container *ngIf="!finished">
                                                 <div class="flex items-center w-10 pl-2 self-start"
                                                     [ngClass]="{'mt-6': first}">
                                                     <button class="w-8 h-8 min-h-8" mat-icon-button
@@ -87,14 +87,14 @@
                                     </ng-container>
                                 </div>
                                 <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
-                                    *ngIf="(select_plugin_item && !isSelectedAllProcessItem)">
+                                    *ngIf="(select_plugin_item && !isSelectedAllProcessItem) && !finished">
                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
                                     <span class="ml-2 font-medium text-secondary group-hover:underline"
                                         (click)="createProcessItem()">Añadir
                                         elemento</span>
                                 </div>
                                 <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
-                                    *ngIf="!select_plugin_item">
+                                    *ngIf="(!select_plugin_item && !finished)">
                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
                                     <span class="ml-2 font-medium text-secondary group-hover:underline"
                                         (click)="createProcessItem()">Añadir
@@ -349,14 +349,17 @@
                                                     [accept]="'.*'" placeholder="Removable Input"
                                                     (value)="removableInput">
                                                 </ngx-mat-file-input>
-                                                <mat-icon *ngIf="removableInput.empty" matSuffix>upload</mat-icon>
-                                                <button mat-icon-button matSuffix *ngIf="!removableInput.empty"
+                                                <mat-icon *ngIf="removableInput.empty && !finished" matSuffix>upload
+                                                </mat-icon>
+                                                <button mat-icon-button matSuffix
+                                                    *ngIf="!removableInput.empty && !finished"
                                                     [matTooltip]="formArrayProcessAttacheds.getRawValue()[i].matTooltip"
                                                     (click)="removableInput.setDisabledState(true); downloadProcessAttached(i)">
                                                     <mat-icon class=" icon-size-5"
                                                         [svgIcon]="'heroicons_solid:download'"></mat-icon>
                                                 </button>
-                                                <button mat-icon-button matSuffix *ngIf="!removableInput.empty"
+                                                <button mat-icon-button matSuffix
+                                                    *ngIf="!removableInput.empty && !finished"
                                                     (click)="removableInput.clear($event); removableInput.setDisabledState(false); deleteProcessAttached(i);">
                                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'">
                                                     </mat-icon>

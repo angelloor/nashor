@@ -109,12 +109,11 @@ export class TaskService {
       )
       .pipe(
         tap((tasks: Task[]) => {
-          return tasks;
-          // if (tasks) {
-          //   this._tasks.next(tasks);
-          // } else {
-          //   this._tasks.next([]);
-          // }
+          if (tasks) {
+            this._tasks.next(tasks);
+          } else {
+            this._tasks.next([]);
+          }
         })
       );
   }

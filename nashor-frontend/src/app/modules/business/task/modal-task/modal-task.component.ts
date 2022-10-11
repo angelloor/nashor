@@ -45,6 +45,7 @@ import { Process } from '../../process/process.types';
 import { ProcessCommentService } from '../components/process-comment/process-comment.service';
 import { ProcessComment } from '../components/process-comment/process-comment.types';
 import { ModalTaskRealizeService } from '../modal-task-realize/modal-task-realize.service';
+import { task } from '../task.data';
 import { TaskService } from '../task.service';
 import {
   Task,
@@ -127,7 +128,7 @@ export class ModalTaskComponent implements OnInit {
   /**
    * Alert
    */
-  task!: Task;
+  task: Task = task;
   taskForm!: FormGroup;
   private tasks!: Task[];
 
@@ -180,14 +181,25 @@ export class ModalTaskComponent implements OnInit {
   ngOnInit(): void {
     this.id_task = this._data.id_task;
     this.id_process = this._data.id_process;
-    console.log(this.id_task);
 
     this.sourceProcess = this._data.sourceProcess;
 
     this._taskService
       .specificRead(this.id_task)
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe();
+      .subscribe((task: Task) => {
+        /**
+         * Get the task
+         */
+        this.task = task;
+
+        if (this.sourceProcess) {
+          /**
+           * opentask
+           */
+          this.openModalTaskRealize();
+        }
+      });
     /**
      * isOpenModal
      */
@@ -243,221 +255,212 @@ export class ModalTaskComponent implements OnInit {
          * Get the task
          */
         this.task = task;
-        console.log(this.task);
 
-        if (this.task.id_task == ' ') {
-          return;
-        }
+        if (this.task.id_task != ' ') {
+          this._processCommentService
+            .byProcessRead(this.task.process.id_process)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe();
 
-        console.log(this.task);
-
-        this._processCommentService
-          .byProcessRead(this.task.process.id_process)
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe();
-
-        this._processCommentService.processComments$
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((_processComment: ProcessComment[]) => {
-            this.processComment = _processComment;
-            /**
-             * Clear the processComments form arrays
-             */
-            (this.taskForm.get('processComments') as FormArray).clear();
-
-            const lotCommentFormGroups: any = [];
-            /**
-             * Iterate through them
-             */
-
-            this.processComment.forEach((_processComment) => {
+          this._processCommentService.processComments$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((_processComment: ProcessComment[]) => {
+              this.processComment = _processComment;
               /**
-               * Create an elemento form group
+               * Clear the processComments form arrays
+               */
+              (this.taskForm.get('processComments') as FormArray).clear();
+
+              const lotCommentFormGroups: any = [];
+              /**
+               * Iterate through them
                */
 
-              lotCommentFormGroups.push(
-                this._formBuilder.group({
-                  id_process_comment: _processComment.id_process_comment,
-                  value_process_comment: [
-                    {
-                      value: _processComment.value_process_comment,
-                      disabled: true,
-                    },
-                  ],
-                  date_process_comment: [
-                    {
-                      value: _processComment.date_process_comment,
-                      disabled: false,
-                    },
-                    [Validators.required],
-                  ],
-                  official: [
-                    {
-                      value: _processComment.official,
-                      disabled: false,
-                    },
-                    [Validators.required],
-                  ],
-                  process: [
-                    {
-                      value: _processComment.process,
-                      disabled: false,
-                    },
-                    [Validators.required],
-                  ],
-                  task: [
-                    {
-                      value: _processComment.task,
-                      disabled: false,
-                    },
-                    [Validators.required],
-                  ],
-                  level: [
-                    {
-                      value: _processComment.level,
-                      disabled: false,
-                    },
-                    [Validators.required],
-                  ],
-                  editMode: [
-                    {
-                      value: false,
-                      disabled: false,
-                    },
-                  ],
-                  isOwner: [
-                    this.data.user.id_user ==
-                      _processComment.official.user.id_user,
-                  ],
-                })
-              );
+              this.processComment.forEach((_processComment) => {
+                /**
+                 * Create an elemento form group
+                 */
+
+                lotCommentFormGroups.push(
+                  this._formBuilder.group({
+                    id_process_comment: _processComment.id_process_comment,
+                    value_process_comment: [
+                      {
+                        value: _processComment.value_process_comment,
+                        disabled: true,
+                      },
+                    ],
+                    date_process_comment: [
+                      {
+                        value: _processComment.date_process_comment,
+                        disabled: false,
+                      },
+                      [Validators.required],
+                    ],
+                    official: [
+                      {
+                        value: _processComment.official,
+                        disabled: false,
+                      },
+                      [Validators.required],
+                    ],
+                    process: [
+                      {
+                        value: _processComment.process,
+                        disabled: false,
+                      },
+                      [Validators.required],
+                    ],
+                    task: [
+                      {
+                        value: _processComment.task,
+                        disabled: false,
+                      },
+                      [Validators.required],
+                    ],
+                    level: [
+                      {
+                        value: _processComment.level,
+                        disabled: false,
+                      },
+                      [Validators.required],
+                    ],
+                    editMode: [
+                      {
+                        value: false,
+                        disabled: false,
+                      },
+                    ],
+                    isOwner: [
+                      this.data.user.id_user ==
+                        _processComment.official.user.id_user,
+                    ],
+                  })
+                );
+              });
+              /**
+               * Add the elemento form groups to the elemento form array
+               */
+              lotCommentFormGroups.forEach((lotCommentFormGroup: any) => {
+                (this.taskForm.get('processComments') as FormArray).push(
+                  lotCommentFormGroup
+                );
+              });
             });
-            /**
-             * Add the elemento form groups to the elemento form array
-             */
-            lotCommentFormGroups.forEach((lotCommentFormGroup: any) => {
-              (this.taskForm.get('processComments') as FormArray).push(
-                lotCommentFormGroup
-              );
+
+          /**
+           * Type Enum TYPE_STATUS_TAKS
+           */
+          this.typeStatusTaskSelect = this.typeStatusTask.find(
+            (type_status) =>
+              type_status.value_type == this.task.type_status_task
+          )!;
+          /**
+           * Type Enum TYPE_STATUS_TAKS
+           */
+
+          /**
+           * Type Enum TYPE_ACTION_TAKS
+           */
+          this.typeActionTaskSelect = this.typeActionTask.find(
+            (type_action) =>
+              type_action.value_type == this.task.type_action_task
+          )!;
+          /**
+           * Type Enum TYPE_ACTION_TAKS
+           */
+
+          // Process
+          this._processService
+            .queryRead('*')
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((processs: Process[]) => {
+              this.listProcess = processs;
+
+              this.selectedProcess = this.listProcess.find(
+                (item) =>
+                  item.id_process == this.task.process.id_process.toString()
+              )!;
             });
-          });
 
-        /**
-         * Type Enum TYPE_STATUS_TAKS
-         */
-        this.typeStatusTaskSelect = this.typeStatusTask.find(
-          (type_status) => type_status.value_type == this.task.type_status_task
-        )!;
-        /**
-         * Type Enum TYPE_STATUS_TAKS
-         */
+          // Official
+          this._officialService
+            .queryRead('*')
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((officials: Official[]) => {
+              this.listOfficial = officials;
 
-        /**
-         * Type Enum TYPE_ACTION_TAKS
-         */
-        this.typeActionTaskSelect = this.typeActionTask.find(
-          (type_action) => type_action.value_type == this.task.type_action_task
-        )!;
-        /**
-         * Type Enum TYPE_ACTION_TAKS
-         */
+              this.selectedOfficial = this.listOfficial.find(
+                (item) =>
+                  item.id_official == this.task.official.id_official.toString()
+              )!;
+            });
 
-        // Process
-        this._processService
-          .queryRead('*')
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((processs: Process[]) => {
-            this.listProcess = processs;
+          // Level
+          this._levelService
+            .queryRead('*')
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((levels: Level[]) => {
+              this.listLevel = levels;
 
-            this.selectedProcess = this.listProcess.find(
-              (item) =>
-                item.id_process == this.task.process.id_process.toString()
-            )!;
-          });
+              this.selectedLevel = this.listLevel.find(
+                (item) => item.id_level == this.task.level.id_level.toString()
+              )!;
+            });
 
-        // Official
-        this._officialService
-          .queryRead('*')
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((officials: Official[]) => {
-            this.listOfficial = officials;
+          // Flow
+          this._flowService
+            .byCompanyQueryRead(this.id_company, '*')
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((flows: Flow[]) => {
+              this.listFlow = flows;
 
-            this.selectedOfficial = this.listOfficial.find(
-              (item) =>
-                item.id_official == this.task.official.id_official.toString()
-            )!;
-          });
+              this.selectedFlow = this.listFlow.find(
+                (item) =>
+                  item.id_flow ==
+                  this.task.process.flow_version.flow.id_flow.toString()
+              )!;
+            });
 
-        // Level
-        this._levelService
-          .queryRead('*')
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((levels: Level[]) => {
-            this.listLevel = levels;
+          // LevelProfile
+          this._levelProfileService
+            .byCompanyQueryRead(this.id_company, '*')
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((level_profiles: LevelProfile[]) => {
+              this.listLevelProfile = level_profiles;
 
-            this.selectedLevel = this.listLevel.find(
-              (item) => item.id_level == this.task.level.id_level.toString()
-            )!;
-          });
+              this.selectedLevelProfile = this.listLevelProfile.find(
+                (item) =>
+                  item.id_level_profile ==
+                  this.task.level.level_profile.id_level_profile.toString()
+              )!;
+            });
 
-        // Flow
-        this._flowService
-          .byCompanyQueryRead(this.id_company, '*')
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((flows: Flow[]) => {
-            this.listFlow = flows;
+          // LevelStatus
+          this._levelStatusService
+            .byCompanyQueryRead(this.id_company, '*')
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((level_statuss: LevelStatus[]) => {
+              this.listLevelStatus = level_statuss;
 
-            this.selectedFlow = this.listFlow.find(
-              (item) =>
-                item.id_flow ==
-                this.task.process.flow_version.flow.id_flow.toString()
-            )!;
-          });
+              this.selectedLevelStatus = this.listLevelStatus.find(
+                (item) =>
+                  item.id_level_status ==
+                  this.task.level.level_status.id_level_status.toString()
+              )!;
+            });
 
-        // LevelProfile
-        this._levelProfileService
-          .byCompanyQueryRead(this.id_company, '*')
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((level_profiles: LevelProfile[]) => {
-            this.listLevelProfile = level_profiles;
+          /**
+           * Patch values to the form
+           */
+          this.patchForm();
 
-            this.selectedLevelProfile = this.listLevelProfile.find(
-              (item) =>
-                item.id_level_profile ==
-                this.task.level.level_profile.id_level_profile.toString()
-            )!;
-          });
-
-        // LevelStatus
-        this._levelStatusService
-          .byCompanyQueryRead(this.id_company, '*')
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((level_statuss: LevelStatus[]) => {
-            this.listLevelStatus = level_statuss;
-
-            this.selectedLevelStatus = this.listLevelStatus.find(
-              (item) =>
-                item.id_level_status ==
-                this.task.level.level_status.id_level_status.toString()
-            )!;
-          });
-
-        /**
-         * Patch values to the form
-         */
-        this.patchForm();
-
-        /**
-         * Mark for check
-         */
-        this._changeDetectorRef.markForCheck();
+          /**
+           * Mark for check
+           */
+          this._changeDetectorRef.markForCheck();
+        }
       });
-    if (this.sourceProcess) {
-      /**
-       * opentask
-       */
-      this.openModalTaskRealize();
-    }
   }
 
   get formArrayProcessComments(): FormArray {
@@ -882,7 +885,7 @@ export class ModalTaskComponent implements OnInit {
    */
   openModalTaskRealize(): void {
     this._modalTaskRealizeService.openModalTaskRealize(
-      this.task,
+      this.task.id_task,
       this.task.level.template.id_template
     );
   }

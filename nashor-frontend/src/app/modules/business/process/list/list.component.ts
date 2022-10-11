@@ -381,6 +381,19 @@ export class ProcessListComponent implements OnInit {
                    * Go to new process
                    */
                   this.goToEntity(_process.id_process);
+
+                  this._taskService
+                    .byProcessQueryRead(_process.id_process, '')
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe((tasks: Task[]) => {
+                      let id_task = tasks[0].id_task;
+                      const sourceProcess: boolean = true;
+
+                      this._modalTaskService.openModalTask(
+                        id_task,
+                        sourceProcess
+                      );
+                    });
                   /**
                    * open task
                    */
@@ -389,19 +402,6 @@ export class ProcessListComponent implements OnInit {
                     '¡Error interno!, consulte al administrador.'
                   );
                 }
-
-                this._taskService
-                  .byProcessQueryRead(_process.id_process, '')
-                  .pipe(takeUntil(this._unsubscribeAll))
-                  .subscribe((tasks: Task[]) => {
-                    let id_task = tasks[0].id_task;
-                    const sourceProcess: boolean = true;
-
-                    this._modalTaskService.openModalTask(
-                      id_task,
-                      sourceProcess
-                    );
-                  });
               },
               error: (error: { error: MessageAPI }) => {
                 this._notificationService.error(

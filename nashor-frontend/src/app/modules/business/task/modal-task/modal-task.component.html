@@ -12,8 +12,9 @@
             <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
         </button>
     </div>
-    <div class="flex items-center justify-center py-8 px-8 space-x-3 ng-star-inserted br-10 text-2xl">
-        Fecha de creación: {{task.creation_date_task | date:'medium'}}
+    <div class="flex items-center justify-center py-8 px-8 space-x-3 ng-star-inserted br-10 text-2xl"
+        *ngIf="task.creation_date_task != ' '">
+        Fecha de creación: {{ task.creation_date_task | date:'medium' }}
     </div>
     <!-- Process form -->
     <form class="flex flex-col flex-auto px-6 pb-6 sm:px-8 sm:pb-8 overflow-y-auto" [formGroup]="taskForm">

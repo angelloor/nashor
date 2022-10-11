@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LayoutService } from 'app/layout/layout.service';
-import { Task } from '../task.types';
 import { ModalTaskRealizeComponent } from './modal-task-realize.component';
 
 @Injectable({
@@ -15,7 +14,7 @@ export class ModalTaskRealizeService {
 
   dialogRef: any;
 
-  openModalTaskRealize(task: Task, id_template: string) {
+  openModalTaskRealize(id_task: string, id_template: string) {
     this._layoutService.setOpenModal(true);
 
     return (this.dialogRef = this._dialog.open(ModalTaskRealizeComponent, {
@@ -26,7 +25,7 @@ export class ModalTaskRealizeService {
       maxWidth: '',
       panelClass: ['mat-dialog-cont'],
       data: {
-        task,
+        id_task,
         id_template,
       },
       disableClose: true,
