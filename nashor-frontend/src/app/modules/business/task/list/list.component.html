@@ -68,11 +68,11 @@
                                             <div *ngIf="task.type_status_task === 'progress'"
                                                 class="mt-1 w-3 h-3 bg-yellow-500 rounded-full">
                                             </div>
-                                            <div *ngIf="task.type_status_task === 'finished'"
+                                            <div *ngIf="task.type_status_task === 'dispatched'"
                                                 class="mt-1 w-3 h-3 bg-green-600 rounded-full">
                                             </div>
                                             <div class="leading-5 truncate text-secondary ml-2">
-                                                {{parseTime(task.creation_date_task)}}</div>
+                                                {{parseTime(task.date_task)}}</div>
                                         </div>
 
                                     </div>

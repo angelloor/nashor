@@ -13,8 +13,8 @@
         </button>
     </div>
     <div class="flex items-center justify-center py-8 px-8 space-x-3 ng-star-inserted br-10 text-2xl"
-        *ngIf="task.creation_date_task != ' '">
-        Fecha de creación: {{ task.creation_date_task | date:'medium' }}
+        *ngIf="task.date_task != ' '">
+        Fecha de creación: {{ task.date_task | date:'medium' }}
     </div>
     <!-- Process form -->
     <form class="flex flex-col flex-auto px-6 pb-6 sm:px-8 sm:pb-8 overflow-y-auto" [formGroup]="taskForm">
@@ -66,14 +66,13 @@
                 </div>
             </div>
             <div class="flex flex-col w-2/4 pl-3">
-                <!-- type_action_task -->
+                <!-- name_level -->
                 <div>
                     <mat-form-field class="angel-mat-no-subscript w-full">
-                        <mat-label>type_action_task</mat-label>
-                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:timeline'">
+                        <mat-label>name_level</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
                         </mat-icon>
-                        <input matInput [value]="getTypeActionTaskEnum(task.type_action_task).name_type" readonly
-                            [matTooltip]="parseTime(task.action_date_task)">
+                        <input matInput [value]="task.level.name_level" readonly>
                     </mat-form-field>
                 </div>
             </div>
@@ -91,14 +90,14 @@
                     </mat-form-field>
                 </div>
             </div>
-            <div class="flex flex-col w-2/4 pl-3">
-                <!-- name_level -->
+            <div class="flex flex-col w-2/4 pr-3">
+                <!-- date_Task -->
                 <div>
                     <mat-form-field class="angel-mat-no-subscript w-full">
-                        <mat-label>name_level</mat-label>
+                        <mat-label>date_Task</mat-label>
                         <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
                         </mat-icon>
-                        <input matInput [value]="task.level.name_level" readonly>
+                        <input matInput [value]="parseTime(task.date_task)" readonly>
                     </mat-form-field>
                 </div>
             </div>
@@ -123,12 +122,12 @@
 
 
 
-        <!-- <mat-accordion class="example-headers-align" multi>
+        <mat-accordion class="example-headers-align" multi>
             <ng-container *ngFor="let task of tasks; let i = index; trackBy: trackByFn">
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            Personal data
+                            {{task.number_task}}
                         </mat-panel-title>
                         <mat-panel-description>
                             Type your name and age
@@ -147,7 +146,7 @@
                     </mat-form-field>
                 </mat-expansion-panel>
             </ng-container>
-        </mat-accordion> -->
+        </mat-accordion>
 
 
 
@@ -157,7 +156,8 @@
 
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center mt-4">
-            <a (click)="openModalTaskRealize()" *ngIf="task.type_status_task === 'progress'"
+            <a (click)="openModalTaskRealize()"
+                *ngIf="task.type_status_task === 'created' || task.type_status_task === 'progress'"
                 class="flex flex-col items-center w-56 p-6 rounded-lg shadow bg-card rounded-lg hover:shadow-xl transition-shadow duration-150 ease-in-out cursor-pointer">
                 <div
                     class="flex items-center justify-center p-4 rounded-full bg-primary-50 text-primary-700 dark:bg-primary dark:text-on-primary">
@@ -167,7 +167,7 @@
                 <div class="mt-0.5 line-clamp-2 text-secondary text-center">
                     Realiza la tarea</div>
             </a>
-            <a (click)="reasign()" *ngIf="task.type_status_task === 'progress'"
+            <a (click)="reasign()" *ngIf="task.type_status_task === 'created' || task.type_status_task === 'progress'"
                 class="flex flex-col items-center w-56 p-6 rounded-lg shadow bg-card rounded-lg hover:shadow-xl transition-shadow duration-150 ease-in-out cursor-pointer">
                 <div
                     class="flex items-center justify-center p-4 rounded-full bg-primary-50 text-primary-700 dark:bg-primary dark:text-on-primary">

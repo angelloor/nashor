@@ -10,9 +10,7 @@ export const task: Task = {
   official: official,
   level: level,
   number_task: ' ',
-  creation_date_task: ' ',
   type_status_task: 'progress',
-  type_action_task: 'dispatched',
-  action_date_task: ' ',
+  date_task: ' ',
   deleted_task: false,
 };

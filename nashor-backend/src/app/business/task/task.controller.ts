@@ -1,11 +1,7 @@
 import { checkDateString, FullDate } from '../../../utils/date';
 import { verifyToken } from '../../../utils/jwt';
 import { _messages } from '../../../utils/message/message';
-import {
-	Task,
-	validationTypeActionTask,
-	validationTypeStatusTask,
-} from './task.class';
+import { Task, validationTypeStatusTask } from './task.class';
 
 export const validation = (task: Task, url: string, token: string) => {
 	return new Promise<Task | Task[] | boolean | any>(async (resolve, reject) => {
@@ -53,36 +49,6 @@ export const validation = (task: Task, url: string, token: string) => {
 					}
 
 					if (url == '/update' || url == '/reasign' || url == '/send') {
-						attributeValidate(
-							'creation_date_task',
-							task.creation_date_task,
-							'string',
-							30
-						).catch((err) => {
-							validationStatus = true;
-							reject(err);
-						});
-
-						/**
-						 * checkDateString
-						 */
-						await checkDateString(task.creation_date_task!)
-							.then((fullDate: FullDate) => {
-								task.creation_date_task = `${fullDate.fullYear}-${fullDate.month}-${fullDate.day} ${fullDate.hours}:${fullDate.minutes}:${fullDate.seconds}.${fullDate.milliSeconds}`;
-							})
-							.catch(() => {
-								validationStatus = true;
-								reject({
-									..._messages[12],
-									description: _messages[12].description.replace(
-										'value_date',
-										task.creation_date_task!
-									),
-								});
-							});
-					}
-
-					if (url == '/update' || url == '/reasign' || url == '/send') {
 						validationTypeStatusTask(
 							'type_status_task',
 							task.type_status_task!
@@ -93,32 +59,19 @@ export const validation = (task: Task, url: string, token: string) => {
 					}
 
 					if (url == '/update' || url == '/reasign' || url == '/send') {
-						validationTypeActionTask(
-							'type_action_task',
-							task.type_action_task!
-						).catch((err) => {
-							validationStatus = true;
-							reject(err);
-						});
-					}
-
-					if (url == '/update' || url == '/reasign' || url == '/send') {
-						attributeValidate(
-							'action_date_task',
-							task.action_date_task,
-							'string',
-							30
-						).catch((err) => {
-							validationStatus = true;
-							reject(err);
-						});
+						attributeValidate('date_task', task.date_task, 'string', 30).catch(
+							(err) => {
+								validationStatus = true;
+								reject(err);
+							}
+						);
 
 						/**
 						 * checkDateString
 						 */
-						await checkDateString(task.action_date_task!)
+						await checkDateString(task.date_task!)
 							.then((fullDate: FullDate) => {
-								task.action_date_task = `${fullDate.fullYear}-${fullDate.month}-${fullDate.day} ${fullDate.hours}:${fullDate.minutes}:${fullDate.seconds}.${fullDate.milliSeconds}`;
+								task.date_task = `${fullDate.fullYear}-${fullDate.month}-${fullDate.day} ${fullDate.hours}:${fullDate.minutes}:${fullDate.seconds}.${fullDate.milliSeconds}`;
 							})
 							.catch(() => {
 								validationStatus = true;
@@ -126,7 +79,7 @@ export const validation = (task: Task, url: string, token: string) => {
 									..._messages[12],
 									description: _messages[12].description.replace(
 										'value_date',
-										task.action_date_task!
+										task.date_task!
 									),
 								});
 							});
@@ -319,10 +272,8 @@ export const validation = (task: Task, url: string, token: string) => {
 							_task.official = task.official;
 							_task.level = task.level;
 							_task.number_task = task.number_task;
-							_task.creation_date_task = task.creation_date_task;
 							_task.type_status_task = task.type_status_task;
-							_task.type_action_task = task.type_action_task;
-							_task.action_date_task = task.action_date_task;
+							_task.date_task = task.date_task;
 							await _task
 								.update()
 								.then((_task: Task) => {
@@ -339,10 +290,8 @@ export const validation = (task: Task, url: string, token: string) => {
 							_task.official = task.official;
 							_task.level = task.level;
 							_task.number_task = task.number_task;
-							_task.creation_date_task = task.creation_date_task;
 							_task.type_status_task = task.type_status_task;
-							_task.type_action_task = task.type_action_task;
-							_task.action_date_task = task.action_date_task;
+							_task.date_task = task.date_task;
 							await _task
 								.reasign()
 								.then((_task: Task) => {
@@ -359,10 +308,8 @@ export const validation = (task: Task, url: string, token: string) => {
 							_task.official = task.official;
 							_task.level = task.level;
 							_task.number_task = task.number_task;
-							_task.creation_date_task = task.creation_date_task;
 							_task.type_status_task = task.type_status_task;
-							_task.type_action_task = task.type_action_task;
-							_task.action_date_task = task.action_date_task;
+							_task.date_task = task.date_task;
 							await _task
 								.send()
 								.then((_task: Task) => {

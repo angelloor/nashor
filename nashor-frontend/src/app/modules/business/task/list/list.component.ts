@@ -1,6 +1,6 @@
 import {
   ActionAngelConfirmation,
-  AngelConfirmationService,
+  AngelConfirmationService
 } from '@angel/services/confirmation';
 import { AngelMediaWatcherService } from '@angel/services/media-watcher';
 import { DOCUMENT } from '@angular/common';
@@ -9,7 +9,7 @@ import {
   Component,
   Inject,
   OnInit,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -29,7 +29,7 @@ import {
   switchMap,
   takeUntil,
   takeWhile,
-  tap,
+  tap
 } from 'rxjs/operators';
 import { official } from '../../official/official.data';
 import { Official } from '../../official/official.types';
@@ -37,12 +37,9 @@ import { ModalTaskService } from '../modal-task/modal-task.service';
 import { TaskService } from '../task.service';
 import {
   Task,
-  TYPE_ACTION_TASK,
-  TYPE_ACTION_TASK_ENUM,
   TYPE_STATUS_TASK,
   TYPE_STATUS_TASK_ENUM,
-  _typeActionTask,
-  _typeStatusTask,
+  _typeStatusTask
 } from '../task.types';
 
 @Component({
@@ -75,14 +72,6 @@ export class TaskListComponent implements OnInit {
   typeStatusTask: TYPE_STATUS_TASK_ENUM[] = _typeStatusTask;
   /**
    * Type Enum TYPE_STATUS_TASK
-   */
-
-  /**
-   * Type Enum TYPE_ACTION_TASK
-   */
-  typeActionTask: TYPE_ACTION_TASK_ENUM[] = _typeActionTask;
-  /**
-   * Type Enum TYPE_ACTION_TASK
    */
 
   drawerMode!: 'side' | 'over';
@@ -461,16 +450,6 @@ export class TaskListComponent implements OnInit {
   ): TYPE_STATUS_TASK_ENUM {
     return this.typeStatusTask.find(
       (_type_status_task) => _type_status_task.value_type == type_status_task
-    )!;
-  }
-  /**
-   * getTypeActionTaskEnum
-   */
-  getTypeActionTaskEnum(
-    type_action_task: TYPE_ACTION_TASK
-  ): TYPE_ACTION_TASK_ENUM {
-    return this.typeActionTask.find(
-      (_type_action_task) => _type_action_task.value_type == type_action_task
     )!;
   }
   /**

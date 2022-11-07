@@ -332,10 +332,8 @@ export class ProcessControl {
 					official: { id_official: item.id_official },
 					level: { id_level: item.id_level },
 					number_task: item.number_task,
-					creation_date_task: item.creation_date_task,
 					type_status_task: item.type_status_task,
-					type_action_task: item.type_action_task,
-					action_date_task: item.action_date_task,
+					date_task: item.date_task,
 				},
 				level: {
 					id_level: item.id_level,
@@ -387,10 +385,8 @@ export class ProcessControl {
 			delete _processControl.id_official;
 			delete _processControl.id_level;
 			delete _processControl.number_task;
-			delete _processControl.creation_date_task;
 			delete _processControl.type_status_task;
-			delete _processControl.type_action_task;
-			delete _processControl.action_date_task;
+			delete _processControl.date_task;
 			delete _processControl.id_level;
 			delete _processControl.id_company;
 			delete _processControl.id_template;

@@ -71,7 +71,7 @@
                                             </ng-container>
                                             <!-- Render horizontal columns -->
 
-                                            <ng-container *ngIf="!finished">
+                                            <ng-container *ngIf="!dispatched">
                                                 <div class="flex items-center w-10 pl-2 self-start"
                                                     [ngClass]="{'mt-6': first}">
                                                     <button class="w-8 h-8 min-h-8" mat-icon-button
@@ -87,14 +87,14 @@
                                     </ng-container>
                                 </div>
                                 <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
-                                    *ngIf="(select_plugin_item && !isSelectedAllProcessItem) && !finished">
+                                    *ngIf="(select_plugin_item && !isSelectedAllProcessItem) && !dispatched">
                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
                                     <span class="ml-2 font-medium text-secondary group-hover:underline"
                                         (click)="createProcessItem()">Añadir
                                         elemento</span>
                                 </div>
                                 <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
-                                    *ngIf="(!select_plugin_item && !finished)">
+                                    *ngIf="(!select_plugin_item && !dispatched)">
                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
                                     <span class="ml-2 font-medium text-secondary group-hover:underline"
                                         (click)="createProcessItem()">Añadir
@@ -349,17 +349,17 @@
                                                     [accept]="'.*'" placeholder="Removable Input"
                                                     (value)="removableInput">
                                                 </ngx-mat-file-input>
-                                                <mat-icon *ngIf="removableInput.empty && !finished" matSuffix>upload
+                                                <mat-icon *ngIf="removableInput.empty && !dispatched" matSuffix>upload
                                                 </mat-icon>
                                                 <button mat-icon-button matSuffix
-                                                    *ngIf="!removableInput.empty && !finished"
+                                                    *ngIf="!removableInput.empty && !dispatched"
                                                     [matTooltip]="formArrayProcessAttacheds.getRawValue()[i].matTooltip"
                                                     (click)="removableInput.setDisabledState(true); downloadProcessAttached(i)">
                                                     <mat-icon class=" icon-size-5"
                                                         [svgIcon]="'heroicons_solid:download'"></mat-icon>
                                                 </button>
                                                 <button mat-icon-button matSuffix
-                                                    *ngIf="!removableInput.empty && !finished"
+                                                    *ngIf="!removableInput.empty && !dispatched"
                                                     (click)="removableInput.clear($event); removableInput.setDisabledState(false); deleteProcessAttached(i);">
                                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'">
                                                     </mat-icon>
@@ -507,7 +507,7 @@
         </div>
 
         <div class="flex items-center justify-center sm:justify-end py-2 space-x-3 ng-star-inserted br-10 pt-6"
-            *ngIf="task.type_status_task === 'progress' && task.type_action_task === 'received'">
+            *ngIf="task.type_status_task === 'created' || task.type_status_task === 'progress'">
             <!-- Send -->
             <button class="order-first sm:order-last" mat-stroked-button [color]="'primary'" (click)="sendTask()"
                 [disabled]="(taskRealizeForm.invalid || (listItem.length == 0|| template.plugin_item_process && formArrayProcessItems.controls.length == 0))">

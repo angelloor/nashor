@@ -302,10 +302,8 @@ export class ProcessComment {
 					official: { id_official: item.id_official },
 					level: { id_level: item.id_level },
 					number_task: item.number_task,
-					creation_date_task: item.creation_date_task,
 					type_status_task: item.type_status_task,
-					type_action_task: item.type_action_task,
-					action_date_task: item.action_date_task,
+					date_task: item.date_task,
 				},
 				level: {
 					id_level: item.id_level,
@@ -342,10 +340,8 @@ export class ProcessComment {
 			delete _processComment.id_official;
 			delete _processComment.id_level;
 			delete _processComment.number_task;
-			delete _processComment.creation_date_task;
 			delete _processComment.type_status_task;
-			delete _processComment.type_action_task;
-			delete _processComment.action_date_task;
+			delete _processComment.date_task;
 			delete _processComment.id_level;
 			delete _processComment.id_company;
 			delete _processComment.id_template;

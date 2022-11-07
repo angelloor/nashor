@@ -17,7 +17,7 @@ import {
 	view_process_item_by_official_read,
 	view_process_item_by_process_read,
 	view_process_item_by_task_read,
-	view_process_item_specific_read
+	view_process_item_specific_read,
 } from './process_item.store';
 
 export class ProcessItem {
@@ -302,10 +302,8 @@ export class ProcessItem {
 					official: { id_official: item.id_official },
 					level: { id_level: item.id_level },
 					number_task: item.number_task,
-					creation_date_task: item.creation_date_task,
 					type_status_task: item.type_status_task,
-					type_action_task: item.type_action_task,
-					action_date_task: item.action_date_task,
+					date_task: item.date_task,
 				},
 				level: {
 					id_level: item.id_level,
@@ -349,10 +347,8 @@ export class ProcessItem {
 			delete _processItem.id_official;
 			delete _processItem.id_level;
 			delete _processItem.number_task;
-			delete _processItem.creation_date_task;
 			delete _processItem.type_status_task;
-			delete _processItem.type_action_task;
-			delete _processItem.action_date_task;
+			delete _processItem.date_task;
 			delete _processItem.id_level;
 			delete _processItem.id_company;
 			delete _processItem.id_template;

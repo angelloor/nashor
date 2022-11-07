@@ -26,10 +26,8 @@ export class Task {
 	public official: Official;
 	public level: Level;
 	public number_task?: string;
-	public creation_date_task?: string;
 	public type_status_task?: TYPE_STATUS_TASK;
-	public type_action_task?: TYPE_ACTION_TASK;
-	public action_date_task?: string;
+	public date_task?: string;
 	public deleted_task?: boolean;
 	/** Constructor */
 	constructor(
@@ -39,10 +37,8 @@ export class Task {
 		official: Official = _official,
 		level: Level = _level,
 		number_task: string = '',
-		creation_date_task: string = '',
 		type_status_task: TYPE_STATUS_TASK = 'progress',
-		type_action_task: TYPE_ACTION_TASK = 'dispatched',
-		action_date_task: string = '',
+		date_task: string = '',
 		deleted_task: boolean = false
 	) {
 		this.id_user_ = id_user_;
@@ -51,10 +47,8 @@ export class Task {
 		this.official = official;
 		this.level = level;
 		this.number_task = number_task;
-		this.creation_date_task = creation_date_task;
 		this.type_status_task = type_status_task;
-		this.type_action_task = type_action_task;
-		this.action_date_task = action_date_task;
+		this.date_task = date_task;
 		this.deleted_task = deleted_task;
 	}
 	/** Setters and Getters */
@@ -100,13 +94,6 @@ export class Task {
 		return this.number_task!;
 	}
 
-	set _creation_date_task(creation_date_task: string) {
-		this.creation_date_task = creation_date_task;
-	}
-	get _creation_date_task() {
-		return this.creation_date_task!;
-	}
-
 	set _type_status_task(type_status_task: TYPE_STATUS_TASK) {
 		this.type_status_task = type_status_task;
 	}
@@ -114,18 +101,11 @@ export class Task {
 		return this.type_status_task!;
 	}
 
-	set _type_action_task(type_action_task: TYPE_ACTION_TASK) {
-		this.type_action_task = type_action_task;
-	}
-	get _type_action_task() {
-		return this.type_action_task!;
-	}
-
-	set _action_date_task(action_date_task: string) {
-		this.action_date_task = action_date_task;
+	set _action_date_task(date_task: string) {
+		this.date_task = date_task;
 	}
 	get _action_date_task() {
-		return this.action_date_task!;
+		return this.date_task!;
 	}
 
 	set _deleted_task(deleted_task: boolean) {
@@ -401,7 +381,11 @@ export class Task {
 /**
  * Type Enum TYPE_STATUS_TASK
  */
-export type TYPE_STATUS_TASK = 'progress' | 'finished';
+export type TYPE_STATUS_TASK =
+	| 'created'
+	| 'progress'
+	| 'reassigned'
+	| 'dispatched';
 
 export interface TYPE_STATUS_TASK_ENUM {
 	name_type: string;
@@ -410,12 +394,20 @@ export interface TYPE_STATUS_TASK_ENUM {
 
 export const _typeStatusTask: TYPE_STATUS_TASK_ENUM[] = [
 	{
+		name_type: 'Creado',
+		value_type: 'created',
+	},
+	{
 		name_type: 'En progeso',
 		value_type: 'progress',
 	},
 	{
-		name_type: 'Finalizado',
-		value_type: 'finished',
+		name_type: 'Reasignado',
+		value_type: 'reassigned',
+	},
+	{
+		name_type: 'Enviado',
+		value_type: 'dispatched',
 	},
 ];
 
@@ -442,54 +434,4 @@ export const validationTypeStatusTask = (
 
 /**
  * Type Enum TYPE_STATUS_TASK
- */
-
-/**
- * Type Enum TYPE_ACTION_TASK
- */
-export type TYPE_ACTION_TASK = 'received' | 'reassigned' | 'dispatched';
-
-export interface TYPE_ACTION_TASK_ENUM {
-	name_type: string;
-	value_type: TYPE_ACTION_TASK;
-}
-
-export const _typeActionTask: TYPE_ACTION_TASK_ENUM[] = [
-	{
-		name_type: 'Recibido',
-		value_type: 'received',
-	},
-	{
-		name_type: 'Reasignado',
-		value_type: 'reassigned',
-	},
-	{
-		name_type: 'Enviado',
-		value_type: 'dispatched',
-	},
-];
-
-export const validationTypeActionTask = (
-	attribute: string,
-	value: string | TYPE_ACTION_TASK
-) => {
-	return new Promise<Boolean>((resolve, reject) => {
-		const typeActionTask = _typeActionTask.find(
-			(typeActionTask: TYPE_ACTION_TASK_ENUM) =>
-				typeActionTask.value_type == value
-		);
-
-		if (!typeActionTask) {
-			reject({
-				..._messages[7],
-				description: _messages[7].description
-					.replace('_nameAttribute', `${attribute}`)
-					.replace('_expectedType', 'TYPE_ACTION_TASK'),
-			});
-		}
-	});
-};
-
-/**
- * Type Enum TYPE_ACTION_TASK
  */

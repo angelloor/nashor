@@ -8,16 +8,18 @@ export interface Task {
   official: Official;
   level: Level;
   number_task: string;
-  creation_date_task: string;
   type_status_task: TYPE_STATUS_TASK;
-  type_action_task: TYPE_ACTION_TASK;
-  action_date_task: string;
+  date_task: string;
   deleted_task: boolean;
 }
 /**
  * Type Enum TYPE_STATUS_TASK
  */
-export type TYPE_STATUS_TASK = 'progress' | 'finished';
+export type TYPE_STATUS_TASK =
+  | 'created'
+  | 'progress'
+  | 'reassigned'
+  | 'dispatched';
 
 export interface TYPE_STATUS_TASK_ENUM {
   name_type: string;
@@ -26,33 +28,12 @@ export interface TYPE_STATUS_TASK_ENUM {
 
 export const _typeStatusTask: TYPE_STATUS_TASK_ENUM[] = [
   {
+    name_type: 'Creado',
+    value_type: 'created',
+  },
+  {
     name_type: 'En progeso',
     value_type: 'progress',
-  },
-  {
-    name_type: 'Finalizado',
-    value_type: 'finished',
-  },
-];
-
-/**
- * Type Enum TYPE_STATUS_TASK
- */
-
-/**
- * Type Enum TYPE_ACTION_TASK
- */
-export type TYPE_ACTION_TASK = 'received' | 'reassigned' | 'dispatched';
-
-export interface TYPE_ACTION_TASK_ENUM {
-  name_type: string;
-  value_type: TYPE_ACTION_TASK;
-}
-
-export const _typeActionTask: TYPE_ACTION_TASK_ENUM[] = [
-  {
-    name_type: 'Recibido',
-    value_type: 'received',
   },
   {
     name_type: 'Reasignado',
@@ -65,5 +46,5 @@ export const _typeActionTask: TYPE_ACTION_TASK_ENUM[] = [
 ];
 
 /**
- * Type Enum TYPE_ACTION_TASK
+ * Type Enum TYPE_STATUS_TASK
  */

@@ -73,7 +73,7 @@ export class ModalTaskRealizeComponent implements OnInit {
   id_template: string = '';
   taskRealizeForm!: FormGroup;
   id_company: string = '';
-  finished: boolean = false;
+  dispatched: boolean = false;
 
   listDocumentationProfile: DocumentationProfile[] = [];
   selectedDocumentationProfile: DocumentationProfile = documentationProfile;
@@ -197,7 +197,7 @@ export class ModalTaskRealizeComponent implements OnInit {
       .subscribe((task: Task) => {
         this.task = task;
 
-        this.finished = task.type_status_task === 'finished';
+        this.dispatched = task.type_status_task === 'dispatched';
 
         if (this.task.id_task != ' ') {
           this._templateService
@@ -334,7 +334,7 @@ export class ModalTaskRealizeComponent implements OnInit {
                                         new FormControl(
                                           {
                                             value: '',
-                                            disabled: this.finished,
+                                            disabled: this.dispatched,
                                           },
                                           [
                                             Validators.required,
@@ -366,7 +366,7 @@ export class ModalTaskRealizeComponent implements OnInit {
                                                 new FormControl(
                                                   {
                                                     value: columnProcessItem,
-                                                    disabled: this.finished,
+                                                    disabled: this.dispatched,
                                                   },
                                                   [Validators.required]
                                                 )
@@ -528,7 +528,7 @@ export class ModalTaskRealizeComponent implements OnInit {
                                   value:
                                     _templateControl.control
                                       .initial_value_control,
-                                  disabled: this.finished,
+                                  disabled: this.dispatched,
                                 },
                                 [
                                   _templateControl.control.required_control
@@ -559,7 +559,7 @@ export class ModalTaskRealizeComponent implements OnInit {
                                   value:
                                     _templateControl.control
                                       .initial_value_control,
-                                  disabled: this.finished,
+                                  disabled: this.dispatched,
                                 },
                                 [
                                   _templateControl.control.required_control
@@ -575,7 +575,7 @@ export class ModalTaskRealizeComponent implements OnInit {
                                   value:
                                     _templateControl.control
                                       .initial_value_control,
-                                  disabled: this.finished,
+                                  disabled: this.dispatched,
                                 },
                                 [
                                   _templateControl.control.required_control
@@ -809,7 +809,7 @@ export class ModalTaskRealizeComponent implements OnInit {
                                 new FormControl(
                                   {
                                     value: '',
-                                    disabled: this.finished,
+                                    disabled: this.dispatched,
                                   },
                                   [
                                     FileValidator.maxContentSize(
@@ -856,7 +856,7 @@ export class ModalTaskRealizeComponent implements OnInit {
                                 /**
                                  * Verificar si la tarea esta enviada  y bloquear removablefile + index
                                  */
-                                if (this.finished) {
+                                if (this.dispatched) {
                                   this.taskRealizeForm
                                     .get('removablefile' + index)
                                     ?.disable();
@@ -1071,7 +1071,6 @@ export class ModalTaskRealizeComponent implements OnInit {
                   this._notificationService.success(
                     'Tarea enviada correctamente'
                   );
-
                   /**
                    * closeModalTaskRealize
                    */

@@ -3256,7 +3256,7 @@ BEGIN
 				_ACRONYM_TASK = (select bvpt.acronym_task from business.view_flow bvpt where bvpt.id_flow = _id_flow);
 
 				_NUMBER_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
-				_ID_TASK = (select * from business.dml_task_create(id_user_, _ID_PROCESS, _ID_OFFICIAL, _ID_LEVEL, _NUMBER_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
+				_ID_TASK = (select * from business.dml_task_create(id_user_, _ID_PROCESS, _ID_OFFICIAL, _ID_LEVEL, _NUMBER_TASK, 'created', now()::timestamp, false));
 				
 				IF (_ID_TASK >= 1) THEN
 					RETURN QUERY select * from business.view_process_inner_join bvpij 
@@ -3336,8 +3336,8 @@ $BODY$;
 ALTER FUNCTION business.dml_process_update_modified(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean, boolean, boolean)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_task_create(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
--- DROP FUNCTION IF EXISTS business.dml_task_create(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean);
+-- FUNCTION: business.dml_task_create(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_task_create(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", timestamp without time zone, boolean);
 
 CREATE OR REPLACE FUNCTION business.dml_task_create(
 	id_user_ numeric,
@@ -3345,10 +3345,8 @@ CREATE OR REPLACE FUNCTION business.dml_task_create(
 	_id_official numeric,
 	_id_level numeric,
 	_number_task character varying,
-	_creation_date_task timestamp without time zone,
 	_type_status_task business."TYPE_STATUS_TASK",
-	_type_action_task business."TYPE_ACTION_TASK",
-	_action_date_task timestamp without time zone,
+	_date_task timestamp without time zone,
 	_deleted_task boolean)
     RETURNS numeric
     LANGUAGE 'plpgsql'
@@ -3397,7 +3395,7 @@ BEGIN
 		_COUNT_ATT = (select count(*) from business.view_task t where t.id_task = _CURRENT_ID);
 	
 		IF (_COUNT_ATT = 0) THEN 
-			FOR _X IN INSERT INTO business.task(id_task, id_process, id_official, id_level, number_task, creation_date_task, type_status_task, type_action_task, action_date_task, deleted_task) VALUES (_CURRENT_ID, $2, $3, $4, ''||_number_task||''||_CURRENT_ID||'', $6, $7, $8, $9, $10) RETURNING id_task LOOP
+			FOR _X IN INSERT INTO business.task(id_task, id_process, id_official, id_level, number_task, type_status_task, date_task, deleted_task) VALUES (_CURRENT_ID, $2, $3, $4, ''||_number_task||''||_CURRENT_ID||'', $6, $7, $8) RETURNING id_task LOOP
 				_RETURNING = _X.id_task;
 			END LOOP;
 			
@@ -3442,7 +3440,7 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_task_create(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
+ALTER FUNCTION business.dml_task_create(numeric, numeric, numeric, numeric, character varying, business."TYPE_STATUS_TASK", timestamp without time zone, boolean)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_task_create_modified(numeric, numeric, numeric, numeric)
@@ -3453,7 +3451,7 @@ CREATE OR REPLACE FUNCTION business.dml_task_create_modified(
 	_id_process numeric,
 	_id_official numeric,
 	_id_level numeric)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying,creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3476,7 +3474,7 @@ BEGIN
 	
 	_NUMBER_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
 
-	_ID_TASK = (select * from business.dml_task_create(id_user_, _id_process, _id_official, _id_level, _NUMBER_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
+	_ID_TASK = (select * from business.dml_task_create(id_user_, _id_process, _id_official, _id_level, _NUMBER_TASK, 'created', now()::timestamp, false));
 	
 	IF (_ID_TASK >= 1) THEN
 		RETURN QUERY select * from business.view_task_inner_join bvtij 
@@ -3498,8 +3496,8 @@ $BODY$;
 ALTER FUNCTION business.dml_task_create_modified(numeric, numeric, numeric, numeric)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
--- DROP FUNCTION IF EXISTS business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean);
+-- FUNCTION: business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", timestamp without time zone, boolean);
 
 CREATE OR REPLACE FUNCTION business.dml_task_update_modified(
 	id_user_ numeric,
@@ -3508,12 +3506,10 @@ CREATE OR REPLACE FUNCTION business.dml_task_update_modified(
 	_id_official numeric,
 	_id_level numeric,
 	_number_task character varying,
-	_creation_date_task timestamp without time zone,
 	_type_status_task business."TYPE_STATUS_TASK",
-	_type_action_task business."TYPE_ACTION_TASK",
-	_action_date_task timestamp without time zone,
+	_date_task timestamp without time zone,
 	_deleted_task boolean)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying,creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3524,7 +3520,7 @@ DECLARE
  	_UPDATE_TASK BOOLEAN;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
- 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _id_official, _id_level, _number_task, _creation_date_task, _type_status_task, _type_action_task, _action_date_task, _deleted_task));
+ 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _id_official, _id_level, _number_task, _type_status_task, _date_task, _deleted_task));
 
  	IF (_UPDATE_TASK) THEN
 		RETURN QUERY select * from business.view_task_inner_join bvtij 
@@ -3543,11 +3539,11 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
+ALTER FUNCTION business.dml_task_update_modified(numeric, numeric, numeric, numeric, numeric, character varying, business."TYPE_STATUS_TASK", timestamp without time zone, boolean)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
--- DROP FUNCTION IF EXISTS business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean);
+-- FUNCTION: business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", timestamp without time zone, boolean);
 
 CREATE OR REPLACE FUNCTION business.dml_task_reasign(
 	id_user_ numeric,
@@ -3556,12 +3552,10 @@ CREATE OR REPLACE FUNCTION business.dml_task_reasign(
 	_id_official numeric,
 	_id_level numeric,
 	_number_task character varying,
-	_creation_date_task timestamp without time zone,
 	_type_status_task business."TYPE_STATUS_TASK",
-	_type_action_task business."TYPE_ACTION_TASK",
-	_action_date_task timestamp without time zone,
+	_date_task timestamp without time zone,
 	_deleted_task boolean)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying,creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3587,7 +3581,7 @@ BEGIN
 
 	_ID_OFFICIAL_PRIMARY = (select bvt.id_official from business.view_task bvt where bvt.id_task = _id_task);
 
- 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _ID_OFFICIAL_PRIMARY, _id_level, _number_task, _creation_date_task, 'finished', 'reassigned', now()::timestamp, _deleted_task));
+ 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _ID_OFFICIAL_PRIMARY, _id_level, _number_task, 'reassigned', now()::timestamp, _deleted_task));
 
  	IF (_UPDATE_TASK) THEN
 		-- Generate task
@@ -3600,7 +3594,7 @@ BEGIN
 
 		_NUMBER_TASK_NEW_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
 
-		_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _id_official, _ID_LEVEL, _NUMBER_TASK_NEW_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
+		_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _id_official, _ID_LEVEL, _NUMBER_TASK_NEW_TASK, 'created', now()::timestamp, false));
 		
 		IF (_ID_NEW_TASK >= 1) THEN
 			RETURN QUERY select * from business.view_task_inner_join bvtij 
@@ -3623,12 +3617,11 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
+ALTER FUNCTION business.dml_task_reasign(numeric, numeric, numeric, numeric, numeric, character varying, business."TYPE_STATUS_TASK", timestamp without time zone, boolean)
     OWNER TO postgres;
 
--- FUNCTION: business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
-
--- DROP FUNCTION IF EXISTS business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean);
+-- FUNCTION: business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, business."TYPE_STATUS_TASK", timestamp without time zone, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, business."TYPE_STATUS_TASK", timestamp without time zone, boolean);
 
 CREATE OR REPLACE FUNCTION business.dml_task_send(
 	id_user_ numeric,
@@ -3637,12 +3630,10 @@ CREATE OR REPLACE FUNCTION business.dml_task_send(
 	_id_official numeric,
 	_id_level numeric,
 	_number_task character varying,
-	_creation_date_task timestamp without time zone,
 	_type_status_task business."TYPE_STATUS_TASK",
-	_type_action_task business."TYPE_ACTION_TASK",
-	_action_date_task timestamp without time zone,
+	_date_task timestamp without time zone,
 	_deleted_task boolean)
-    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
+    RETURNS TABLE(id_task numeric, id_process numeric, id_official numeric, id_level numeric, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, deleted_task boolean, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, id_user numeric, id_area numeric, id_position numeric, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_flow numeric, number_flow_version numeric, status_flow_version boolean, creation_date_flow_version timestamp without time zone, id_company numeric, name_flow character varying, description_flow character varying, acronym_flow character varying, acronym_task character varying, sequential_flow numeric) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3682,17 +3673,16 @@ BEGIN
 
 	_ID_OFFICIAL_PRIMARY = (select bvt.id_official from business.view_task bvt where bvt.id_task = _id_task);
 
- 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _ID_OFFICIAL_PRIMARY, _id_level, _number_task, _creation_date_task, 'finished', 'dispatched', now()::timestamp, _deleted_task));
+ 	_UPDATE_TASK = (select * from business.dml_task_update(id_user_, _id_task, _id_process, _ID_OFFICIAL_PRIMARY, _id_level, _number_task, 'dispatched', now()::timestamp, _deleted_task));
 
  	IF (_UPDATE_TASK) THEN
 		-- Obtener la posicion del siguiente nivel
-		
 		_POSITION_LEVEL_CURRENT_LEVEL = (select bvfvl.position_level from business.view_flow_version_level bvfvl where bvfvl.id_level = _id_level order by bvfvl.id_flow_version_level limit 1);
 		
 		FOR _X IN (select bvfvl.* from business.view_process bvp
 			inner join business.view_flow_version bvfv on bvp.id_flow_version = bvfv.id_flow_version
 			inner join business.view_flow_version_level bvfvl on bvfv.id_flow_version = bvfvl.id_flow_version
-			where bvp.id_process = 1 order by bvfvl.position_level asc) LOOP
+			where bvp.id_process = _id_process order by bvfvl.position_level asc) LOOP
 			
 			IF (_X.position_level_father = _POSITION_LEVEL_CURRENT_LEVEL) THEN
 				_POSITION_LEVEL_NEXT_LEVEL = _X.position_level;
@@ -3734,7 +3724,7 @@ BEGIN
 						
 					_NUMBER_TASK_NEW_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
 					
-					_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _OFFICIAL_NEXT_LEVEL, _POSITION_LEVEL_NEXT_LEVEL, _NUMBER_TASK_NEW_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
+					_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _OFFICIAL_NEXT_LEVEL, _POSITION_LEVEL_NEXT_LEVEL, _NUMBER_TASK_NEW_TASK, 'created', now()::timestamp, false));
 		
 					IF (_ID_NEW_TASK > 0) THEN
 						RETURN QUERY select * from business.view_task_inner_join bvtij 
@@ -3854,7 +3844,7 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", business."TYPE_ACTION_TASK", timestamp without time zone, boolean)
+ALTER FUNCTION business.dml_task_send(numeric, numeric, numeric, numeric, numeric, character varying, business."TYPE_STATUS_TASK", timestamp without time zone, boolean)
     OWNER TO postgres;
 
 -- FUNCTION: business.dml_process_item_create_modified(numeric, numeric, numeric, numeric, numeric)
@@ -3866,7 +3856,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_item_create_modified(
 	_id_process numeric,
 	_id_task numeric,
 	_id_level numeric)
-    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying) 
+    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -3942,7 +3932,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_item_update_modified(
 	_id_task numeric,
 	_id_level numeric,
 	_id_item numeric)
-    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying) 
+    RETURNS TABLE(id_process_item numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_item numeric, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, id_item_category numeric, name_item character varying, description_item character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -4180,7 +4170,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_attached_create_modified(
 	_extension character varying,
 	_server_path character varying,
 	_alfresco_path character varying)
-    RETURNS TABLE(id_process_attached numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_attached numeric, file_name character varying, length_mb character varying, extension character varying, server_path character varying, alfresco_path character varying, upload_date timestamp without time zone, deleted_process_attached boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, name_attached character varying, description_attached character varying, length_mb_attached numeric, required_attached boolean) 
+    RETURNS TABLE(id_process_attached numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_attached numeric, file_name character varying, length_mb character varying, extension character varying, server_path character varying, alfresco_path character varying, upload_date timestamp without time zone, deleted_process_attached boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, name_attached character varying, description_attached character varying, length_mb_attached numeric, required_attached boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -4231,7 +4221,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_attached_update_modified(
 	_alfresco_path character varying,
 	_upload_date timestamp without time zone,
 	_deleted_process_attached boolean)
-    RETURNS TABLE(id_process_attached numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_attached numeric, file_name character varying, length_mb character varying, extension character varying, server_path character varying, alfresco_path character varying, upload_date timestamp without time zone, deleted_process_attached boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, name_attached character varying, description_attached character varying, length_mb_attached numeric, required_attached boolean) 
+    RETURNS TABLE(id_process_attached numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_attached numeric, file_name character varying, length_mb character varying, extension character varying, server_path character varying, alfresco_path character varying, upload_date timestamp without time zone, deleted_process_attached boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, name_attached character varying, description_attached character varying, length_mb_attached numeric, required_attached boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -4275,7 +4265,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_control_create_modified(
 	_id_level numeric,
 	_id_control numeric,
 	_value_process_control text)
-    RETURNS TABLE(id_process_control numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_control numeric, value_process_control text, last_change_process_control timestamp without time zone, deleted_process_control boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean) 
+    RETURNS TABLE(id_process_control numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_control numeric, value_process_control text, last_change_process_control timestamp without time zone, deleted_process_control boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -4322,7 +4312,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_control_update_modified(
 	_value_process_control text,
 	_last_change_process_control timestamp without time zone,
 	_deleted_process_control boolean)
-    RETURNS TABLE(id_process_control numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_control numeric, value_process_control text, last_change_process_control timestamp without time zone, deleted_process_control boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean) 
+    RETURNS TABLE(id_process_control numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, id_control numeric, value_process_control text, last_change_process_control timestamp without time zone, deleted_process_control boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying, type_control business."TYPE_CONTROL", title_control character varying, form_name_control character varying, initial_value_control character varying, required_control boolean, min_length_control numeric, max_length_control numeric, placeholder_control character varying, spell_check_control boolean, options_control json, in_use boolean) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -4364,7 +4354,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_comment_create_modified(
 	_id_process numeric,
 	_id_task numeric,
 	_id_level numeric)
-    RETURNS TABLE(id_process_comment numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, value_process_comment character varying, date_process_comment timestamp without time zone, deleted_process_comment boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
+    RETURNS TABLE(id_process_comment numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, value_process_comment character varying, date_process_comment timestamp without time zone, deleted_process_comment boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -4410,7 +4400,7 @@ CREATE OR REPLACE FUNCTION business.dml_process_comment_update_modified(
 	_value_process_comment character varying,
 	_date_process_comment timestamp without time zone,
 	_deleted_process_comment boolean)
-    RETURNS TABLE(id_process_comment numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, value_process_comment character varying, date_process_comment timestamp without time zone, deleted_process_comment boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, creation_date_task timestamp without time zone, type_status_task business."TYPE_STATUS_TASK", type_action_task business."TYPE_ACTION_TASK", action_date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
+    RETURNS TABLE(id_process_comment numeric, id_official numeric, id_process numeric, id_task numeric, id_level numeric, value_process_comment character varying, date_process_comment timestamp without time zone, deleted_process_comment boolean, id_user numeric, id_area numeric, id_position numeric, id_person numeric, id_type_user numeric, name_user character varying, password_user character varying, avatar_user character varying, status_user boolean, id_academic numeric, id_job numeric, dni_person character varying, name_person character varying, last_name_person character varying, address_person character varying, phone_person character varying, id_flow_version numeric, number_process character varying, date_process timestamp without time zone, generated_task boolean, finalized_process boolean, number_task character varying, type_status_task business."TYPE_STATUS_TASK", date_task timestamp without time zone, id_template numeric, id_level_profile numeric, id_level_status numeric, name_level character varying, description_level character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE

@@ -49,11 +49,8 @@ import { task } from '../task.data';
 import { TaskService } from '../task.service';
 import {
   Task,
-  TYPE_ACTION_TASK,
-  TYPE_ACTION_TASK_ENUM,
   TYPE_STATUS_TASK,
   TYPE_STATUS_TASK_ENUM,
-  _typeActionTask,
   _typeStatusTask,
 } from '../task.types';
 import { ModalTaskService } from './modal-task.service';
@@ -105,17 +102,6 @@ export class ModalTaskComponent implements OnInit {
    * Type Enum TYPE_STATUS_TASK
    */
 
-  /**
-   * Type Enum TYPE_ACTION_TASK
-   */
-  typeActionTask: TYPE_ACTION_TASK_ENUM[] = _typeActionTask;
-
-  typeActionTaskSelect!: TYPE_ACTION_TASK_ENUM;
-
-  /**
-   * Type Enum TYPE_ACTION_TASK
-   */
-
   editMode: boolean = false;
   /**
    * Alert
@@ -130,7 +116,7 @@ export class ModalTaskComponent implements OnInit {
    */
   task: Task = task;
   taskForm!: FormGroup;
-  private tasks!: Task[];
+  tasks!: Task[];
 
   processComment: ProcessComment[] = [];
 
@@ -192,6 +178,25 @@ export class ModalTaskComponent implements OnInit {
          * Get the task
          */
         this.task = task;
+        /**
+         * Get the tasks
+         */
+        console.log(this.task);
+        this._taskService
+          .byProcessQueryRead(this.task.process.id_process, '*')
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe(() => {
+            this._taskService.tasks$
+              .pipe(takeUntil(this._unsubscribeAll))
+              .subscribe((tasks: Task[]) => {
+                console.log(tasks);
+                this.tasks = tasks;
+                /**
+                 * Mark for check
+                 */
+                this._changeDetectorRef.markForCheck();
+              });
+          });
 
         if (this.sourceProcess) {
           /**
@@ -227,24 +232,11 @@ export class ModalTaskComponent implements OnInit {
       id_official: ['', [Validators.required]],
       id_level: ['', [Validators.required]],
       number_task: ['', [Validators.required]],
-      creation_date_task: ['', [Validators.required]],
       type_status_task: ['', [Validators.required]],
-      type_action_task: ['', [Validators.required]],
-      action_date_task: ['', [Validators.required]],
+      date_task: ['', [Validators.required]],
       processComments: this._formBuilder.array([]),
     });
-    /**
-     * Get the tasks
-     */
-    this._taskService.tasks$
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((tasks: Task[]) => {
-        this.tasks = tasks;
-        /**
-         * Mark for check
-         */
-        this._changeDetectorRef.markForCheck();
-      });
+
     /**
      * Get the task
      */
@@ -358,18 +350,6 @@ export class ModalTaskComponent implements OnInit {
           /**
            * Type Enum TYPE_STATUS_TAKS
            */
-
-          /**
-           * Type Enum TYPE_ACTION_TAKS
-           */
-          this.typeActionTaskSelect = this.typeActionTask.find(
-            (type_action) =>
-              type_action.value_type == this.task.type_action_task
-          )!;
-          /**
-           * Type Enum TYPE_ACTION_TAKS
-           */
-
           // Process
           this._processService
             .queryRead('*')
@@ -909,16 +889,6 @@ export class ModalTaskComponent implements OnInit {
   ): TYPE_STATUS_TASK_ENUM {
     return this.typeStatusTask.find(
       (_type_status_task) => _type_status_task.value_type == type_status_task
-    )!;
-  }
-  /**
-   * getTypeActionTaskEnum
-   */
-  getTypeActionTaskEnum(
-    type_action_task: TYPE_ACTION_TASK
-  ): TYPE_ACTION_TASK_ENUM {
-    return this.typeActionTask.find(
-      (_type_action_task) => _type_action_task.value_type == type_action_task
     )!;
   }
   /**

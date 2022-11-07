@@ -61,7 +61,7 @@ export const view_task_by_process_query_read = (task: Task) => {
 			number_process != '*'
 				? ` where lower(number_process) LIKE '%${number_process}%' and bvtij.id_process = ${task.level}`
 				: ` where bvtij.id_process = ${task.level}`
-		} order by bvtij.id_task desc`;
+		} order by bvtij.id_task asc`;
 
 		// console.log(query);
 
@@ -167,10 +167,8 @@ export const dml_task_update = (task: Task) => {
 			${task.official.id_official},
 			${task.level.id_level},
 			'${task.number_task}',
-			'${task.creation_date_task}',
 			'${task.type_status_task}',
-			'${task.type_action_task}',
-			'${task.action_date_task}',
+			'${task.date_task}',
 			${task.deleted_task})`;
 
 		// console.log(query);
@@ -199,10 +197,8 @@ export const dml_task_reasign = (task: Task) => {
 			${task.official.id_official},
 			${task.level.id_level},
 			'${task.number_task}',
-			'${task.creation_date_task}',
 			'${task.type_status_task}',
-			'${task.type_action_task}',
-			'${task.action_date_task}',
+			'${task.date_task}',
 			${task.deleted_task})`;
 
 		// console.log(query);
@@ -231,10 +227,8 @@ export const dml_task_send = (task: Task) => {
 			${task.official.id_official},
 			${task.level.id_level},
 			'${task.number_task}',
-			'${task.creation_date_task}',
 			'${task.type_status_task}',
-			'${task.type_action_task}',
-			'${task.action_date_task}',
+			'${task.date_task}',
 			${task.deleted_task})`;
 
 		console.log(query);
