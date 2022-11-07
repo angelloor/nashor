@@ -31,8 +31,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/auth/sign-in",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "auth", "sign-in"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"auth",
+												"sign-in"
+											]
 										}
 									},
 									"response": []
@@ -53,8 +60,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/auth/refresh-access-token",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "auth", "refresh-access-token"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"auth",
+												"refresh-access-token"
+											]
 										}
 									},
 									"response": []
@@ -75,8 +89,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/auth/unlock-session",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "auth", "unlock-session"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"auth",
+												"unlock-session"
+											]
 										}
 									},
 									"response": []
@@ -97,8 +118,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/auth/check-session",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "auth", "check-session"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"auth",
+												"check-session"
+											]
 										}
 									},
 									"response": []
@@ -119,8 +147,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/auth/sign-out",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "auth", "sign-out"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"auth",
+												"sign-out"
+											]
 										}
 									},
 									"response": []
@@ -141,8 +176,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/auth/forgot-password",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "auth", "forgot-password"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"auth",
+												"forgot-password"
+											]
 										}
 									},
 									"response": []
@@ -163,8 +205,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/auth/reset-password",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "auth", "reset-password"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"auth",
+												"reset-password"
+											]
 										}
 									},
 									"response": []
@@ -185,8 +234,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/auth/sign-up",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "auth", "sign-up"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"auth",
+												"sign-up"
+											]
 										}
 									},
 									"response": []
@@ -207,8 +263,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/auth/confirmation-required",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "auth", "confirmation-required"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"auth",
+												"confirmation-required"
+											]
 										}
 									},
 									"response": []
@@ -240,8 +303,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/company/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "company", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"company",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -259,8 +329,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/company/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "company", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"company",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -278,7 +356,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/company/bySettingQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -304,8 +384,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/company/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "company", "specificRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"company",
+												"specificRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -332,8 +420,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/company/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "company", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"company",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -351,8 +446,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/company/delete?id_user_=1&id_company=3",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "company", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"company",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -394,8 +496,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/validation/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "validation", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"validation",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -413,8 +522,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/validation/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "validation", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"validation",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -432,7 +549,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/validation/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -458,7 +577,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/validation/byTypeValidationQueryRead/1/validationPassword",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -484,8 +605,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/validation/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "validation", "specificRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"validation",
+												"specificRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -512,8 +641,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/validation/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "validation", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"validation",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -531,8 +667,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/validation/delete?id_user_=1&id_validation=4",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "validation", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"validation",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -574,8 +717,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/navigation/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "navigation", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"navigation",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -593,8 +743,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/navigation/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "navigation", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"navigation",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -612,7 +770,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/navigation/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -638,8 +798,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/navigation/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "navigation", "specificRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"navigation",
+												"specificRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -666,8 +834,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/navigation/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "navigation", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"navigation",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -685,8 +860,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/navigation/delete?id_user_=1&id_navigation=5",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "navigation", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"navigation",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -728,8 +910,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "profile", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"profile",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -747,8 +936,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "profile", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"profile",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -766,7 +963,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -792,8 +991,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "profile", "specificRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"profile",
+												"specificRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -820,8 +1027,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "profile", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"profile",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -839,8 +1053,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile/delete?id_user_=1&id_profile=2",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "profile", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"profile",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -882,8 +1103,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile_navigation/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "profile_navigation", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"profile_navigation",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -901,7 +1129,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile_navigation/byProfileRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -926,7 +1156,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile_navigation/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -960,8 +1192,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile_navigation/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "profile_navigation", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"profile_navigation",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -979,8 +1218,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/profile_navigation/delete?id_user_=1&id_profile_navigation=4",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "profile_navigation", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"profile_navigation",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -1022,8 +1268,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/type_user/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "type_user", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"type_user",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -1041,8 +1294,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/type_user/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "type_user", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"type_user",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -1060,7 +1321,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/type_user/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -1086,7 +1349,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/type_user/byProfileQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -1112,8 +1377,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/type_user/specificRead/2",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "type_user", "specificRead", "2"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"type_user",
+												"specificRead",
+												"2"
+											]
 										}
 									},
 									"response": []
@@ -1140,8 +1413,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/type_user/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "type_user", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"type_user",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -1159,8 +1439,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/type_user/delete?id_user_=1&id_type_user=2",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "type_user", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"type_user",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -1202,8 +1489,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/user/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "user", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"user",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -1221,8 +1515,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/user/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "user", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"user",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -1240,7 +1542,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/user/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -1266,7 +1570,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/user/byTypeUserQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -1292,8 +1598,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/user/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "user", "specificRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"user",
+												"specificRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -1320,8 +1634,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/user/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "user", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"user",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -1339,8 +1660,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/user/delete?id_user_=1&id_user=2",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "user", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"user",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -1383,8 +1711,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/user/uploadAvatar",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "user", "uploadAvatar"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"user",
+												"uploadAvatar"
+											]
 										}
 									},
 									"response": []
@@ -1411,8 +1746,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/user/removeAvatar",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "user", "removeAvatar"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"user",
+												"removeAvatar"
+											]
 										}
 									},
 									"response": []
@@ -1439,8 +1781,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/user/reportUser",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "user", "reportUser"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"user",
+												"reportUser"
+											]
 										}
 									},
 									"response": []
@@ -1463,8 +1812,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/session/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "session", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"session",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -1482,7 +1839,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/session/byUserQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -1508,8 +1867,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/session/specificRead/3",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "session", "specificRead", "3"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"session",
+												"specificRead",
+												"3"
+											]
 										}
 									},
 									"response": []
@@ -1527,8 +1894,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/session/byUserRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "session", "byUserRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"session",
+												"byUserRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -1555,8 +1930,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/session/bySessionRelease",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "session", "bySessionRelease"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"session",
+												"bySessionRelease"
+											]
 										}
 									},
 									"response": []
@@ -1583,8 +1965,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/session/byUserReleaseAll",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "session", "byUserReleaseAll"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"session",
+												"byUserReleaseAll"
+											]
 										}
 									},
 									"response": []
@@ -1611,8 +2000,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/session/byCompanyReleaseAll",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "session", "byCompanyReleaseAll"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"session",
+												"byCompanyReleaseAll"
+											]
 										}
 									},
 									"response": []
@@ -1635,8 +2031,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/system_event/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "core", "system_event", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"core",
+												"system_event",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -1654,7 +2058,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/system_event/byUserQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -1680,7 +2086,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/core/system_event/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"core",
@@ -1724,8 +2132,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/area/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "area", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"area",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -1743,8 +2158,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/area/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "area", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"area",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -1762,7 +2185,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/area/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -1788,8 +2213,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/area/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "area", "specificRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"area",
+												"specificRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -1816,8 +2249,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/area/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "area", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"area",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -1835,8 +2275,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/area/delete?id_user_=1&id_area=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "area", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"area",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -1878,8 +2325,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/position/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "position", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"position",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -1897,8 +2351,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/position/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "position", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"position",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -1916,7 +2378,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/position/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -1942,7 +2406,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/position/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -1976,8 +2442,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/position/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "position", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"position",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -1995,8 +2468,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/position/delete?id_user_=1&id_position=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "position", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"position",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -2038,8 +2518,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/official/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "official", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"official",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -2057,8 +2544,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/official/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "official", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"official",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -2076,7 +2571,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/official/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2102,8 +2599,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/official/byUserRead/2",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "official", "byUserRead", "2"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"official",
+												"byUserRead",
+												"2"
+											]
 										}
 									},
 									"response": []
@@ -2121,7 +2626,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/official/byAreaQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2147,7 +2654,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/official/byPositionQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2173,7 +2682,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/official/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2207,8 +2718,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/official/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "official", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"official",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -2226,8 +2744,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/official/delete?id_user_=1&id_official=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "official", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"official",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -2269,8 +2794,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/attached/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "attached", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"attached",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -2288,8 +2820,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/attached/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "attached", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"attached",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -2307,7 +2847,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/attached/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2333,7 +2875,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/attached/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2367,8 +2911,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/attached/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "attached", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"attached",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -2386,8 +2937,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/attached/delete?id_user_=1&id_attached=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "attached", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"attached",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -2432,7 +2990,9 @@
 												},
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/documentation_profile_attached/create",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -2456,7 +3016,9 @@
 												],
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/documentation_profile_attached/byDocumentationProfileRead/2",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -2481,7 +3043,9 @@
 												],
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/documentation_profile_attached/byAttachedRead/2",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -2506,7 +3070,9 @@
 												],
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/documentation_profile_attached/specificRead/1",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -2540,7 +3106,9 @@
 												},
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/documentation_profile_attached/update",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -2564,7 +3132,9 @@
 												],
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/documentation_profile_attached/delete?id_user_=1&id_documentation_profile_attached=1",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -2609,7 +3179,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/documentation_profile/create",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2633,7 +3205,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/documentation_profile/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2658,7 +3232,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/documentation_profile/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2684,7 +3260,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/documentation_profile/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2718,7 +3296,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/documentation_profile/update",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2742,7 +3322,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/documentation_profile/delete?id_user_=1&id_documentation_profile=1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2790,8 +3372,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item_category/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "item_category", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"item_category",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -2809,7 +3398,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item_category/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2834,7 +3425,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item_category/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2860,7 +3453,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item_category/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -2894,8 +3489,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item_category/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "item_category", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"item_category",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -2913,8 +3515,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item_category/delete?id_user_=1&id_item_category=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "item_category", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"item_category",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -2956,8 +3565,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "item", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"item",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -2975,8 +3591,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "item", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"item",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -2994,7 +3618,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3020,7 +3646,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item/byItemCategoryQueryRead/2/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3046,8 +3674,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "item", "specificRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"item",
+												"specificRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -3074,8 +3710,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "item", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"item",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -3093,8 +3736,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/item/delete?id_user_=1&id_item=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "item", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"item",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -3127,8 +3777,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/control/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "control", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"control",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -3146,7 +3804,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/control/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3154,6 +3814,34 @@
 												"byCompanyQueryRead",
 												"1",
 												"*"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "byPositionLevel",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "token",
+												"value": "{{TOKEN_NASHOR}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{URL_NASHOR}}/app/business/control/byPositionLevel/1/1",
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"control",
+												"byPositionLevel",
+												"1",
+												"1"
 											]
 										}
 									},
@@ -3172,7 +3860,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/control/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3206,8 +3896,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/control/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "control", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"control",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -3225,8 +3922,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/control/delete?id_user_=1&id_control=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "control", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"control",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -3268,8 +3972,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "plugin_item", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"plugin_item",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -3287,7 +3998,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3312,7 +4025,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3338,7 +4053,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3372,8 +4089,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "plugin_item", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"plugin_item",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -3391,8 +4115,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item/delete?id_user_=1&id_plugin_item=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "plugin_item", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"plugin_item",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -3434,7 +4165,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item_column/create",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3458,7 +4191,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item_column/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3483,7 +4218,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item_column/byPluginItemQueryRead/2/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3509,7 +4246,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item_column/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3543,7 +4282,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item_column/update",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3567,7 +4308,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/plugin_item_column/delete?id_user_=1&id_plugin_item_column=1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3615,8 +4358,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "template", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"template",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -3634,8 +4384,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "template", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"template",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -3653,7 +4411,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3679,7 +4439,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3713,8 +4475,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "template", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"template",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -3732,8 +4501,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template/delete?id_user_=1&id_template=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "template", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"template",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -3775,8 +4551,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template_control/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "template_control", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"template_control",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -3803,7 +4586,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template_control/createWithNewControl",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3827,7 +4612,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template_control/byTemplateRead/3",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3852,7 +4639,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template_control/byControlRead/3",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3877,7 +4666,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template_control/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3911,7 +4702,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template_control/updateControlProperties",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3944,7 +4737,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template_control/updatePositions",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -3968,8 +4763,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/template_control/delete?id_user_=1&id_template_control=2",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "template_control", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"template_control",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -4011,8 +4813,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "flow", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"flow",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -4030,8 +4839,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "flow", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"flow",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -4049,7 +4866,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4075,8 +4894,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "flow", "specificRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"flow",
+												"specificRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -4103,8 +4930,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "flow", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"flow",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -4122,8 +4956,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow/delete?id_user_=1&id_flow=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "flow", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"flow",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -4165,8 +5006,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_status/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level_status", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level_status",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -4184,7 +5032,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_status/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4209,7 +5059,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_status/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4235,7 +5087,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_status/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4269,8 +5123,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_status/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level_status", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level_status",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -4288,8 +5149,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_status/delete?id_user_=1&id_level_status=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level_status", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level_status",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -4334,7 +5202,9 @@
 												},
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/level_profile_official/create",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -4358,7 +5228,9 @@
 												],
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/level_profile_official/byLevelProfileRead/3",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -4383,7 +5255,9 @@
 												],
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/level_profile_official/specificRead/1",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -4417,7 +5291,9 @@
 												},
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/level_profile_official/update",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -4441,7 +5317,9 @@
 												],
 												"url": {
 													"raw": "{{URL_NASHOR}}/app/business/level_profile_official/delete?id_user_=1&id_level_profile_official=1",
-													"host": ["{{URL_NASHOR}}"],
+													"host": [
+														"{{URL_NASHOR}}"
+													],
 													"path": [
 														"app",
 														"business",
@@ -4486,8 +5364,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_profile/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level_profile", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level_profile",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -4505,7 +5390,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_profile/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4530,7 +5417,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_profile/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4556,7 +5445,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_profile/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4590,8 +5481,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_profile/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level_profile", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level_profile",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -4609,8 +5507,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level_profile/delete?id_user_=1&id_level_profile=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level_profile", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level_profile",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -4652,8 +5557,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -4671,8 +5583,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -4690,7 +5610,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level/byCompanyQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4716,7 +5638,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level/byTemplateQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4742,7 +5666,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level/byLevelProfileQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4768,7 +5694,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level/byLevelStatusQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4794,8 +5722,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level", "specificRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level",
+												"specificRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -4822,8 +5758,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -4841,8 +5784,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/level/delete?id_user_=1&id_level=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "level", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"level",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -4884,8 +5834,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "flow_version", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"flow_version",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -4903,7 +5860,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version/byFlowRead/3",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4928,7 +5887,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -4962,8 +5923,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "flow_version", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"flow_version",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -4981,8 +5949,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version/delete?id_user_=1&id_flow_version=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "flow_version", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"flow_version",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -5024,7 +5999,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version_level/create",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5048,7 +6025,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version_level/byFlowVersionRead/2",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5073,7 +6052,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version_level/byFlowVersionExcludeConditionalRead/2",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5098,7 +6079,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version_level/byLevelRead/2",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5123,7 +6106,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version_level/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5157,7 +6142,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version_level/update",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5181,7 +6168,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/flow_version_level/delete?id_user_=1&id_flow_version_level=1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5229,8 +6218,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -5248,8 +6244,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -5267,7 +6271,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process/byOfficialQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5293,7 +6299,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process/byFlowVersionQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5319,7 +6327,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5353,8 +6363,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -5372,8 +6389,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process/delete?id_user_=1&id_process=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -5415,8 +6439,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/task/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "task", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"task",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -5434,8 +6465,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/task/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "task", "queryRead", "*"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"task",
+												"queryRead",
+												"*"
+											]
 										}
 									},
 									"response": []
@@ -5452,14 +6491,16 @@
 											}
 										],
 										"url": {
-											"raw": "{{URL_NASHOR}}/app/business/task/byProcessQueryRead/4/*",
-											"host": ["{{URL_NASHOR}}"],
+											"raw": "{{URL_NASHOR}}/app/business/task/byProcessQueryRead/1/*",
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
 												"task",
 												"byProcessQueryRead",
-												"4",
+												"1",
 												"*"
 											]
 										}
@@ -5479,7 +6520,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/task/byOfficialQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5505,7 +6548,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/task/byLevelQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5531,8 +6576,16 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/task/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "task", "specificRead", "1"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"task",
+												"specificRead",
+												"1"
+											]
 										}
 									},
 									"response": []
@@ -5550,7 +6603,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n\t\"id_user_\": 1,\r\n\t\"id_task\": 1,\r\n    \"process\": {\r\n        \"id_process\": 1\r\n    },\r\n    \"official\": {\r\n        \"id_official\": 1\r\n    },\r\n    \"level\": {\r\n        \"id_level\": 1\r\n    },\r\n\t\"number_task\": \"replaceValue\",\r\n    \"creation_date_task\": \"2022-09-13T09:27:36.000Z\",\r\n    \"type_status_task\": \"progress\",\r\n    \"type_action_task\": \"dispatched\",\r\n    \"date_task\": \"2022-09-13T09:40:26.000Z\"\r\n}",
+											"raw": "{\r\n\t\"id_user_\": 1,\r\n\t\"id_task\": 1,\r\n    \"process\": {\r\n        \"id_process\": 1\r\n    },\r\n    \"official\": {\r\n        \"id_official\": 1\r\n    },\r\n    \"level\": {\r\n        \"id_level\": 1\r\n    },\r\n\t\"number_task\": \"replaceValue\",\r\n    \"type_status_task\": \"progress\",\r\n    \"date_task\": \"2022-09-13T09:40:26.000Z\"\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -5559,8 +6612,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/task/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "task", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"task",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -5578,7 +6638,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n\t\"id_user_\": 1,\r\n\t\"id_task\": 1,\r\n    \"process\": {\r\n        \"id_process\": 1\r\n    },\r\n    \"official\": {\r\n        \"id_official\": 1\r\n    },\r\n    \"level\": {\r\n        \"id_level\": 1\r\n    },\r\n\t\"number_task\": \"replaceValue\",\r\n    \"creation_date_task\": \"2022-09-13T09:27:36.000Z\",\r\n    \"type_status_task\": \"progress\",\r\n    \"type_action_task\": \"dispatched\",\r\n    \"date_task\": \"2022-09-13T09:40:26.000Z\"\r\n}",
+											"raw": "{\r\n\t\"id_user_\": 1,\r\n\t\"id_task\": 1,\r\n    \"process\": {\r\n        \"id_process\": 1\r\n    },\r\n    \"official\": {\r\n        \"id_official\": 1\r\n    },\r\n    \"level\": {\r\n        \"id_level\": 1\r\n    },\r\n\t\"number_task\": \"replaceValue\",\r\n    \"type_status_task\": \"progress\",\r\n    \"date_task\": \"2022-09-13T09:40:26.000Z\"\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -5587,8 +6647,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/task/reasign",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "task", "reasign"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"task",
+												"reasign"
+											]
 										}
 									},
 									"response": []
@@ -5606,7 +6673,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n\t\"id_user_\": 1,\r\n\t\"id_task\": 1,\r\n    \"process\": {\r\n        \"id_process\": 1\r\n    },\r\n    \"official\": {\r\n        \"id_official\": 1\r\n    },\r\n    \"level\": {\r\n        \"id_level\": 1\r\n    },\r\n\t\"number_task\": \"replaceValue\",\r\n    \"creation_date_task\": \"2022-09-13T09:27:36.000Z\",\r\n    \"type_status_task\": \"progress\",\r\n    \"type_action_task\": \"dispatched\",\r\n    \"date_task\": \"2022-09-13T09:40:26.000Z\"\r\n}",
+											"raw": "{\r\n\t\"id_user_\": 1,\r\n\t\"id_task\": 1,\r\n    \"process\": {\r\n        \"id_process\": 1\r\n    },\r\n    \"official\": {\r\n        \"id_official\": 1\r\n    },\r\n    \"level\": {\r\n        \"id_level\": 1\r\n    },\r\n\t\"number_task\": \"replaceValue\",\r\n    \"type_status_task\": \"progress\",\r\n    \"date_task\": \"2022-09-13T09:40:26.000Z\"\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -5615,8 +6682,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/task/send",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "task", "send"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"task",
+												"send"
+											]
 										}
 									},
 									"response": []
@@ -5634,8 +6708,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/task/delete?id_user_=1&id_task=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "task", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"task",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -5677,8 +6758,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_item/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_item", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_item",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -5696,7 +6784,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_item/byOfficialRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5721,7 +6811,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_item/byProcessRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5746,7 +6838,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_item/byTaskRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5771,7 +6865,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_item/byLevelRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5796,7 +6892,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_item/byItemRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5821,7 +6919,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_item/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5855,8 +6955,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_item/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_item", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_item",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -5874,8 +6981,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_item/delete?id_user_=1&id_task=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_item", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_item",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -5917,7 +7031,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/column_process_item/create",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5941,7 +7057,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/column_process_item/byPluginItemColumnQueryRead/2/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5967,7 +7085,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/column_process_item/byProcessItemQueryRead/1/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -5993,7 +7113,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/column_process_item/byPluginItemColumnAndProcessItemRead/1/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6019,7 +7141,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/column_process_item/queryRead/*",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6044,7 +7168,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/column_process_item/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6078,7 +7204,9 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/column_process_item/update",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6102,7 +7230,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/column_process_item/delete?id_user_=1&id_column_process_item=1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6181,8 +7311,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_attached/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_attached", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_attached",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -6200,7 +7337,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_attached/byOfficialRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6225,7 +7364,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_attached/byProcessRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6250,7 +7391,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_attached/byTaskRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6275,7 +7418,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_attached/byLevelRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6300,7 +7445,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_attached/byItemRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6325,7 +7472,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_attached/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6359,8 +7508,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_attached/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_attached", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_attached",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -6378,8 +7534,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_attached/delete?id_user_=1&id_process_attached=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_attached", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_attached",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -6421,8 +7584,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_control/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_control", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_control",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -6440,7 +7610,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_control/byOfficialRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6465,7 +7637,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_control/byProcessRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6490,7 +7664,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_control/byTaskRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6515,7 +7691,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_control/byLevelRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6540,7 +7718,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_control/byControlRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6565,7 +7745,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_control/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6599,8 +7781,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_control/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_control", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_control",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -6618,8 +7807,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_control/delete?id_user_=1&id_process_control=1",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_control", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_control",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -6661,8 +7857,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_comment/create",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_comment", "create"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_comment",
+												"create"
+											]
 										}
 									},
 									"response": []
@@ -6680,7 +7883,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_comment/byOfficialRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6705,7 +7910,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_comment/byProcessRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6730,7 +7937,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_comment/byTaskRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6755,7 +7964,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_comment/byLevelRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6780,7 +7991,9 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_comment/specificRead/1",
-											"host": ["{{URL_NASHOR}}"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
 											"path": [
 												"app",
 												"business",
@@ -6814,8 +8027,15 @@
 										},
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_comment/update",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_comment", "update"]
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_comment",
+												"update"
+											]
 										}
 									},
 									"response": []
@@ -6833,8 +8053,15 @@
 										],
 										"url": {
 											"raw": "{{URL_NASHOR}}/app/business/process_comment/delete?id_user_=1&id_process_comment=2",
-											"host": ["{{URL_NASHOR}}"],
-											"path": ["app", "business", "process_comment", "delete"],
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"process_comment",
+												"delete"
+											],
 											"query": [
 												{
 													"key": "id_user_",
@@ -6869,8 +8096,14 @@
 								],
 								"url": {
 									"raw": "{{URL_NASHOR}}/app/report/delete?id_user_=1&name_report=report50",
-									"host": ["{{URL_NASHOR}}"],
-									"path": ["app", "report", "delete"],
+									"host": [
+										"{{URL_NASHOR}}"
+									],
+									"path": [
+										"app",
+										"report",
+										"delete"
+									],
 									"query": [
 										{
 											"key": "id_user_",
@@ -6908,8 +8141,13 @@
 						},
 						"url": {
 							"raw": "{{URL_NASHOR}}/dev/entityBackendGenerate",
-							"host": ["{{URL_NASHOR}}"],
-							"path": ["dev", "entityBackendGenerate"]
+							"host": [
+								"{{URL_NASHOR}}"
+							],
+							"path": [
+								"dev",
+								"entityBackendGenerate"
+							]
 						}
 					},
 					"response": []
@@ -6930,8 +8168,13 @@
 						},
 						"url": {
 							"raw": "{{URL_NASHOR}}/dev/entityFrontendGenerate",
-							"host": ["{{URL_NASHOR}}"],
-							"path": ["dev", "entityFrontendGenerate"]
+							"host": [
+								"{{URL_NASHOR}}"
+							],
+							"path": [
+								"dev",
+								"entityFrontendGenerate"
+							]
 						}
 					},
 					"response": []
