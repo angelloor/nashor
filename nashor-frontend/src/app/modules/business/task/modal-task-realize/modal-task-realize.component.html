@@ -15,15 +15,8 @@
                 <div class="flex-0 w-full rounded-2xl bg-default">
                     <div class="mt-2 rounded-xl bg-gray-400 bg-opacity-12 dark:bg-transparent dark:border p-3">
                         <div>
+                            <!-- Items -->
                             <ng-container *ngIf="template.plugin_item_process">
-                                <!-- <div class="flex mt-3 mb-3">
-                                    <div class="text-2xl">Items</div>
-                                    <button class="ml-auto" mat-flat-button [color]="'primary'"
-                                        (click)="openModalItems()" [matTooltip]="'Guardar'">
-                                        Items
-                                    </button>
-                                </div> -->
-                                <!-- Items -->
                                 <div class="space-y-4 mt-5 mb-5">
                                     <ng-container
                                         *ngFor="let elementItem of formArrayProcessItems.controls; let indexOne = index; let first = first; let last = last; trackBy: trackByFn">

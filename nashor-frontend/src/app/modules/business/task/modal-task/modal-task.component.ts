@@ -22,10 +22,16 @@ import { LocalDatePipe } from 'app/shared/pipes/local-date.pipe';
 import { GlobalUtils } from 'app/utils/GlobalUtils';
 import { FullDate } from 'app/utils/utils.types';
 import { environment } from 'environments/environment';
+import { cloneDeep } from 'lodash';
 import { Subject, takeUntil } from 'rxjs';
+import { ColumnProcessItemService } from '../../column-process-item/column-process-item.service';
+import { ColumnProcessItem } from '../../column-process-item/column-process-item.types';
 import { flow } from '../../flow/flow.data';
 import { FlowService } from '../../flow/flow.service';
 import { Flow } from '../../flow/flow.types';
+import { Item } from '../../item/item.types';
+import { LevelProfileOfficialService } from '../../level-profile/level-profile-official/level-profile-official.service';
+import { LevelProfileOfficial } from '../../level-profile/level-profile-official/level-profile-official.types';
 import { levelProfile } from '../../level-profile/level-profile.data';
 import { LevelProfileService } from '../../level-profile/level-profile.service';
 import { LevelProfile } from '../../level-profile/level-profile.types';
@@ -39,11 +45,19 @@ import { ModalSelectOfficialByLevelProfileService } from '../../official/modal-s
 import { official } from '../../official/official.data';
 import { OfficialService } from '../../official/official.service';
 import { Official } from '../../official/official.types';
+import { PluginItemColumnService } from '../../plugin-item/plugin-item-column/plugin-item-column.service';
+import { PluginItemColumn } from '../../plugin-item/plugin-item-column/plugin-item-column.types';
+import { PluginItemService } from '../../plugin-item/plugin-item.service';
+import { PluginItem } from '../../plugin-item/plugin-item.types';
 import { process } from '../../process/process.data';
 import { ProcessService } from '../../process/process.service';
 import { Process } from '../../process/process.types';
+import { TemplateService } from '../../template/template.service';
+import { Template } from '../../template/template.types';
 import { ProcessCommentService } from '../components/process-comment/process-comment.service';
 import { ProcessComment } from '../components/process-comment/process-comment.types';
+import { ProcessItemService } from '../components/process-item/process-item.service';
+import { ProcessItem } from '../components/process-item/process-item.types';
 import { ModalTaskRealizeService } from '../modal-task-realize/modal-task-realize.service';
 import { task } from '../task.data';
 import { TaskService } from '../task.service';
@@ -67,6 +81,7 @@ export class ModalTaskComponent implements OnInit {
   id_task: string = '';
   id_process: string = '';
   sourceProcess: boolean = false;
+  isOfficialModifier: boolean = false;
 
   listProcess: Process[] = [];
   selectedProcess: Process = process;
@@ -129,6 +144,15 @@ export class ModalTaskComponent implements OnInit {
   /**
    * isOpenModal
    */
+
+  expansionForm!: FormGroup;
+
+  listItem: Item[] = [];
+  select_plugin_item: boolean = false;
+  pluginItemColumns: PluginItemColumn[] = [];
+  processItem: ProcessItem[] = [];
+  isSelectedAllProcessItem: boolean = false;
+
   /**
    * Constructor
    */
@@ -154,7 +178,13 @@ export class ModalTaskComponent implements OnInit {
     private _modalSelectOfficialByLevelProfileService: ModalSelectOfficialByLevelProfileService,
     private _globalUtils: GlobalUtils,
     private _modalTaskRealizeService: ModalTaskRealizeService,
-    private _processCommentService: ProcessCommentService
+    private _processCommentService: ProcessCommentService,
+    private _templateService: TemplateService,
+    private _pluginItemService: PluginItemService,
+    private _pluginItemColumnService: PluginItemColumnService,
+    private _processItemService: ProcessItemService,
+    private _columnProcessItemService: ColumnProcessItemService,
+    private _levelProfileOfficialService: LevelProfileOfficialService
   ) {}
 
   /** ----------------------------------------------------------------------------------------------------- */
@@ -170,6 +200,21 @@ export class ModalTaskComponent implements OnInit {
 
     this.sourceProcess = this._data.sourceProcess;
 
+    /**
+     * form
+     */
+    this.expansionForm = this._formBuilder.group({
+      tasks: this._formBuilder.array([]),
+
+      processItems: this._formBuilder.array([]),
+      // processControls: this._formBuilder.array([]),
+      // processAttacheds: this._formBuilder.array([]),
+    });
+
+    (this.expansionForm.get('processItems') as FormArray).clear();
+    // (this.expansionForm.get('processControls') as FormArray).clear();
+    // (this.expansionForm.get('processAttacheds') as FormArray).clear();
+
     this._taskService
       .specificRead(this.id_task)
       .pipe(takeUntil(this._unsubscribeAll))
@@ -181,7 +226,6 @@ export class ModalTaskComponent implements OnInit {
         /**
          * Get the tasks
          */
-        console.log(this.task);
         this._taskService
           .byProcessQueryRead(this.task.process.id_process, '*')
           .pipe(takeUntil(this._unsubscribeAll))
@@ -189,8 +233,942 @@ export class ModalTaskComponent implements OnInit {
             this._taskService.tasks$
               .pipe(takeUntil(this._unsubscribeAll))
               .subscribe((tasks: Task[]) => {
-                console.log(tasks);
                 this.tasks = tasks;
+                /**
+                 * FormArray Tasks
+                 */
+                /**
+                 * Clear the tasks form arrays
+                 */
+                (this.expansionForm.get('tasks') as FormArray).clear();
+
+                const lotTasksFormGroups: any = [];
+                /**
+                 * Iterate through them
+                 */
+                this.tasks.forEach((_task) => {
+                  /**
+                   * Get isOfficialModifier
+                   */
+                  this._levelProfileOfficialService
+                    .byLevelProfileRead(
+                      _task.level.level_profile.id_level_profile
+                    )
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe(
+                      (_levelProfileOfficials: LevelProfileOfficial[]) => {
+                        var levelProfileOfficial: LevelProfileOfficial =
+                          _levelProfileOfficials.find(
+                            (item) =>
+                              item.official.user.id_user ==
+                              this.data.user.id_user
+                          )!;
+
+                        if (levelProfileOfficial) {
+                          this.isOfficialModifier =
+                            levelProfileOfficial.official_modifier;
+                        }
+                      }
+                    );
+                  /**
+                   * Get officialModifier
+                   */
+                  /**
+                   * Get template
+                   */
+                  this._templateService
+                    .specificRead(_task.level.template.id_template)
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe((_template: Template) => {
+                      console.log(_template);
+
+                      let _select_plugin_item: boolean = false;
+                      /**
+                       * Render PluginItem
+                       */
+                      if (_template.plugin_item_process) {
+                        /**
+                         * Get the pluginItem
+                         */
+                        this._pluginItemService
+                          .specificRead(_template.plugin_item.id_plugin_item)
+                          .pipe(takeUntil(this._unsubscribeAll))
+                          .subscribe((pluginItem: PluginItem) => {
+                            _select_plugin_item = pluginItem.select_plugin_item;
+
+                            /**
+                             * Create a element form group
+                             */
+                            lotTasksFormGroups.push(
+                              this._formBuilder.group({
+                                id_task: _task.id_task,
+                                process: [
+                                  {
+                                    value: _task.process,
+                                    disabled: true,
+                                  },
+                                ],
+                                official: [
+                                  {
+                                    value: _task.official,
+                                    disabled: false,
+                                  },
+                                  [Validators.required],
+                                ],
+                                level: [
+                                  {
+                                    value: _task.level,
+                                    disabled: false,
+                                  },
+                                  [Validators.required],
+                                ],
+                                number_task: [
+                                  {
+                                    value: _task.number_task,
+                                    disabled: false,
+                                  },
+                                  [Validators.required],
+                                ],
+                                type_status_task: [
+                                  {
+                                    value: _task.type_status_task,
+                                    disabled: false,
+                                  },
+                                  [Validators.required],
+                                ],
+                                date_task: [
+                                  {
+                                    value: _task.date_task,
+                                    disabled: false,
+                                  },
+                                  [Validators.required],
+                                ],
+                                template: _template,
+                                select_plugin_item: _select_plugin_item,
+                                processItems: this._formBuilder.array([]),
+                              })
+                            );
+
+                            this._pluginItemColumnService
+                              .byPluginItemQueryRead(
+                                _template.plugin_item.id_plugin_item,
+                                '*'
+                              )
+                              .pipe(takeUntil(this._unsubscribeAll))
+                              .subscribe(
+                                (pluginItemColumn: PluginItemColumn[]) => {
+                                  this.pluginItemColumns = pluginItemColumn;
+
+                                  // ------------------------------------------------------------------------
+                                  /**
+                                   * ProcessItem byLevelRead
+                                   */
+                                  this._processItemService
+                                    .byTaskRead(_task.id_task)
+                                    .pipe(takeUntil(this._unsubscribeAll))
+                                    .subscribe();
+                                  /**
+                                   * Get the processItems
+                                   */
+                                  this._processItemService.processItems$
+                                    .pipe(takeUntil(this._unsubscribeAll))
+                                    .subscribe(
+                                      (_processItem: ProcessItem[]) => {
+                                        console.log(_processItem);
+                                        this.processItem = _processItem;
+                                        if (
+                                          this.processItem.length ==
+                                          this.listItem.length
+                                        ) {
+                                          this.isSelectedAllProcessItem = true;
+                                        } else {
+                                          this.isSelectedAllProcessItem = false;
+                                        }
+                                        /**
+                                         * Filter select
+                                         */
+                                        /**
+                                         * Reset the selection
+                                         * 1) add attribute isSelected
+                                         * 2) [disabled]="entity.isSelected" in mat-option
+                                         */
+                                        this.listItem.map(
+                                          (item: Item, index: number) => {
+                                            item = {
+                                              ...item,
+                                              isSelected: false,
+                                            };
+                                            this.listItem[index] = item;
+                                          }
+                                        );
+
+                                        let filterListItems: Item[] = cloneDeep(
+                                          this.listItem
+                                        );
+                                        /**
+                                         * Selected Items
+                                         */
+                                        this.processItem.map(
+                                          (itemOne: ProcessItem) => {
+                                            /**
+                                             * All Items
+                                             */
+                                            filterListItems.map(
+                                              (
+                                                itemTwo: Item,
+                                                index: number
+                                              ) => {
+                                                if (
+                                                  itemTwo.id_item ==
+                                                  itemOne.item!.id_item
+                                                ) {
+                                                  itemTwo = {
+                                                    ...itemTwo,
+                                                    isSelected: true,
+                                                  };
+
+                                                  filterListItems[index] =
+                                                    itemTwo;
+                                                }
+                                              }
+                                            );
+                                          }
+                                        );
+
+                                        this.listItem = filterListItems;
+                                        /**
+                                         * Filter select
+                                         */
+                                        /**
+                                         * Clear the processItems form arrays
+                                         */
+                                        (
+                                          this.expansionForm.get(
+                                            'processItems'
+                                          ) as FormArray
+                                        ).clear();
+
+                                        const lotItemFormGroups: any = [];
+                                        /**
+                                         * Iterate through them
+                                         */
+
+                                        this.processItem.forEach(
+                                          (
+                                            _processItem: ProcessItem,
+                                            indexOne: number
+                                          ) => {
+                                            /**
+                                             * Crear los controles para los inputs horizontales
+                                             */
+
+                                            this.pluginItemColumns.forEach(
+                                              async (
+                                                _pluginItemColumn: PluginItemColumn
+                                              ) => {
+                                                /**
+                                                 * Creamos los controles
+                                                 */
+                                                this.expansionForm.addControl(
+                                                  `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`,
+                                                  new FormControl(
+                                                    {
+                                                      value: '',
+                                                      disabled:
+                                                        this.isOfficialModifier,
+                                                    },
+                                                    [
+                                                      Validators.required,
+                                                      Validators.maxLength(
+                                                        _pluginItemColumn.lenght_plugin_item_column
+                                                      ),
+                                                    ]
+                                                  )
+                                                );
+                                                /**
+                                                 * Buscar el valor de la columna
+                                                 */
+                                                this._columnProcessItemService
+                                                  .byPluginItemColumnAndProcessItemRead(
+                                                    _pluginItemColumn.id_plugin_item_column,
+                                                    _processItem.id_process_item
+                                                  )
+                                                  .pipe(
+                                                    takeUntil(
+                                                      this._unsubscribeAll
+                                                    )
+                                                  )
+                                                  .subscribe(
+                                                    (
+                                                      columnProcessItem: ColumnProcessItem
+                                                    ) => {
+                                                      if (columnProcessItem) {
+                                                        /**
+                                                         * Creamos los controles
+                                                         */
+                                                        this.expansionForm.addControl(
+                                                          `column${_pluginItemColumn.name_plugin_item_column}${indexOne}`,
+                                                          new FormControl(
+                                                            {
+                                                              value:
+                                                                columnProcessItem,
+                                                              disabled:
+                                                                this
+                                                                  .isOfficialModifier,
+                                                            },
+                                                            [
+                                                              Validators.required,
+                                                            ]
+                                                          )
+                                                        );
+
+                                                        this.expansionForm
+                                                          .get(
+                                                            `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`
+                                                          )
+                                                          ?.patchValue(
+                                                            columnProcessItem.value_column_process_item
+                                                          );
+                                                      }
+                                                    }
+                                                  );
+                                              }
+                                            );
+
+                                            lotItemFormGroups.push(
+                                              this._formBuilder.group({
+                                                id_process_item:
+                                                  _processItem.id_process_item,
+                                                official: [
+                                                  {
+                                                    value:
+                                                      _processItem.official,
+                                                    disabled: false,
+                                                  },
+                                                  [Validators.required],
+                                                ],
+                                                process: [
+                                                  {
+                                                    value: _processItem.process,
+                                                    disabled: false,
+                                                  },
+                                                  [Validators.required],
+                                                ],
+                                                task: [
+                                                  {
+                                                    value: _processItem.task,
+                                                    disabled: false,
+                                                  },
+                                                  [Validators.required],
+                                                ],
+                                                level: [
+                                                  {
+                                                    value: _processItem.level,
+                                                    disabled: false,
+                                                  },
+                                                  [Validators.required],
+                                                ],
+                                                item: [
+                                                  {
+                                                    value: _processItem.item,
+                                                    disabled: false,
+                                                  },
+                                                  [Validators.required],
+                                                ],
+                                                id_item: [
+                                                  {
+                                                    value:
+                                                      _processItem.item.id_item,
+                                                    disabled:
+                                                      this.processItem.length !=
+                                                        indexOne + 1 ||
+                                                      this
+                                                        .isSelectedAllProcessItem,
+                                                  },
+                                                  [Validators.required],
+                                                ],
+                                                editMode: [
+                                                  {
+                                                    value: false,
+                                                    disabled: false,
+                                                  },
+                                                ],
+                                                isOwner: [
+                                                  this.data.user.id_user ==
+                                                    _processItem.official.user
+                                                      .id_user,
+                                                ],
+                                              })
+                                            );
+                                          }
+                                        );
+                                        /**
+                                         * Add the element form groups to the element form array
+                                         */
+                                        lotItemFormGroups.forEach(
+                                          (_lotItemFormGroup: any) => {
+                                            (
+                                              this.expansionForm.get(
+                                                'processItems'
+                                              ) as FormArray
+                                            ).push(_lotItemFormGroup);
+                                          }
+                                        );
+                                      }
+                                    );
+
+                                  // ------------------------------------------------------------------------
+                                }
+                              );
+                            /**
+                             * Add the element form groups to the element form array
+                             */
+                            lotTasksFormGroups.forEach(
+                              (lotTaskFormGroup: any) => {
+                                (
+                                  this.expansionForm.get('tasks') as FormArray
+                                ).push(lotTaskFormGroup);
+                              }
+                            );
+                          });
+                      }
+                      // /**
+                      //  * Render PluginAttached
+                      //  */
+                      // if (_template.plugin_attached_process) {
+                      // }
+                    });
+                });
+                /**
+                 * FormArray Tasks
+                 */
+
+                // this.tasks.map((_task: Task) => {
+                //   if (_task.id_task != ' ') {
+                //     console.log(_task.level.template.id_template);
+                //     this._templateService
+                //       .specificRead(_task.level.template.id_template)
+                //       .pipe(takeUntil(this._unsubscribeAll))
+                //       .subscribe((_template: Template) => {
+                //         /**
+                //          * Get the template
+                //          */
+                //         var template = _template;
+
+                //         /**
+                //          * Render PluginItem
+                //          */
+
+                //         // /**
+                //         // * processControl byLevelRead
+                //         // */
+                //         // this._processControlService
+                //         //   .byLevelRead(_task.level.id_level)
+                //         //   .pipe(takeUntil(this._unsubscribeAll))
+                //         //   .subscribe();
+                //         // /**
+                //         // * Subscribe byTemplateRead
+                //         // */
+                //         // if (
+                //         //   template.id_template &&
+                //         //   template.id_template != ' '
+                //         // ) {
+                //         //   this._templateControlService
+                //         //     .byTemplateRead(template.id_template)
+                //         //     .pipe(takeUntil(this._unsubscribeAll))
+                //         //     .subscribe((_templateControl: TemplateControl[]) => {
+                //         //       this.templateControl = _templateControl;
+                //         //       /**
+                //         //       * Get the processControls
+                //         //       */
+                //         //       this._processControlService.processControls$
+                //         //         .pipe(takeUntil(this._unsubscribeAll))
+                //         //         .subscribe((_processControl: ProcessControl[]) => {
+                //         //           this.processControl = _processControl;
+                //         //           /**
+                //         //           * Clear the processControls form arrays
+                //         //           */
+                //         //           (
+                //         //             this.expansionForm.get(
+                //         //               'processControls'
+                //         //             ) as FormArray
+                //         //           ).clear();
+
+                //         //           const lotControlFormGroups: any = [];
+
+                //         //           /**
+                //         //           * Iterate through them
+                //         //           */
+                //         //           this.templateControl.forEach((_templateControl) => {
+                //         //             /**
+                //         //             * Set controls
+                //         //             */
+                //         //             if (
+                //         //               _templateControl.control.type_control === 'input' ||
+                //         //               _templateControl.control.type_control ===
+                //         //                 'textArea' ||
+                //         //               _templateControl.control.type_control ===
+                //         //                 'radioButton' ||
+                //         //               _templateControl.control.type_control ===
+                //         //                 'select' ||
+                //         //               _templateControl.control.type_control === 'date'
+                //         //             ) {
+                //         //               this.expansionForm.addControl(
+                //         //                 _templateControl.control.form_name_control,
+                //         //                 new FormControl(
+                //         //                   {
+                //         //                     value:
+                //         //                       _templateControl.control
+                //         //                         .initial_value_control,
+                //         //                     disabled: this.isOfficialModifier,
+                //         //                   },
+                //         //                   [
+                //         //                     _templateControl.control.required_control
+                //         //                       ? Validators.required
+                //         //                       : Validators.min(0),
+                //         //                   ]
+                //         //                 )
+                //         //               );
+                //         //             } else if (
+                //         //               _templateControl.control.type_control === 'checkBox'
+                //         //             ) {
+                //         //               _templateControl.control.options_control.map(
+                //         //                 (item: any) => {
+                //         //                   this.expansionForm.addControl(
+                //         //                     `${_templateControl.control.form_name_control}${item.value}`,
+                //         //                     new FormControl(null)
+                //         //                   );
+                //         //                 }
+                //         //               );
+                //         //             } else if (
+                //         //               _templateControl.control.type_control ===
+                //         //               'dateRange'
+                //         //             ) {
+                //         //               this.expansionForm.addControl(
+                //         //                 `${_templateControl.control.form_name_control}StartDate`,
+                //         //                 new FormControl(
+                //         //                   {
+                //         //                     value:
+                //         //                       _templateControl.control
+                //         //                         .initial_value_control,
+                //         //                     disabled: this.isOfficialModifier,
+                //         //                   },
+                //         //                   [
+                //         //                     _templateControl.control.required_control
+                //         //                       ? Validators.required
+                //         //                       : Validators.min(0),
+                //         //                   ]
+                //         //                 )
+                //         //               );
+                //         //               this.expansionForm.addControl(
+                //         //                 `${_templateControl.control.form_name_control}EndDate`,
+                //         //                 new FormControl(
+                //         //                   {
+                //         //                     value:
+                //         //                       _templateControl.control
+                //         //                         .initial_value_control,
+                //         //                     disabled: this.isOfficialModifier,
+                //         //                   },
+                //         //                   [
+                //         //                     _templateControl.control.required_control
+                //         //                       ? Validators.required
+                //         //                       : Validators.min(0),
+                //         //                   ]
+                //         //                 )
+                //         //               );
+                //         //             }
+                //         //             /**
+                //         //             * Set controls
+                //         //             */
+                //         //             let _processControl: ProcessControl =
+                //         //               this.processControl.find(
+                //         //                 (_processControl: ProcessControl) =>
+                //         //                   _processControl.control.id_control ===
+                //         //                   _templateControl.control.id_control
+                //         //               )!;
+
+                //         //             if (_processControl) {
+                //         //               if (
+                //         //                 _templateControl.control.type_control ===
+                //         //                   'input' ||
+                //         //                 _templateControl.control.type_control ===
+                //         //                   'textArea' ||
+                //         //                 _templateControl.control.type_control ===
+                //         //                   'radioButton' ||
+                //         //                 _templateControl.control.type_control ===
+                //         //                   'select' ||
+                //         //                 _templateControl.control.type_control === 'date'
+                //         //               ) {
+                //         //                 this.expansionForm
+                //         //                   .get(_templateControl.control.form_name_control)
+                //         //                   ?.patchValue(
+                //         //                     _processControl.value_process_control
+                //         //                   );
+                //         //               } else if (
+                //         //                 _templateControl.control.type_control ===
+                //         //                 'checkBox'
+                //         //               ) {
+                //         //                 _templateControl.control.options_control.map(
+                //         //                   (option: any) => {
+                //         //                     const _form_name_control = `${_templateControl.control.form_name_control}${option.value}`;
+                //         //                     let checkeds: string[] = [];
+
+                //         //                     if (
+                //         //                       _processControl.value_process_control !=
+                //         //                         undefined &&
+                //         //                       _processControl.value_process_control !=
+                //         //                         'undefined' &&
+                //         //                       _processControl.value_process_control !=
+                //         //                         ' ' &&
+                //         //                       _processControl.value_process_control !=
+                //         //                         null
+                //         //                     ) {
+                //         //                       checkeds = JSON.parse(
+                //         //                         _processControl.value_process_control
+                //         //                       );
+                //         //                     }
+
+                //         //                     const isChecked = checkeds.find(
+                //         //                       (item: string) =>
+                //         //                         item === _form_name_control
+                //         //                     );
+
+                //         //                     this.expansionForm
+                //         //                       .get(_form_name_control)
+                //         //                       ?.patchValue(isChecked ? true : null);
+                //         //                   }
+                //         //                 );
+                //         //               } else if (
+                //         //                 _templateControl.control.type_control ===
+                //         //                 'dateRange'
+                //         //               ) {
+                //         //                 let value: any;
+                //         //                 let startDate: string = '';
+                //         //                 let endDate: string = '';
+
+                //         //                 if (
+                //         //                   _processControl.value_process_control !=
+                //         //                     undefined &&
+                //         //                   _processControl.value_process_control !=
+                //         //                     'undefined' &&
+                //         //                   _processControl.value_process_control != ' ' &&
+                //         //                   _processControl.value_process_control != null
+                //         //                 ) {
+                //         //                   value = JSON.parse(
+                //         //                     _processControl.value_process_control
+                //         //                   );
+
+                //         //                   startDate = value.startDate;
+                //         //                   endDate = value.endDate;
+                //         //                 }
+
+                //         //                 /**
+                //         //                 * Set values date
+                //         //                 */
+                //         //                 this.expansionForm
+                //         //                   .get(
+                //         //                     `${_templateControl.control.form_name_control}StartDate`
+                //         //                   )
+                //         //                   ?.patchValue(startDate);
+
+                //         //                 this.expansionForm
+                //         //                   .get(
+                //         //                     `${_templateControl.control.form_name_control}EndDate`
+                //         //                   )
+                //         //                   ?.patchValue(endDate);
+                //         //               }
+                //         //               /**
+                //         //               * Set the value if haved
+                //         //               */
+                //         //             } else {
+                //         //               _processControl = this._processControl;
+                //         //             }
+                //         //             /**
+                //         //             * Create an element form group
+                //         //             */
+                //         //             lotControlFormGroups.push(
+                //         //               this._formBuilder.group({
+                //         //                 id_template_control:
+                //         //                   _templateControl.id_template_control,
+                //         //                 template: _templateControl.template,
+                //         //                 control: _templateControl.control,
+                //         //                 ordinal_position:
+                //         //                   _templateControl.ordinal_position,
+                //         //                 /**
+                //         //                 * Upload properties
+                //         //                 */
+                //         //                 isComplete:
+                //         //                   _processControl.id_process_control != ' '
+                //         //                     ? true
+                //         //                     : false,
+                //         //                 id_process_control: _processControl
+                //         //                   ? _processControl.id_process_control
+                //         //                   : '',
+                //         //                 official: _processControl
+                //         //                   ? _processControl.official
+                //         //                   : '',
+                //         //                 process: _processControl
+                //         //                   ? _processControl.process
+                //         //                   : '',
+                //         //                 task: _processControl ? _processControl.task : '',
+                //         //                 level: _processControl
+                //         //                   ? _processControl.level
+                //         //                   : '',
+                //         //                 value_process_control: _processControl
+                //         //                   ? _processControl.value_process_control
+                //         //                   : '',
+                //         //                 last_change_process_control: _processControl
+                //         //                   ? _processControl.last_change_process_control
+                //         //                   : '',
+                //         //                 isOwner: [
+                //         //                   this.data.user.id_user ==
+                //         //                     _processControl.official.user.id_user,
+                //         //                 ],
+                //         //               })
+                //         //             );
+                //         //           });
+                //         //           /**
+                //         //           * Add the element form groups to the element form array
+                //         //           */
+                //         //           lotControlFormGroups.forEach(
+                //         //             (_lotControlFormGroup: any) => {
+                //         //               (
+                //         //                 this.expansionForm.get(
+                //         //                   'processControls'
+                //         //                 ) as FormArray
+                //         //               ).push(_lotControlFormGroup);
+                //         //             }
+                //         //           );
+                //         //         });
+                //         //     });
+                //         // }
+
+                //         // /**
+                //         // * Attached
+                //         // */
+                //         // if (template.plugin_attached_process) {
+                //         //   /**
+                //         //   * processAttached byLevelRead
+                //         //   */
+                //         //   this._processAttachedService
+                //         //     .byTaskRead(_task.id_task)
+                //         //     .pipe(takeUntil(this._unsubscribeAll))
+                //         //     .subscribe();
+                //         //   /**
+                //         //   * Render plugin_attached_process
+                //         //   */
+                //         //   this._documentationProfileAttachedService
+                //         //     .byDocumentationProfileRead(
+                //         //       template.documentation_profile.id_documentation_profile
+                //         //     )
+                //         //     .pipe(takeUntil(this._unsubscribeAll))
+                //         //     .subscribe(
+                //         //       (
+                //         //         _documentationProfileAttacheds: DocumentationProfileAttached[]
+                //         //       ) => {
+                //         //         this.documentationProfileAttacheds =
+                //         //           _documentationProfileAttacheds;
+                //         //         /**
+                //         //         * Get the processAttacheds
+                //         //         */
+                //         //         this._processAttachedService.processAttacheds$
+                //         //           .pipe(takeUntil(this._unsubscribeAll))
+                //         //           .subscribe((_processAttached: ProcessAttached[]) => {
+                //         //             this.processAttached = _processAttached;
+                //         //             /**
+                //         //             * Clear the lotAttached form arrays
+                //         //             */
+                //         //             (
+                //         //               this.expansionForm.get(
+                //         //                 'processAttacheds'
+                //         //               ) as FormArray
+                //         //             ).clear();
+
+                //         //             const lotAttachedFormGroups: any = [];
+                //         //             /**
+                //         //             * Iterate through them
+                //         //             */
+                //         //             this.documentationProfileAttacheds.forEach(
+                //         //               (
+                //         //                 _documentationProfileAttached: DocumentationProfileAttached,
+                //         //                 index: number
+                //         //               ) => {
+                //         //                 /**
+                //         //                 * Add control for the input file
+                //         //                 */
+                //         //                 this.expansionForm.addControl(
+                //         //                   'removablefile' + index,
+                //         //                   new FormControl(
+                //         //                     {
+                //         //                       value: '',
+                //         //                       disabled: this.isOfficialModifier,
+                //         //                     },
+                //         //                     [
+                //         //                       FileValidator.maxContentSize(
+                //         //                         _documentationProfileAttached.attached
+                //         //                           .length_mb_attached *
+                //         //                           1024 *
+                //         //                           1024
+                //         //                       ),
+                //         //                       _documentationProfileAttached.attached
+                //         //                         .required_attached
+                //         //                         ? Validators.required
+                //         //                         : Validators.min(0),
+                //         //                     ]
+                //         //                   )
+                //         //                 );
+                //         //                 let _processAttached: ProcessAttached =
+                //         //                   this.processAttached.find(
+                //         //                     (_processAttached: ProcessAttached) =>
+                //         //                       _processAttached.attached.id_attached ===
+                //         //                       _documentationProfileAttached.attached
+                //         //                         .id_attached
+                //         //                   )!;
+
+                //         //                 let _matTooltip = ``;
+
+                //         //                 if (_processAttached) {
+                //         //                   /**
+                //         //                   * Creamos un objeto file para ponerlo dentro del imput para que no lo puedan remplazar
+                //         //                   */
+
+                //         //                   const file = new File(
+                //         //                     ['attached'],
+                //         //                     this.getNameFile(
+                //         //                       _processAttached.server_path
+                //         //                     ),
+                //         //                     {
+                //         //                       type: 'application/pdf',
+                //         //                     }
+                //         //                   );
+
+                //         //                   this.expansionForm
+                //         //                     .get('removablefile' + index)
+                //         //                     ?.patchValue(new FileInput([file]));
+                //         //                   /**
+                //         //                   * Verificar si la tarea esta enviada  y bloquear removablefile + index
+                //         //                   */
+                //         //                   if (this.isOfficialModifier) {
+                //         //                     this.expansionForm
+                //         //                       .get('removablefile' + index)
+                //         //                       ?.disable();
+                //         //                   }
+                //         //                   /**
+                //         //                   * Set _matTooltip
+                //         //                   */
+                //         //                   _matTooltip = `${_processAttached.length_mb} MB`;
+                //         //                 } else {
+                //         //                   _processAttached = this._processAttached;
+                //         //                 }
+
+                //         //                 /**
+                //         //                 * Create a element form group
+                //         //                 */
+                //         //                 lotAttachedFormGroups.push(
+                //         //                   this._formBuilder.group({
+                //         //                     id_documentation_profile_attached:
+                //         //                       _documentationProfileAttached.id_documentation_profile_attached,
+                //         //                     id_attached:
+                //         //                       _documentationProfileAttached.attached
+                //         //                         .id_attached,
+                //         //                     name_attached:
+                //         //                       _documentationProfileAttached.attached
+                //         //                         .name_attached,
+                //         //                     description_attached:
+                //         //                       _documentationProfileAttached.attached
+                //         //                         .description_attached,
+                //         //                     length_mb_attached:
+                //         //                       _documentationProfileAttached.attached
+                //         //                         .length_mb_attached,
+                //         //                     required_attached:
+                //         //                       _documentationProfileAttached.attached
+                //         //                         .required_attached,
+                //         //                     documentation_profile:
+                //         //                       _documentationProfileAttached.documentation_profile,
+                //         //                     matTooltip: _matTooltip,
+                //         //                     /**
+                //         //                     * Upload properties
+                //         //                     */
+                //         //                     isUpload:
+                //         //                       _processAttached.id_process_attached != ' '
+                //         //                         ? true
+                //         //                         : false,
+                //         //                     id_process_attached: _processAttached
+                //         //                       ? _processAttached.id_process_attached
+                //         //                       : '',
+                //         //                     official: _processAttached
+                //         //                       ? _processAttached.official
+                //         //                       : '',
+                //         //                     process: _processAttached
+                //         //                       ? _processAttached.process
+                //         //                       : '',
+                //         //                     task: _processAttached
+                //         //                       ? _processAttached.task
+                //         //                       : '',
+                //         //                     level: _processAttached
+                //         //                       ? _processAttached.level
+                //         //                       : '',
+                //         //                     attached: _processAttached
+                //         //                       ? _processAttached.attached
+                //         //                       : '',
+                //         //                     file_name: [
+                //         //                       _processAttached.file_name != ' ' &&
+                //         //                       _processAttached.file_name != null &&
+                //         //                       _processAttached.file_name != undefined
+                //         //                         ? _processAttached.file_name
+                //         //                         : '',
+                //         //                       _documentationProfileAttached.attached
+                //         //                         .required_attached
+                //         //                         ? Validators.required
+                //         //                         : Validators.min(0),
+                //         //                     ],
+                //         //                     length_mb: _processAttached
+                //         //                       ? _processAttached.length_mb
+                //         //                       : '',
+                //         //                     extension: _processAttached
+                //         //                       ? _processAttached.extension
+                //         //                       : '',
+                //         //                     server_path: _processAttached
+                //         //                       ? _processAttached.server_path
+                //         //                       : '',
+                //         //                     alfresco_path: _processAttached
+                //         //                       ? _processAttached.alfresco_path
+                //         //                       : '',
+                //         //                     upload_date: _processAttached
+                //         //                       ? _processAttached.upload_date
+                //         //                       : '',
+                //         //                     isOwner: [
+                //         //                       this.data.user.id_user ==
+                //         //                         _processAttached.official.user.id_user,
+                //         //                     ],
+                //         //                   })
+                //         //                 );
+                //         //               }
+                //         //             );
+                //         //             /**
+                //         //             * Add the element form groups to the element form array
+                //         //             */
+                //         //             lotAttachedFormGroups.forEach(
+                //         //               (lotAttachedFormGroup: any) => {
+                //         //                 (
+                //         //                   this.expansionForm.get(
+                //         //                     'processAttacheds'
+                //         //                   ) as FormArray
+                //         //                 ).push(lotAttachedFormGroup);
+                //         //               }
+                //         //             );
+                //         //           });
+                //         //       }
+                //         //     );
+                //         // }
+                //         /**
+                //          * Mark for check
+                //          */
+                //         this._changeDetectorRef.markForCheck();
+                //       });
+                //   }
+                // });
+
                 /**
                  * Mark for check
                  */
@@ -443,6 +1421,14 @@ export class ModalTaskComponent implements OnInit {
       });
   }
 
+  get formArrayTasks(): FormArray {
+    return this.expansionForm.get('tasks') as FormArray;
+  }
+
+  get formArrayProcessItems(): FormArray {
+    return this.expansionForm.get('processItems') as FormArray;
+  }
+
   get formArrayProcessComments(): FormArray {
     return this.taskForm.get('processComments') as FormArray;
   }
@@ -489,6 +1475,284 @@ export class ModalTaskComponent implements OnInit {
     }
   }
 
+  /**
+   * createProcessItem
+   */
+  createProcessItem() {
+    const id_user_ = this.data.user.id_user;
+    const id_official: string = this.task.official.id_official;
+    const id_process: string = this.task.process.id_process;
+    const id_task: string = this.task.id_task;
+    const id_level: string = this.task.level.id_level;
+
+    this._processItemService
+      .create(id_user_, id_official, id_process, id_task, id_level)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (_processItem: ProcessItem) => {
+          if (_processItem) {
+            const index = this.processItem.findIndex(
+              (_processItem) =>
+                _processItem.id_process_item == _processItem.id_process_item
+            );
+
+            this._notificationService.success('Item agregado correctamente');
+          } else {
+            this._notificationService.error('Ocurrió un error agregar el item');
+          }
+          /**
+           * Mark for check
+           */
+          this._changeDetectorRef.markForCheck();
+        },
+        error: (error: { error: MessageAPI }) => {
+          this._notificationService.error(
+            !error.error
+              ? '¡Error interno!, consulte al administrador.'
+              : !error.error.description
+              ? '¡Error interno!, consulte al administrador.'
+              : error.error.description
+          );
+        },
+      });
+  }
+  /**
+   * updateProcessItem
+   * @param index
+   */
+  updateProcessItem(index: number) {
+    const id_user_ = this.data.user.id_user;
+    const elementProcessItemFormArray = this.expansionForm.get(
+      'processItems'
+    ) as FormArray;
+
+    let processItem = elementProcessItemFormArray.getRawValue()[index];
+
+    processItem = {
+      ...processItem,
+      id_user_: parseInt(id_user_),
+      id_process_item: parseInt(processItem.id_process_item),
+      official: {
+        id_official: parseInt(this.task.official.id_official),
+      },
+      process: {
+        id_process: parseInt(processItem.process.id_process),
+      },
+      task: {
+        id_task: parseInt(processItem.task.id_task),
+      },
+      level: {
+        id_level: parseInt(processItem.level.id_level),
+      },
+      item: {
+        id_item: parseInt(processItem.item.id_item),
+      },
+    };
+
+    this._processItemService
+      .update(processItem)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (_processItem: ProcessItem) => {
+          if (_processItem) {
+            this._notificationService.success('Item actualizado');
+          } else {
+            this._notificationService.error(
+              'Ocurrió un error al actualiar el item'
+            );
+          }
+          /**
+           * Mark for check
+           */
+          this._changeDetectorRef.markForCheck();
+        },
+        error: (error: { error: MessageAPI }) => {
+          this._notificationService.error(
+            !error.error
+              ? '¡Error interno!, consulte al administrador.'
+              : !error.error.description
+              ? '¡Error interno!, consulte al administrador.'
+              : error.error.description
+          );
+        },
+      });
+  }
+  /**
+   * deleteProcessItem
+   * @param index
+   */
+  deleteProcessItem(index: number, pluginItemColumns: PluginItemColumn[]) {
+    const elementProcessItemFormArray = this.expansionForm.get(
+      'processItems'
+    ) as FormArray;
+    /**
+     * Delete control of columns
+     */
+    pluginItemColumns.forEach((pluginItemColumn: PluginItemColumn) => {
+      this.expansionForm.removeControl(
+        `formControl${pluginItemColumn.name_plugin_item_column}${index}`
+      );
+      this.expansionForm.removeControl(
+        `column${pluginItemColumn.name_plugin_item_column}${index}`
+      );
+    });
+
+    const id_process_item =
+      elementProcessItemFormArray.getRawValue()[index].id_process_item;
+    const id_user_ = this.data.user.id_user;
+
+    this._processItemService
+      .delete(id_user_, id_process_item)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response: boolean) => {
+          if (response) {
+            this._notificationService.success('Item eliminado');
+          } else {
+            this._notificationService.error(
+              'Ocurrió un error eliminado el item'
+            );
+          }
+          /**
+           * Mark for check
+           */
+          this._changeDetectorRef.markForCheck();
+        },
+        error: (error: { error: MessageAPI }) => {
+          this._notificationService.error(
+            !error.error
+              ? '¡Error interno!, consulte al administrador.'
+              : !error.error.description
+              ? '¡Error interno!, consulte al administrador.'
+              : error.error.description
+          );
+        },
+      });
+  }
+  /**
+   * Update the columnProcessItem
+   */
+  updateColumnProcessItem(
+    name_plugin_item_column: string,
+    index: number,
+    column: PluginItemColumn
+  ): void {
+    const elementProcessItemFormArray = this.expansionForm.get(
+      'processItems'
+    ) as FormArray;
+
+    let processItem = elementProcessItemFormArray.getRawValue()[index];
+
+    const id_user_ = this.data.user.id_user;
+    const formControl = this.expansionForm.get(
+      `formControl${name_plugin_item_column}${index}`
+    );
+
+    const hasErrorLength: boolean = formControl?.hasError('maxlength')!;
+
+    const valueFormControl = formControl?.value;
+    /**
+     * Get the columnProcessItem
+     */
+    let columnProcessItem = this.expansionForm.get(
+      `column${name_plugin_item_column}${index}`
+    )?.value;
+
+    if (!hasErrorLength) {
+      if (columnProcessItem) {
+        /**
+         * Delete whitespace (trim() the atributes type string)
+         */
+        columnProcessItem = {
+          ...columnProcessItem,
+          id_user_: parseInt(id_user_),
+          id_column_process_item: parseInt(
+            columnProcessItem.id_column_process_item
+          ),
+          plugin_item_column: {
+            id_plugin_item_column: parseInt(
+              columnProcessItem.plugin_item_column.id_plugin_item_column
+            ),
+          },
+          process_item: {
+            id_process_item: parseInt(
+              columnProcessItem.process_item.id_process_item
+            ),
+          },
+          value_column_process_item: valueFormControl,
+        };
+        /**
+         * Update
+         */
+        this._columnProcessItemService
+          .update(columnProcessItem)
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe({
+            next: (_columnProcessItem: ColumnProcessItem) => {
+              if (_columnProcessItem) {
+                this._notificationService.success(
+                  'Column process item actualizada correctamente'
+                );
+              } else {
+                this._notificationService.error(
+                  '¡Error interno!, consulte al administrador.'
+                );
+              }
+            },
+            error: (error: { error: MessageAPI }) => {
+              this._notificationService.error(
+                !error.error
+                  ? '¡Error interno!, consulte al administrador.'
+                  : !error.error.description
+                  ? '¡Error interno!, consulte al administrador.'
+                  : error.error.description
+              );
+            },
+          });
+      } else {
+        /**
+         * Create the column_process_item
+         */
+        this._columnProcessItemService
+          .create(
+            id_user_,
+            column.id_plugin_item_column,
+            processItem.id_process_item,
+            valueFormControl
+          )
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe({
+            next: (_columnProcessItem: ColumnProcessItem) => {
+              if (_columnProcessItem) {
+                this._notificationService.success(
+                  'Column process item agregada correctamente'
+                );
+              } else {
+                this._notificationService.error(
+                  '¡Error interno!, consulte al administrador.'
+                );
+              }
+            },
+            error: (error: { error: MessageAPI }) => {
+              this._notificationService.error(
+                !error.error
+                  ? '¡Error interno!, consulte al administrador.'
+                  : !error.error.description
+                  ? '¡Error interno!, consulte al administrador.'
+                  : error.error.description
+              );
+            },
+          });
+      }
+      this._processItemService.$processItems = this.processItem;
+    } else {
+      this._notificationService.error(`
+          La columna 
+          ${column.name_plugin_item_column} en la fila ${index + 1} ha
+          excedido los caracteres máximos (${column.lenght_plugin_item_column}
+          caracteres)`);
+    }
+  }
   /** ----------------------------------------------------------------------------------------------------- */
   /** @ Public methods
       /** ----------------------------------------------------------------------------------------------------- */

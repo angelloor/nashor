@@ -119,31 +119,96 @@
 
 
         <!-- task -->
-
-
-
         <mat-accordion class="example-headers-align" multi>
-            <ng-container *ngFor="let task of tasks; let i = index; trackBy: trackByFn">
+            <ng-container
+                *ngFor="let elementTask of formArrayTasks.controls; let indexOne = index; let first = first; let last = last; trackBy: trackByFn">
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            {{task.number_task}}
+                            {{formArrayTasks.getRawValue()[indexOne].number_task}}
                         </mat-panel-title>
                         <mat-panel-description>
-                            Type your name and age
-                            <mat-icon>account_circle</mat-icon>
+                            {{formArrayTasks.getRawValue()[indexOne].date_task}}
                         </mat-panel-description>
                     </mat-expansion-panel-header>
 
-                    <mat-form-field appearance="fill">
-                        <mat-label>First name</mat-label>
-                        <input matInput>
-                    </mat-form-field>
+                    <!-- Items -->
+                    <ng-container *ngIf="formArrayTasks.getRawValue()[indexOne].plugin_item_process">
+                        <div class="space-y-4 mt-5 mb-5">
+                            <ng-container
+                                *ngFor="let elementItem of formArrayProcessItems.controls; let indexOne = index; let first = first; let last = last; trackBy: trackByFn">
+                                <div class="relative flex">
+                                    <button mat-icon-button class="self-center" class="self-start"
+                                        [ngClass]="first ? 'self-center' : 'self-start'"
+                                        [matTooltip]="formArrayProcessItems.getRawValue()[indexOne].official.user.person.name_person + ' ' + formArrayProcessItems.getRawValue()[indexOne].official.user.person.last_name_person + ' - ' ">
+                                        <span class="relative">
+                                            <img class="w-7 h-7 rounded-full"
+                                                *ngIf="formArrayProcessItems.getRawValue()[indexOne].official.user.avatar_user"
+                                                [src]="_urlPathAvatar + formArrayProcessItems.getRawValue()[indexOne].official.user.avatar_user">
+                                        </span>
+                                    </button>
+                                    <ng-container *ngIf="select_plugin_item">
+                                        <mat-form-field class="angel-mat-no-subscript w-full max-w-40">
+                                            <mat-label *ngIf="first">Elemento</mat-label>
+                                            <mat-select
+                                                [formControl]="getFromControl(formArrayProcessItems, indexOne, 'id_item')"
+                                                (selectionChange)="updateProcessItem(indexOne)">
+                                                <mat-option *ngFor="let item of listItem; trackBy: trackByFn"
+                                                    [disabled]="item.isSelected" [value]="item.id_item"
+                                                    matTooltip="{{item.description_item}}">
+                                                    {{item.name_item}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </ng-container>
 
-                    <mat-form-field appearance="fill">
-                        <mat-label>Age</mat-label>
-                        <input matInput type="number" min="1">
-                    </mat-form-field>
+                                    <!-- Render horizontal columns -->
+                                    <ng-container
+                                        *ngFor="let column of pluginItemColumns; let indexTwo = index; let firstColumn = first; let lastColumn = last; trackBy: trackByFn">
+                                        <mat-form-field class="angel-mat-no-subscript flex-auto w-full ml-2 sm:ml-4">
+                                            <mat-label *ngIf="first">{{column.name_plugin_item_column}}
+                                            </mat-label>
+                                            <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                                [svgIcon]="'heroicons_solid:tag'">
+                                            </mat-icon>
+                                            <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                                                [cdkAutosizeMinRows]="2"
+                                                [formControlName]="'formControl'+column.name_plugin_item_column+indexOne"
+                                                [cdkAutosizeMaxRows]="30"
+                                                (change)="updateColumnProcessItem(column.name_plugin_item_column, indexOne, column)"></textarea>
+                                        </mat-form-field>
+                                    </ng-container>
+                                    <!-- Render horizontal columns -->
+
+                                    <ng-container *ngIf="isOfficialModifier">
+                                        <div class="flex items-center w-10 pl-2 self-start" [ngClass]="{'mt-6': first}">
+                                            <button class="w-8 h-8 min-h-8" mat-icon-button
+                                                (click)="deleteProcessItem(indexOne, pluginItemColumns)"
+                                                matTooltip="Eliminar">
+                                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'">
+                                                </mat-icon>
+                                            </button>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
+                            *ngIf="(select_plugin_item && !isSelectedAllProcessItem) && isOfficialModifier">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                            <span class="ml-2 font-medium text-secondary group-hover:underline"
+                                (click)="createProcessItem()">Añadir
+                                elemento</span>
+                        </div>
+                        <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
+                            *ngIf="(!select_plugin_item && isOfficialModifier)">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                            <span class="ml-2 font-medium text-secondary group-hover:underline"
+                                (click)="createProcessItem()">Añadir
+                                elemento</span>
+                        </div>
+                    </ng-container>
+                    <!-- Items -->
                 </mat-expansion-panel>
             </ng-container>
         </mat-accordion>
