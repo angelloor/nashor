@@ -2,7 +2,7 @@ import { angelAnimations } from '@angel/animations';
 import { AngelAlertType } from '@angel/components/alert';
 import {
   ActionAngelConfirmation,
-  AngelConfirmationService
+  AngelConfirmationService,
 } from '@angel/services/confirmation';
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import {
@@ -10,7 +10,7 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';

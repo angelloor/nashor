@@ -110,9 +110,9 @@ export class TaskService {
       .pipe(
         tap((tasks: Task[]) => {
           if (tasks) {
-            this._tasks.next(tasks);
+            return tasks;
           } else {
-            this._tasks.next([]);
+            return [];
           }
         })
       );

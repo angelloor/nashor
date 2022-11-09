@@ -116,50 +116,50 @@
             </div>
         </div>
 
-
-
         <!-- task -->
-        <mat-accordion class="example-headers-align" multi>
+        <mat-accordion>
             <ng-container
-                *ngFor="let elementTask of formArrayTasks.controls; let indexOne = index; let first = first; let last = last; trackBy: trackByFn">
-                <mat-expansion-panel>
+                *ngFor="let elementTask of formArrayTasks.controls; let indexInitial = index; let first = first; let last = last; trackBy: trackByFn">
+                <mat-expansion-panel hideToggle (opened)="setIndexExpansionPanel(indexInitial)">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            {{formArrayTasks.getRawValue()[indexOne].number_task}}
+                            {{formArrayTasks.getRawValue()[indexInitial].number_task}}
                         </mat-panel-title>
                         <mat-panel-description>
-                            {{formArrayTasks.getRawValue()[indexOne].date_task}}
+                            {{formArrayTasks.getRawValue()[indexInitial].date_task}}
                         </mat-panel-description>
                     </mat-expansion-panel-header>
-
                     <!-- Items -->
-                    <ng-container *ngIf="formArrayTasks.getRawValue()[indexOne].plugin_item_process">
+                    <ng-container *ngIf="formArrayTasks.getRawValue()[indexInitial].template.plugin_item_process">
                         <div class="space-y-4 mt-5 mb-5">
                             <ng-container
                                 *ngFor="let elementItem of formArrayProcessItems.controls; let indexOne = index; let first = first; let last = last; trackBy: trackByFn">
                                 <div class="relative flex">
                                     <button mat-icon-button class="self-center" class="self-start"
                                         [ngClass]="first ? 'self-center' : 'self-start'"
-                                        [matTooltip]="formArrayProcessItems.getRawValue()[indexOne].official.user.person.name_person + ' ' + formArrayProcessItems.getRawValue()[indexOne].official.user.person.last_name_person + ' - ' ">
+                                        [matTooltip]="formArrayProcessItems.getRawValue()[indexOne].official.user.person.name_person + ' ' + formArrayProcessItems.getRawValue()[indexOne].official.user.person.last_name_person + ' - ' + 'Preguntar - Creacion o ultima actualizacion'">
                                         <span class="relative">
                                             <img class="w-7 h-7 rounded-full"
                                                 *ngIf="formArrayProcessItems.getRawValue()[indexOne].official.user.avatar_user"
                                                 [src]="_urlPathAvatar + formArrayProcessItems.getRawValue()[indexOne].official.user.avatar_user">
                                         </span>
                                     </button>
-                                    <ng-container *ngIf="select_plugin_item">
-                                        <mat-form-field class="angel-mat-no-subscript w-full max-w-40">
-                                            <mat-label *ngIf="first">Elemento</mat-label>
-                                            <mat-select
-                                                [formControl]="getFromControl(formArrayProcessItems, indexOne, 'id_item')"
-                                                (selectionChange)="updateProcessItem(indexOne)">
-                                                <mat-option *ngFor="let item of listItem; trackBy: trackByFn"
-                                                    [disabled]="item.isSelected" [value]="item.id_item"
-                                                    matTooltip="{{item.description_item}}">
-                                                    {{item.name_item}}
-                                                </mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
+                                    <ng-container
+                                        *ngIf="formArrayTasks.getRawValue()[indexInitial].plugin_item_process">
+                                        <ng-container *ngIf="formArrayTasks.getRawValue()[indexOne].selectPluginItem">
+                                            <mat-form-field class="angel-mat-no-subscript w-full max-w-40">
+                                                <mat-label *ngIf="first">Elemento</mat-label>
+                                                <mat-select
+                                                    [formControl]="getFromControl(formArrayProcessItems, indexOne, 'id_item')"
+                                                    (selectionChange)="updateProcessItem(indexOne)">
+                                                    <mat-option *ngFor="let item of listItem; trackBy: trackByFn"
+                                                        [disabled]="item.isSelected" [value]="item.id_item"
+                                                        matTooltip="{{item.description_item}}">
+                                                        {{item.name_item}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </ng-container>
                                     </ng-container>
 
                                     <!-- Render horizontal columns -->
@@ -194,30 +194,408 @@
                             </ng-container>
                         </div>
                         <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
-                            *ngIf="(select_plugin_item && !isSelectedAllProcessItem) && isOfficialModifier">
+                            *ngIf="(formArrayTasks.getRawValue()[indexInitial].selectPluginItem && !isSelectedAllProcessItem) && isOfficialModifier">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
                             <span class="ml-2 font-medium text-secondary group-hover:underline"
-                                (click)="createProcessItem()">Añadir
+                                (click)="createProcessItem(formArrayTasks.getRawValue()[indexInitial].id_task)">Añadir
                                 elemento</span>
                         </div>
                         <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
-                            *ngIf="(!select_plugin_item && isOfficialModifier)">
+                            *ngIf="(!formArrayTasks.getRawValue()[indexInitial].selectPluginItem && isOfficialModifier)">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
                             <span class="ml-2 font-medium text-secondary group-hover:underline"
-                                (click)="createProcessItem()">Añadir
+                                (click)="createProcessItem(formArrayTasks.getRawValue()[indexInitial].id_task)">Añadir
                                 elemento</span>
                         </div>
                     </ng-container>
                     <!-- Items -->
+                    <!-- Controls -->
+                    <ng-container
+                        *ngFor="let control of formArrayProcessControls.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                        <div cdkDrag
+                            class="flex flex-row items-center mb-3 p-5 pl-0 shadow rounded-lg overflow-hidden bg-card">
+                            <!-- input -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control ==='input'"
+                                class="w-full flex">
+                                <button *ngIf="formArrayProcessControls.getRawValue()[i].isComplete" mat-icon-button
+                                    class="self-center"
+                                    [matTooltip]="formArrayProcessControls.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessControls.getRawValue()[i].official.user.person.last_name_person + ' - ' + parseTime(formArrayProcessControls.getRawValue()[i].last_change_process_control)">
+                                    <span class="relative">
+                                        <img class="w-7 h-7 rounded-full"
+                                            *ngIf="formArrayProcessControls.getRawValue()[i].official.user.avatar_user"
+                                            [src]="_urlPathAvatar + formArrayProcessControls.getRawValue()[i].official.user.avatar_user">
+                                    </span>
+                                </button>
+                                <mat-form-field class="angel-mat-no-subscript w-full"
+                                    [ngClass]="formArrayProcessControls.getRawValue()[i].isComplete ? 'ml-0':'ml-10'">
+                                    <mat-label>
+                                        {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                    </mat-label>
+                                    <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                        [svgIcon]="'heroicons_outline:annotation'">
+                                    </mat-icon>
+                                    <input matInput (change)="updateProcessControl(i,$event)"
+                                        [minlength]="formArrayProcessControls.getRawValue()[i].control.min_length_control ? formArrayProcessControls.getRawValue()[i].control.min_length_control : 0"
+                                        [maxlength]="50"
+                                        [formControlName]="formArrayProcessControls.getRawValue()[i].control.form_name_control"
+                                        [placeholder]="formArrayProcessControls.getRawValue()[i].control.placeholder_control!"
+                                        [spellcheck]="formArrayProcessControls.getRawValue()[i].control.spell_check_control">
+                                </mat-form-field>
+                            </div>
+                            <!-- textArea -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control === 'textArea'"
+                                class="w-full flex">
+                                <button *ngIf="formArrayProcessControls.getRawValue()[i].isComplete" mat-icon-button
+                                    class="self-center"
+                                    [matTooltip]="formArrayProcessControls.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessControls.getRawValue()[i].official.user.person.last_name_person + ' - ' + parseTime(formArrayProcessControls.getRawValue()[i].last_change_process_control)">
+                                    <span class="relative">
+                                        <img class="w-7 h-7 rounded-full"
+                                            *ngIf="formArrayProcessControls.getRawValue()[i].official.user.avatar_user"
+                                            [src]="_urlPathAvatar + formArrayProcessControls.getRawValue()[i].official.user.avatar_user">
+                                    </span>
+                                </button>
+                                <mat-form-field class="angel-mat-textarea angel-mat-no-subscript w-full"
+                                    [ngClass]="formArrayProcessControls.getRawValue()[i].isComplete ? 'ml-0':'ml-10'">
+                                    <mat-label>
+                                        {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                    </mat-label>
+                                    <mat-icon matPrefix class="hidden sm:flex icon-size-5"
+                                        [svgIcon]="'heroicons_outline:annotation'"></mat-icon>
+                                    <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                                        (change)="updateProcessControl(i,$event)" [cdkAutosizeMinRows]="5"
+                                        [cdkAutosizeMaxRows]="30"
+                                        [minlength]="formArrayProcessControls.getRawValue()[i].control.min_length_control ? formArrayProcessControls.getRawValue()[i].control.min_length_control : 0"
+                                        [maxlength]="formArrayProcessControls.getRawValue()[i].control.max_length_control ? formArrayProcessControls.getRawValue()[i].control.max_length_control : 500"
+                                        [formControlName]="formArrayProcessControls.getRawValue()[i].control.form_name_control"
+                                        [placeholder]="formArrayProcessControls.getRawValue()[i].control.placeholder_control!"
+                                        [spellcheck]="formArrayProcessControls.getRawValue()[i].control.spell_check_control"></textarea>
+                                </mat-form-field>
+                            </div>
+                            <!-- radioButton -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control === 'radioButton'"
+                                class="w-full flex">
+                                <button *ngIf="formArrayProcessControls.getRawValue()[i].isComplete" mat-icon-button
+                                    class="self-center"
+                                    [matTooltip]="formArrayProcessControls.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessControls.getRawValue()[i].official.user.person.last_name_person + ' - ' + parseTime(formArrayProcessControls.getRawValue()[i].last_change_process_control)">
+                                    <span class="relative self-start">
+                                        <img class="w-7 h-7 rounded-full"
+                                            *ngIf="formArrayProcessControls.getRawValue()[i].official.user.avatar_user"
+                                            [src]="_urlPathAvatar + formArrayProcessControls.getRawValue()[i].official.user.avatar_user">
+                                    </span>
+                                </button>
+                                <div class="flex flex-col"
+                                    [ngClass]="formArrayProcessControls.getRawValue()[i].isComplete ? 'ml-0':'ml-10'">
+                                    <h4>{{formArrayProcessControls.getRawValue()[i].control.title_control}}</h4>
+                                    <mat-radio-group class="flex flex-col" (change)="updateProcessControl(i,$event)"
+                                        [formControlName]="formArrayProcessControls.getRawValue()[i].control.form_name_control">
+                                        <mat-radio-button class="p-2"
+                                            *ngFor="let option of formArrayProcessControls.getRawValue()[i].control.options_control"
+                                            [value]="option.value">
+                                            {{option.name}}
+                                        </mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
+                            </div>
+                            <!-- checkBox -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control === 'checkBox'"
+                                class="w-full flex">
+                                <button *ngIf="formArrayProcessControls.getRawValue()[i].isComplete" mat-icon-button
+                                    class="self-center"
+                                    [matTooltip]="formArrayProcessControls.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessControls.getRawValue()[i].official.user.person.last_name_person + ' - ' + parseTime(formArrayProcessControls.getRawValue()[i].last_change_process_control)">
+                                    <span class="relative self-start">
+                                        <img class="w-7 h-7 rounded-full"
+                                            *ngIf="formArrayProcessControls.getRawValue()[i].official.user.avatar_user"
+                                            [src]="_urlPathAvatar + formArrayProcessControls.getRawValue()[i].official.user.avatar_user">
+                                    </span>
+                                </button>
+                                <div class="flex flex-col"
+                                    [ngClass]="formArrayProcessControls.getRawValue()[i].isComplete ? 'ml-0':'ml-10'">
+                                    <h4>{{formArrayProcessControls.getRawValue()[i].control.title_control}}</h4>
+                                    <p
+                                        *ngFor="let option of formArrayProcessControls.getRawValue()[i].control.options_control; trackBy: trackByFn">
+                                        <mat-checkbox class="p-2" (change)="updateProcessControl(i,$event,option.value)"
+                                            [formControlName]="formArrayProcessControls.getRawValue()[i].control.form_name_control+option.value">
+                                            {{option.name}}
+                                        </mat-checkbox>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- select -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control === 'select'"
+                                class="w-full flex">
+                                <button *ngIf="formArrayProcessControls.getRawValue()[i].isComplete" mat-icon-button
+                                    class="self-center"
+                                    [matTooltip]="formArrayProcessControls.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessControls.getRawValue()[i].official.user.person.last_name_person + ' - ' + parseTime(formArrayProcessControls.getRawValue()[i].last_change_process_control)">
+                                    <span class="relative self-start">
+                                        <img class="w-7 h-7 rounded-full"
+                                            *ngIf="formArrayProcessControls.getRawValue()[i].official.user.avatar_user"
+                                            [src]="_urlPathAvatar + formArrayProcessControls.getRawValue()[i].official.user.avatar_user">
+                                    </span>
+                                </button>
+                                <mat-form-field class="angel-mat-no-subscript w-full"
+                                    [ngClass]="formArrayProcessControls.getRawValue()[i].isComplete ? 'ml-0':'ml-10'">
+                                    <mat-label>
+                                        {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                    </mat-label>
+                                    <mat-select (selectionChange)="updateProcessControl(i,$event)"
+                                        [formControlName]="formArrayProcessControls.getRawValue()[i].control.form_name_control">
+                                        <ng-container
+                                            *ngFor="let option of formArrayProcessControls.getRawValue()[i].control.options_control; trackBy: trackByFn">
+                                            <mat-option [value]="option.value">
+                                                {{option.name}}</mat-option>
+                                        </ng-container>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <!-- date -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control === 'date'"
+                                class="w-full flex">
+                                <button *ngIf="formArrayProcessControls.getRawValue()[i].isComplete" mat-icon-button
+                                    class="self-center"
+                                    [matTooltip]="formArrayProcessControls.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessControls.getRawValue()[i].official.user.person.last_name_person + ' - ' + parseTime(formArrayProcessControls.getRawValue()[i].last_change_process_control)">
+                                    <span class="relative self-start">
+                                        <img class="w-7 h-7 rounded-full"
+                                            *ngIf="formArrayProcessControls.getRawValue()[i].official.user.avatar_user"
+                                            [src]="_urlPathAvatar + formArrayProcessControls.getRawValue()[i].official.user.avatar_user">
+                                    </span>
+                                </button>
+                                <mat-form-field class="angel-mat-no-subscript w-full"
+                                    [ngClass]="formArrayProcessControls.getRawValue()[i].isComplete ? 'ml-0':'ml-10'">
+                                    <mat-label>
+                                        {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                    </mat-label>
+                                    <input matInput [matDatepicker]="fecha"
+                                        (dateChange)="updateProcessControl(i,$event)"
+                                        [formControlName]="formArrayProcessControls.getRawValue()[i].control.form_name_control"
+                                        [placeholder]="formArrayProcessControls.getRawValue()[i].control.placeholder_control!">
+                                    <mat-datepicker-toggle matSuffix [for]="fecha">
+                                    </mat-datepicker-toggle>
+                                    <mat-datepicker #fecha></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                            <!-- dateRange -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control === 'dateRange'"
+                                class="w-full flex">
+                                <button *ngIf="formArrayProcessControls.getRawValue()[i].isComplete" mat-icon-button
+                                    class="self-center"
+                                    [matTooltip]="formArrayProcessControls.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessControls.getRawValue()[i].official.user.person.last_name_person + ' - ' + parseTime(formArrayProcessControls.getRawValue()[i].last_change_process_control)">
+                                    <span class="relative self-start">
+                                        <img class="w-7 h-7 rounded-full"
+                                            *ngIf="formArrayProcessControls.getRawValue()[i].official.user.avatar_user"
+                                            [src]="_urlPathAvatar + formArrayProcessControls.getRawValue()[i].official.user.avatar_user">
+                                    </span>
+                                </button>
+                                <mat-form-field class="angel-mat-no-subscript w-full" appearance="fill"
+                                    [ngClass]="formArrayProcessControls.getRawValue()[i].isComplete ? 'ml-0':'ml-10'">
+                                    <mat-label>
+                                        {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                    </mat-label>
+                                    <mat-date-range-input [rangePicker]="dateRange">
+                                        <input matStartDate [formControlName]="formArrayProcessControls.getRawValue()[i].control.form_name_control
+                   + 'StartDate'">
+                                        <input matEndDate (dateChange)="updateProcessControl(i,$event)"
+                                            [formControlName]="formArrayProcessControls.getRawValue()[i].control.form_name_control + 'EndDate'">
+                                    </mat-date-range-input>
+                                    <mat-datepicker-toggle matSuffix [for]="dateRange">
+                                    </mat-datepicker-toggle>
+                                    <mat-date-range-picker #dateRange></mat-date-range-picker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- Attacheds -->
+                    <ng-container
+                        *ngIf="formArrayTasks.getRawValue()[indexInitial].template.plugin_attached_process && formArrayTasks.getRawValue()[indexInitial].template.documentation_profile.id_documentation_profile">
+                        <div class="flex mt-3 mb-3">
+                            <div class="text-2xl">Anexos</div>
+                        </div>
+                        <div class="space-y-4">
+                            <ng-container
+                                *ngFor="let atacheds of formArrayProcessAttacheds.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                                <div class="relative flex">
+                                    <div class="flex flex-row w-full h-14 items-center">
+                                        <button mat-icon-button class="self-center"
+                                            *ngIf="formArrayProcessAttacheds.getRawValue()[i].isUpload"
+                                            [matTooltip]="formArrayProcessAttacheds.getRawValue()[i].official.user.person.name_person + ' ' + formArrayProcessAttacheds.getRawValue()[i].official.user.person.last_name_person + ' - ' + parseTime(formArrayProcessAttacheds.getRawValue()[i].upload_date)">
+                                            <span class="relative">
+                                                <img class="w-7 h-7 rounded-full"
+                                                    *ngIf="formArrayProcessAttacheds.getRawValue()[i].official.user.avatar_user"
+                                                    [src]="_urlPathAvatar + formArrayProcessAttacheds.getRawValue()[i].official.user.avatar_user">
+                                            </span>
+                                        </button>
+                                        <div class="w-4/12 p-1">
+                                            {{formArrayProcessAttacheds.getRawValue()[i].name_attached}}
+                                        </div>
+                                        <div class="w-6/12 p-1">
+                                            {{formArrayProcessAttacheds.getRawValue()[i].description_attached}}
+                                        </div>
+                                        <div class="w-1/12 p-1">
+                                            {{(formArrayProcessAttacheds.getRawValue()[i].required_attached)
+                                            ?
+                                            'Obl' : 'Opc'}}
+                                        </div>
+                                        <div class="w-1/12 p-1">
+                                            {{formArrayProcessAttacheds.getRawValue()[i].length_mb_attached
+                                            +
+                                            'MB'}}
+                                        </div>
+                                    </div>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Seleccionar archivo</mat-label>
+                                        <ngx-mat-file-input #removableInput formControlName="{{'removablefile'+i}}"
+                                            (change)="removableInput.setDisabledState(true);  createProcessAttached( $event.target,i); removableInput.clear($event);"
+                                            [accept]="'.*'" placeholder="Removable Input" (value)="removableInput">
+                                        </ngx-mat-file-input>
+                                        <mat-icon *ngIf="removableInput.empty && isOfficialModifier" matSuffix>upload
+                                        </mat-icon>
+                                        <button mat-icon-button matSuffix
+                                            *ngIf="!removableInput.empty && isOfficialModifier"
+                                            [matTooltip]="formArrayProcessAttacheds.getRawValue()[i].matTooltip"
+                                            (click)="removableInput.setDisabledState(true); downloadProcessAttached(i)">
+                                            <mat-icon class=" icon-size-5" [svgIcon]="'heroicons_solid:download'">
+                                            </mat-icon>
+                                        </button>
+                                        <button mat-icon-button matSuffix
+                                            *ngIf="!removableInput.empty && isOfficialModifier"
+                                            (click)="removableInput.clear($event); removableInput.setDisabledState(false); deleteProcessAttached(i);">
+                                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'">
+                                            </mat-icon>
+                                        </button>
+                                    </mat-form-field>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                    <!-- Attacheds -->
+                    <!-- Alert -->
+                    <angel-alert class="mt-8"
+                        *ngIf="taskForm.invalid || showAlert || (formArrayTasks.getRawValue()[indexInitial].template.plugin_item_process && listItem.length == 0)|| (formArrayTasks.getRawValue()[indexInitial].template.plugin_item_process && formArrayProcessItems.controls.length == 0)"
+                        [appearance]="'outline'" [showIcon]="false" [type]="alert.type"
+                        [@shake]="alert.type === 'error'">
+                        <!-- Message if alert is actived for the component -->
+                        {{alert.message}}
+                        <!-- Items -->
+                        <mat-error
+                            *ngIf="formArrayTasks.getRawValue()[indexInitial].template.plugin_item_process && listItem.length == 0">
+                            • No hay items registrados
+                        </mat-error>
+                        <mat-error
+                            *ngIf="formArrayTasks.getRawValue()[indexInitial].template.plugin_item_process && formArrayProcessItems.controls.length == 0">
+                            • Tiene que seleccionar al menos un item
+                        </mat-error>
+                        <!-- process_item -->
+                        <mat-error
+                            *ngFor="let row of processItem; let indexRow = index; let first = first; let last = last; trackBy: trackByFn">
+                            <ng-container
+                                *ngFor="let column of pluginItemColumns; let indexColumn = index; let first = first; let last = last; trackBy: trackByFn">
+                                <div
+                                    *ngIf="taskForm.get('formControl'+column.name_plugin_item_column+indexRow)?.hasError('required')">
+                                    Ingrese {{column.name_plugin_item_column}} en la fila {{indexRow+1}}
+                                </div>
+                                <div
+                                    *ngIf="taskForm.get('formControl'+column.name_plugin_item_column+indexRow)?.hasError('maxlength')">
+                                    La columna {{column.name_plugin_item_column}} en la fila {{indexRow+1}} ha
+                                    excedido los caracteres máximos ({{column.lenght_plugin_item_column}}
+                                    caracteres)
+                                </div>
+                            </ng-container>
+                        </mat-error>
+                        <!-- Controls -->
+                        <mat-error
+                            *ngFor="let control of formArrayProcessControls.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                            <!-- Input -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control ==='input'">
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control)?.hasError('required')">
+                                    Ingrese ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                </div>
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control)?.hasError('minlength')">
+                                    Longitud mínima ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.min_length_control}}
+                                    caracteres
+                                </div>
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control)?.hasError('maxlength')">
+                                    Longitud máxima ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.max_length_control}}
+                                    caracteres
+                                </div>
+                            </div>
+                            <!-- textArea -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control ==='textArea'">
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control)?.hasError('required')">
+                                    Ingrese ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                </div>
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control)?.hasError('minlength')">
+                                    Longitud mínima ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.min_length_control}}
+                                    caracteres
+                                </div>
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control)?.hasError('maxlength')">
+                                    Longitud máxima ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.max_length_control}}
+                                    caracteres
+                                </div>
+                            </div>
+                            <!-- radioButton -->
+                            <div
+                                *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control ==='radioButton'">
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control)?.hasError('required')">
+                                    Seleccione ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                </div>
+                            </div>
+                            <!-- select -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control ==='select'">
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control)?.hasError('required')">
+                                    Seleccione ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                </div>
+                            </div>
+                            <!-- date -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control ==='date'">
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control)?.hasError('required')">
+                                    Seleccione ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                </div>
+                            </div>
+                            <!-- dateRange -->
+                            <div *ngIf="formArrayProcessControls.getRawValue()[i].control.type_control ==='dateRange'">
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control+'StartDate')?.hasError('required')">
+                                    Seleccione la fecha inicial ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                </div>
+                                <div
+                                    *ngIf="taskForm.get(formArrayProcessControls.getRawValue()[i].control.form_name_control+'EndDate')?.hasError('required')">
+                                    Seleccione la fecha final ->
+                                    {{formArrayProcessControls.getRawValue()[i].control.title_control}}
+                                </div>
+                            </div>
+                        </mat-error>
+                        <!-- Attacheds -->
+                        <!-- removablefile -->
+                        <mat-error
+                            *ngFor="let elementoAnexo of formArrayProcessAttacheds.controls; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                            <div
+                                *ngIf="formArrayProcessAttacheds.getRawValue()[i].required_attached && !formArrayProcessAttacheds.getRawValue()[i].isUpload">
+                                • Seleccione el archivo {{i +1}}
+                            </div>
+                        </mat-error>
+                    </angel-alert>
                 </mat-expansion-panel>
             </ng-container>
         </mat-accordion>
-
-
-
         <!-- task -->
-
-
 
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center mt-4">
