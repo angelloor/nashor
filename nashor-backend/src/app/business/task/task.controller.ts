@@ -193,6 +193,31 @@ export const validation = (task: Task, url: string, token: string) => {
 									),
 								});
 							}
+						} else if (
+							url.substring(0, 31) == '/byProcessExcludeReassignedRead'
+						) {
+							const id_process: any = task.process;
+
+							if (id_process >= 1) {
+								/** set required attributes for action */
+								_task.process = task.process;
+								await _task
+									.byProcessExcludeReassignedRead()
+									.then((_tasks: Task[]) => {
+										resolve(_tasks);
+									})
+									.catch((error: any) => {
+										reject(error);
+									});
+							} else {
+								reject({
+									..._messages[11],
+									description: _messages[11].description.replace(
+										'name_entity',
+										'process'
+									),
+								});
+							}
 						} else if (url.substring(0, 20) == '/byOfficialQueryRead') {
 							const id_official: any = task.official;
 

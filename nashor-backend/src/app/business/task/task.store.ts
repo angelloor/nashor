@@ -81,6 +81,33 @@ export const view_task_by_process_query_read = (task: Task) => {
 	});
 };
 
+export const view_task_by_process_exclude_reassigned_read = (task: Task) => {
+	return new Promise<Task[]>(async (resolve, reject) => {
+		const id_process: any = task.process;
+
+		const query = `select * from business.view_task_inner_join bvtij 
+			where bvtij.id_process = ${id_process} 
+			and bvtij.type_status_task != 'reassigned' 
+			order by bvtij.id_task asc`;
+
+		// console.log(query);
+
+		try {
+			const response = await clientNASHORPostgreSQL.query(query);
+			resolve(response.rows);
+		} catch (error: any) {
+			if (error.detail == '_database') {
+				reject({
+					..._messages[3],
+					description: error.toString().slice(7),
+				});
+			} else {
+				reject(error.toString());
+			}
+		}
+	});
+};
+
 export const view_task_by_official_query_read = (task: Task) => {
 	return new Promise<Task[]>(async (resolve, reject) => {
 		const number_process: any = task.process;
@@ -231,7 +258,7 @@ export const dml_task_send = (task: Task) => {
 			'${task.date_task}',
 			${task.deleted_task})`;
 
-		console.log(query);
+		// console.log(query);
 
 		try {
 			const response = await clientNASHORPostgreSQL.query(query);

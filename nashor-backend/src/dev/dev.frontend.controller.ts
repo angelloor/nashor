@@ -3,14 +3,14 @@ import path from 'path';
 import {
 	utils_get_columns_backend,
 	utils_get_schema,
-	utils_table_exists
+	utils_table_exists,
 } from './dev.store';
 import { AttributeList, BodyFrontendGenerate } from './utils/dev.types';
 import {
 	entityReplaceUnderscore,
 	entityToLowerCase,
 	entityToUpperCase,
-	entityToUpperCaseOutInitial
+	entityToUpperCaseOutInitial,
 } from './utils/dev.utils';
 
 const entityFrontendGenerate = (body: BodyFrontendGenerate) => {
@@ -2703,4 +2703,3 @@ export class ModalSelect${entityToUpperCase(
 };
 
 export { entityFrontendGenerate };
-

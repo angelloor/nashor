@@ -784,6 +784,8 @@ select * from business.dml_documentation_profile_attached_create(1, 4 ,4);
 select * from business.dml_plugin_item_create(1, 1, 'Plugin para compras publicas', 'Este plugin es para que compras publicas pueda seleccionar cantidad y poner el CPC', false);
 select * from business.dml_plugin_item_column_create(1, 1, 'CANTIDAD', '5');
 select * from business.dml_plugin_item_column_create(1, 1, 'CPC', '20');
+select * from business.dml_plugin_item_column_create(1, 1, 'STOCK', '20');
+select * from business.dml_plugin_item_column_create(1, 1, 'COMPRA', '20');
 
 select * from business.dml_template_create(1, 1, 1, 1, true, true, 'SM - Solicitud', 'Plantilla para la solicitud de materiales', true, '2022-09-22 10:41:23.053169', false, false);
 select * from business.dml_template_create(1, 1, 1, 1, false, false, 'SM - Fiscalización equipos informáticos', 'Plantilla para la fiscalización de equipos informáticos', true, '2022-09-22 10:58:09.283', false, false);
@@ -796,6 +798,7 @@ select * from business.dml_template_create(1, 1, 1, 1, false, false, 'SM - Alcal
 select * from business.dml_template_create(1, 1, 4, 1, true, false, 'SM - Compras públicas (orden de compra)', 'Plantilla para la generación de la orden de compra en compras públicas', true, '2022-09-22 10:11:00.383672', false, false);
 
 select * from business.dml_control_create(1, 1, 'radioButton', 'Seleccione el tipo de solicitud', 'tipo_solicitud', '', true, 1, 1, '', false, '[{"name":"Bienes","value":"bienes"},{"name":"Servicios","value":"servicios"}]', true, false);
+select * from business.dml_control_create(1, 1, 'radioButton', 'Hay todo en stock?', 'todo_completo', '', true, 1, 1, '', false, '[{"name":"Si","value":"si"},{"name":"No","value":"no"}]', true, false);
 select * from business.dml_control_create(1, 1, 'radioButton', 'Desea aprobar la entrega?', 'aprobacion_entrega', '', true, 1, 1, '', false, '[{"name":"Si","value":"si"},{"name":"No","value":"no"}]', true, false);
 select * from business.dml_control_create(1, 1, 'radioButton', 'Desea aprobar que continue el proceso de compra?', 'aprobacion_proceso', '', true, 1, 1, '', false, '[{"name":"Si","value":"si"},{"name":"No","value":"no"}]', true, false);
 select * from business.dml_control_create(1, 1, 'radioButton', 'Hay partida presupuestaria?', 'existencia_partida', '', true, 1, 1, '', false, '[{"name":"Si","value":"si"},{"name":"No","value":"no"}]', true, false);
@@ -808,10 +811,11 @@ select * from business.dml_item_create(1, 1, 1, 'Teclado', 'Este es un teclado',
 select * from business.dml_item_create(1, 1, 1, 'Impresora', 'Esta es una impresora', false);
 
 select * from business.dml_template_control_create(1, 2, 1, 1);
-select * from business.dml_template_control_create(1, 4, 2, 1);
-select * from business.dml_template_control_create(1, 6, 3, 1);
-select * from business.dml_template_control_create(1, 7, 4, 1);
-select * from business.dml_template_control_create(1, 8, 5, 1);
+select * from business.dml_template_control_create(1, 3, 2, 1);
+select * from business.dml_template_control_create(1, 4, 3, 1);
+select * from business.dml_template_control_create(1, 6, 4, 1);
+select * from business.dml_template_control_create(1, 7, 5, 1);
+select * from business.dml_template_control_create(1, 8, 6, 1);
 
 select * from business.dml_level_profile_create(1, 1, 'Perfil TICS', 'Perfil para TICS', false);
 select * from business.dml_level_profile_create(1, 1, 'Perfil Bodega', 'Perfil para Bodega', false);
@@ -871,7 +875,7 @@ select * from core.dml_person_create(1, 5, 5, '1600156952', 'Ricardo Raúl', 'Fr
 select * from core.dml_person_create(1, 6, 6, '1715105597', 'Jaime Rolando', 'Gallardo Diaz', 'PUYO', '+593', false);
 select * from core.dml_person_create(1, 7, 7, '1600296006', 'Edwin Oswaldo', 'Zuñiga Calderón', 'PUYO', '+593', false);
 select * from core.dml_person_create(1, 8, 8, '1803578051', 'Verónica de los Angeles', 'Viteri Fiallos', 'PUYO', '+593', false);
-
+clear 
 select * from core.dml_user_create(1, 1, 2, 5, 'javier@nashor.puyo.gob.ec', 'kCDBvVvdctK+O4iiAprwPQ==', 'default.svg', true, false);
 select * from core.dml_user_create(1, 1, 3, 2, 'beto@nashor.puyo.gob.ec', 'kCDBvVvdctK+O4iiAprwPQ==', 'default.svg', true, false);
 select * from core.dml_user_create(1, 1, 4, 4, 'mario@nashor.puyo.gob.ec', 'kCDBvVvdctK+O4iiAprwPQ==', 'default.svg', true, false);

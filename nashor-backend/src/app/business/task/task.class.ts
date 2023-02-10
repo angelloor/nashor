@@ -13,6 +13,7 @@ import {
 	dml_task_update,
 	view_task_by_level_query_read,
 	view_task_by_official_query_read,
+	view_task_by_process_exclude_reassigned_read,
 	view_task_by_process_query_read,
 	view_task_query_read,
 	view_task_specific_read,
@@ -153,6 +154,23 @@ export class Task {
 	byProcessQueryRead() {
 		return new Promise<Task[]>(async (resolve, reject) => {
 			await view_task_by_process_query_read(this)
+				.then((tasks: Task[]) => {
+					/**
+					 * Mutate response
+					 */
+					const _tasks = this.mutateResponse(tasks);
+
+					resolve(_tasks);
+				})
+				.catch((error: any) => {
+					reject(error);
+				});
+		});
+	}
+
+	byProcessExcludeReassignedRead() {
+		return new Promise<Task[]>(async (resolve, reject) => {
+			await view_task_by_process_exclude_reassigned_read(this)
 				.then((tasks: Task[]) => {
 					/**
 					 * Mutate response

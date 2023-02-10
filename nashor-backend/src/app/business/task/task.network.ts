@@ -39,6 +39,19 @@ routerTask.get(
 );
 
 routerTask.get(
+	'/byProcessExcludeReassignedRead/:process',
+	async (req: any, res: any) => {
+		await validation(req.params, req.url, req.headers.token)
+			.then((tasks: Task[]) => {
+				res.status(200).send(tasks);
+			})
+			.catch((err: MessageAPI | any) => {
+				error(res, err);
+			});
+	}
+);
+
+routerTask.get(
 	'/byOfficialQueryRead/:official/:process',
 	async (req: any, res: any) => {
 		await validation(req.params, req.url, req.headers.token)

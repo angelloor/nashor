@@ -320,10 +320,11 @@ export class Alfresco {
 					reject(error);
 				});
 
-			await fetch(`${urlService}/${nodeId}/?alf_ticket=${ticket}`, {
-				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' },
-			})
+			await axios
+				.delete(`${urlService}/${nodeId}/?alf_ticket=${ticket}`, {
+					method: 'DELETE',
+					headers: { 'Content-Type': 'application/json' },
+				})
 				.then(async (response: any) => {
 					if (response.status == 204) {
 						resolve('MessageAPI: Carpeta eliminada correctamente');

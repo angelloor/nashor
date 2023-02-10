@@ -3336,6 +3336,44 @@ $BODY$;
 ALTER FUNCTION business.dml_process_update_modified(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, boolean, boolean, boolean)
     OWNER TO postgres;
 
+-- FUNCTION: business.dml_process_update_finalized_process(numeric, boolean)
+-- DROP FUNCTION IF EXISTS business.dml_process_update_finalized_process(numeric, boolean);
+
+CREATE OR REPLACE FUNCTION business.dml_process_update_finalized_process(
+	_id_process numeric,
+	_finalized_process boolean)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+	_RETURNING NUMERIC;
+	_X RECORD;
+BEGIN
+	FOR _X IN UPDATE business.process SET finalized_process = _finalized_process WHERE id_process = _id_process RETURNING id_process LOOP
+		_RETURNING = _X.id_process;
+	END LOOP;
+
+	IF (_RETURNING >= 1) THEN
+		RETURN true;
+	ELSE 
+		RETURN false;
+	END IF;
+ 	exception when others then 
+	 	-- RAISE NOTICE '%', SQLERRM;
+		IF (_EXCEPTION = 'Internal Error') THEN
+			RAISE EXCEPTION '%',SQLERRM USING DETAIL = '_database';
+		ELSE
+			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+		END IF;
+END;
+			 
+$BODY$;
+
+ALTER FUNCTION business.dml_process_update_finalized_process(numeric, boolean)
+    OWNER TO postgres;
+
 -- FUNCTION: business.dml_task_create(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", timestamp without time zone, boolean)
 -- DROP FUNCTION IF EXISTS business.dml_task_create(numeric, numeric, numeric, numeric, character varying, timestamp without time zone, business."TYPE_STATUS_TASK", timestamp without time zone, boolean);
 
@@ -3661,6 +3699,7 @@ DECLARE
 	_VALUE_PROCESS_CONTROL TEXT;
 
 	_ID_NEW_TASK NUMERIC DEFAULT 0;
+	_FINALIZED_PROCESS BOOLEAN;
 	_X RECORD;
 	_EXCEPTION CHARACTER VARYING DEFAULT 'Internal Error';
 BEGIN
@@ -3713,7 +3752,6 @@ BEGIN
 				_OFFICIAL_NEXT_LEVEL =  (select bvlpoij.id_official from business.view_level_profile_official_inner_join bvlpoij where bvlpoij.id_level_profile = _LEVEL_PROFILE_NEXT_LEVEL order by bvlpoij.number_task asc limit 1);
 				RAISE NOTICE '%', _OFFICIAL_NEXT_LEVEL;
 				
-				
 				IF (_OFFICIAL_NEXT_LEVEL > 0) THEN
 					_NUMBER_PROCESS = (select bvp.number_process from business.view_process bvp where bvp.id_process = _id_process);
 					
@@ -3747,6 +3785,8 @@ BEGIN
 					
 					-- Evaluar los tipos de operadores
 					IF (_OPERATOR_NEXT_LEVEL = '==') THEN
+						RAISE NOTICE '%', _VALUE_PROCESS_CONTROL;
+						RAISE NOTICE '%', _VALUE_AGAINST_NEXT_LEVEL;
 						IF (_VALUE_PROCESS_CONTROL = _VALUE_AGAINST_NEXT_LEVEL) THEN
 							_POSITION_LEVEL_NEXT_LEVEL = (select bvfvl.id_level from business.view_flow_version_level bvfvl where bvfvl.position_level_father = _POSITION_LEVEL_NEXT_LEVEL and bvfvl.option_true = true);						
 						
@@ -3767,7 +3807,7 @@ BEGIN
 
 								_NUMBER_TASK_NEW_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
 
-								_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _OFFICIAL_NEXT_LEVEL, _POSITION_LEVEL_NEXT_LEVEL, _NUMBER_TASK_NEW_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
+								_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _OFFICIAL_NEXT_LEVEL, _POSITION_LEVEL_NEXT_LEVEL, _NUMBER_TASK_NEW_TASK, 'created', now()::timestamp, false));
 
 								IF (_ID_NEW_TASK > 0) THEN
 									RETURN QUERY select * from business.view_task_inner_join bvtij 
@@ -3781,14 +3821,13 @@ BEGIN
 								RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 							END IF;
 						ELSE
-							_POSITION_LEVEL_NEXT_LEVEL = (select bvfvl.id_level from business.view_flow_version_level bvfvl where bvfvl.position_level_father = _POSITION_LEVEL_NEXT_LEVEL and bvfvl.option_true = true);						
-						
+							_POSITION_LEVEL_NEXT_LEVEL = (select bvfvl.id_level from business.view_flow_version_level bvfvl where bvfvl.position_level_father = _POSITION_LEVEL_NEXT_LEVEL and bvfvl.option_true = false);						
+
 							-- Obtener el perfil del nivel de acuerdo al nivel
 							_LEVEL_PROFILE_NEXT_LEVEL = (select bvl.id_level_profile from business.view_level bvl where bvl.id_level = _POSITION_LEVEL_NEXT_LEVEL);
 
 							-- Obtener el funcionario de acuerdo al perfil del nivel (Se selecciona el funcionario que tenga menos tareas)								
 							_OFFICIAL_NEXT_LEVEL =  (select bvlpoij.id_official from business.view_level_profile_official_inner_join bvlpoij where bvlpoij.id_level_profile = _LEVEL_PROFILE_NEXT_LEVEL order by bvlpoij.number_task asc limit 1);
-							RAISE NOTICE '%', _OFFICIAL_NEXT_LEVEL;
 							
 							IF (_OFFICIAL_NEXT_LEVEL > 0) THEN
 								_NUMBER_PROCESS = (select bvp.number_process from business.view_process bvp where bvp.id_process = _id_process);
@@ -3800,7 +3839,7 @@ BEGIN
 
 								_NUMBER_TASK_NEW_TASK = ''||_NUMBER_PROCESS||'-'||_ACRONYM_TASK||'-';
 
-								_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _OFFICIAL_NEXT_LEVEL, _POSITION_LEVEL_NEXT_LEVEL, _NUMBER_TASK_NEW_TASK, now()::timestamp, 'progress', 'received', now()::timestamp, false));
+								_ID_NEW_TASK = (select * from business.dml_task_create(id_user_, _id_process, _OFFICIAL_NEXT_LEVEL, _POSITION_LEVEL_NEXT_LEVEL, _NUMBER_TASK_NEW_TASK, 'created', now()::timestamp, false));
 
 								IF (_ID_NEW_TASK > 0) THEN
 									RETURN QUERY select * from business.view_task_inner_join bvtij 
@@ -3820,16 +3859,25 @@ BEGIN
 						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';	
 					END IF;
 				ELSE
-					-- IS CONDITIONAL
-					_EXCEPTION = 'IS FINISH';
-					RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';				
+					-- IS FINISH
+					--_EXCEPTION = 'IS FINISH';
+					--RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+					
+					_FINALIZED_PROCESS = (select * from business.process_update_finalized_process(_id_process, true));
+					
+					IF (_FINALIZED_PROCESS) THEN
+						RETURN QUERY select * from business.view_task_inner_join bvtij 
+							where bvtij.id_task = _id_task;
+					ELSE
+						_EXCEPTION = 'Ocurrió un error al actualizar finalized_process';
+						RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
+					END IF;
 				END IF;
 			END IF;
 		ELSE
 			_EXCEPTION = 'El nivel actual no tiene niveles siguientes enlazados';
 			RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
 		END IF;
-
 	ELSE
 		_EXCEPTION = 'Ocurrió un error al actualizar task';
 		RAISE EXCEPTION '%',_EXCEPTION USING DETAIL = '_database';
