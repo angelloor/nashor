@@ -9,11 +9,11 @@ import {
   switchMap,
   take,
   tap,
-  throwError
+  throwError,
 } from 'rxjs';
 import {
   columnProcessItem,
-  columnProcessItems
+  columnProcessItems,
 } from './column-process-item.data';
 import { ColumnProcessItem } from './column-process-item.types';
 
@@ -69,7 +69,7 @@ export class ColumnProcessItemService {
               process_item: {
                 id_process_item: parseInt(id_process_item),
               },
-              value_column_process_item
+              value_column_process_item,
             },
             {
               headers: this._headers,
@@ -178,7 +178,7 @@ export class ColumnProcessItemService {
   }
   /**
    * specificRead
-   * @param id_columnProcessItem
+   * @param id_columnProcessItem  
    */
   specificRead(id_columnProcessItem: string): Observable<ColumnProcessItem> {
     return this._httpClient

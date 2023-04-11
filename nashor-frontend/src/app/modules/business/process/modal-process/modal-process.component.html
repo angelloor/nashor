@@ -39,6 +39,33 @@
             </div>
         </div>
 
+        <div class="flex flex-auto mt-8">
+            <div class="flex flex-col w-2/4 pr-3">
+                <!-- acronym_task -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>acronym_task</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:timeline'">
+                        </mat-icon>
+                        <input matInput [value]="selectedFlow.acronym_task" readonly
+                            [matTooltip]="'Etiqueta de la tarea'">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex flex-col w-2/4 pl-3">
+                <!-- finalized_process -->
+                <div>
+                    <mat-form-field class="angel-mat-no-subscript w-full">
+                        <mat-label>Estado</mat-label>
+                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
+                        </mat-icon>
+                        <input matInput [value]="process.finalized_process ? 'Finalizado' : 'En proceso'" readonly
+                            [matTooltip]="process.finalized_process ? 'Finalizado' : 'En proceso'">
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center mt-4">
             <a (click)="openModalVersion(process.flow_version.id_flow_version)"
                 class="flex flex-col items-center w-56 p-6 rounded-lg shadow bg-card rounded-lg hover:shadow-xl transition-shadow duration-150 ease-in-out cursor-pointer">

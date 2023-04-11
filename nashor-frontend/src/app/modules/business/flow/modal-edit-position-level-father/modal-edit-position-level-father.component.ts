@@ -19,6 +19,8 @@ export class ModalEditPositionLevelFatherComponent implements OnInit {
   id_flow_version_level: string = '';
   flowVersionLevels: FlowVersionLevel[] = [];
 
+  position_level_father: number = 0;
+
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   flowVersionLevelForm!: FormGroup;
@@ -100,6 +102,10 @@ export class ModalEditPositionLevelFatherComponent implements OnInit {
   updatePositionLevelFather(update: boolean) {
     let flowVersionLevel = this.flowVersionLevelForm.getRawValue();
 
+    this.position_level_father = update
+      ? parseInt(flowVersionLevel.position_level_father)
+      : 0;
+
     flowVersionLevel = {
       id_user_: parseInt(this.id_user_),
       ...this.flowVersionLevel,
@@ -117,9 +123,7 @@ export class ModalEditPositionLevelFatherComponent implements OnInit {
         id_level: parseInt(this.flowVersionLevel.level?.id_level),
       },
       position_level: parseInt(flowVersionLevel.position_level),
-      position_level_father: update
-        ? parseInt(flowVersionLevel.position_level_father)
-        : 0,
+      position_level_father: this.position_level_father,
     };
     /**
      * updateFlowVersion

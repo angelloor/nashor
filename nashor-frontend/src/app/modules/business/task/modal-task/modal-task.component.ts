@@ -100,6 +100,7 @@ export class ModalTaskComponent implements OnInit {
   id_process: string = '';
   sourceProcess: boolean = false;
   isOfficialModifier: boolean = false;
+  openModalTask: boolean = false;
 
   listProcess: Process[] = [];
   selectedProcess: Process = process;
@@ -503,7 +504,7 @@ export class ModalTaskComponent implements OnInit {
            * Get the tasks
            */
           this._taskService
-            .byProcessQueryRead(this.task.process.id_process, '*')
+            .byProcessExcludeReassignedRead(this.task.process.id_process)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((tasks: Task[]) => {
               this.tasks = tasks;
@@ -518,7 +519,10 @@ export class ModalTaskComponent implements OnInit {
                 /**
                  * Render task that is different from current task
                  */
-                if (_task.id_task != this.task.id_task) {
+                if (
+                  _task.id_task != this.task.id_task &&
+                  _task.id_task < this.task.id_task
+                ) {
                   /**
                    * Get template
                    */
@@ -599,12 +603,6 @@ export class ModalTaskComponent implements OnInit {
                                 ],
                               })
                             );
-
-                            const elementsTaskFormArray = this.taskForm.get(
-                              'tasks'
-                            ) as FormArray;
-                            let tasks = elementsTaskFormArray.getRawValue();
-                            console.log(tasks);
                           }
                         });
                     });
@@ -618,7 +616,8 @@ export class ModalTaskComponent implements OnInit {
           /**
            * Get the tasks
            */
-          if (this.sourceProcess) {
+          if (this.sourceProcess && !this.openModalTask) {
+            this.openModalTask = true;
             /**
              * opentask
              */
@@ -783,7 +782,6 @@ export class ModalTaskComponent implements OnInit {
             });
 
             this.listItem = filterListItems;
-            console.log(this.listItem);
             /**
              * Filter select
              */
@@ -796,13 +794,11 @@ export class ModalTaskComponent implements OnInit {
             /**
              * Iterate through them
              */
-
             this.processItem.forEach(
               (_processItem: ProcessItem, indexOne: number) => {
                 /**
                  * Crear los controles para los inputs horizontales
                  */
-
                 this.pluginItemColumns.forEach(
                   async (_pluginItemColumn: PluginItemColumn) => {
                     /**
@@ -813,7 +809,11 @@ export class ModalTaskComponent implements OnInit {
                       new FormControl(
                         {
                           value: '',
-                          disabled: !this.isOfficialModifier,
+                          disabled: !(
+                            this.isOfficialModifier &&
+                            (this.task.type_status_task === 'progress' ||
+                              this.task.type_status_task === 'created')
+                          ),
                         },
                         [
                           Validators.required,
@@ -842,19 +842,27 @@ export class ModalTaskComponent implements OnInit {
                             new FormControl(
                               {
                                 value: columnProcessItem,
-                                disabled: !this.isOfficialModifier,
+                                disabled: !(
+                                  this.isOfficialModifier &&
+                                  (this.task.type_status_task === 'progress' ||
+                                    this.task.type_status_task === 'created')
+                                ),
                               },
                               [Validators.required]
                             )
                           );
-
-                          this.taskForm
-                            .get(
-                              `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`
-                            )
-                            ?.patchValue(
-                              columnProcessItem.value_column_process_item
-                            );
+                          console.log(
+                            columnProcessItem.value_column_process_item
+                          );
+                          if (columnProcessItem.value_column_process_item) {
+                            this.taskForm
+                              .get(
+                                `formControl${_pluginItemColumn.name_plugin_item_column}${indexOne}`
+                              )
+                              ?.patchValue(
+                                columnProcessItem.value_column_process_item
+                              );
+                          }
                         }
                       });
                   }
@@ -973,7 +981,11 @@ export class ModalTaskComponent implements OnInit {
                   new FormControl(
                     {
                       value: _templateControl.control.initial_value_control,
-                      disabled: !this.isOfficialModifier,
+                      disabled: !(
+                        this.isOfficialModifier &&
+                        (this.task.type_status_task === 'progress' ||
+                          this.task.type_status_task === 'created')
+                      ),
                     },
                     [
                       _templateControl.control.required_control
@@ -997,7 +1009,11 @@ export class ModalTaskComponent implements OnInit {
                   new FormControl(
                     {
                       value: _templateControl.control.initial_value_control,
-                      disabled: !this.isOfficialModifier,
+                      disabled: !(
+                        this.isOfficialModifier &&
+                        (this.task.type_status_task === 'progress' ||
+                          this.task.type_status_task === 'created')
+                      ),
                     },
                     [
                       _templateControl.control.required_control
@@ -1011,7 +1027,11 @@ export class ModalTaskComponent implements OnInit {
                   new FormControl(
                     {
                       value: _templateControl.control.initial_value_control,
-                      disabled: !this.isOfficialModifier,
+                      disabled: !(
+                        this.isOfficialModifier &&
+                        (this.task.type_status_task === 'progress' ||
+                          this.task.type_status_task === 'created')
+                      ),
                     },
                     [
                       _templateControl.control.required_control
@@ -1203,7 +1223,11 @@ export class ModalTaskComponent implements OnInit {
                       new FormControl(
                         {
                           value: '',
-                          disabled: !this.isOfficialModifier,
+                          disabled: !(
+                            this.isOfficialModifier &&
+                            (this.task.type_status_task === 'progress' ||
+                              this.task.type_status_task === 'created')
+                          ),
                         },
                         [
                           FileValidator.maxContentSize(
@@ -1247,7 +1271,13 @@ export class ModalTaskComponent implements OnInit {
                       /**
                        * Verificar si la tarea esta enviada  y bloquear removablefile + index
                        */
-                      if (!this.isOfficialModifier) {
+                      if (
+                        !(
+                          this.isOfficialModifier &&
+                          (this.task.type_status_task === 'progress' ||
+                            this.task.type_status_task === 'created')
+                        )
+                      ) {
                         this.taskForm.get('removablefile' + index)?.disable();
                       }
                       /**
@@ -1352,24 +1382,17 @@ export class ModalTaskComponent implements OnInit {
   /**
    * createProcessItem
    */
-  createProcessItem(id_task: string) {
+  createProcessItem(id_task: string, level: Level) {
     const id_user_ = this.data.user.id_user;
     const id_official: string = this.task.official.id_official;
     const id_process: string = this.task.process.id_process;
-    const id_level: string = this.task.level.id_level;
 
     this._processItemService
-      .create(id_user_, id_official, id_process, id_task, id_level)
+      .create(id_user_, id_official, id_process, id_task, level.id_level)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (_processItem: ProcessItem) => {
-          console.log(_processItem);
           if (_processItem) {
-            const index = this.processItem.findIndex(
-              (_processItem) =>
-                _processItem.id_process_item == _processItem.id_process_item
-            );
-
             this._notificationService.success('Item agregado correctamente');
           } else {
             this._notificationService.error('Ocurrió un error agregar el item');

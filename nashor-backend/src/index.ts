@@ -48,7 +48,7 @@ app.use(cors(corsOptionsDelegate));
 app.use(express.urlencoded({ extended: false }));
 app.use('/', express.static('./public'));
 /**
- * Redirect http to https
+ * Redir
  */
 // if (process.env.NODE_ENV == 'production') {
 //     app.enable('trust proxy')

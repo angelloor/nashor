@@ -66,4 +66,5 @@ CREATE TYPE business."TYPE_ELEMENT" AS ENUM
 /*==============================================================*/
 CREATE TYPE business."TYPE_OPERATOR" AS ENUM
     ('==' , '!=' , '<' , '>' , '<=' , '>=');
+    
 

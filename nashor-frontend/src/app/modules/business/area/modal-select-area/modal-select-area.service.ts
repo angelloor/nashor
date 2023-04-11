@@ -12,7 +12,7 @@ export class ModalSelectAreaService {
     private _layoutService: LayoutService
   ) {}
   dialogRef: any;
-  
+
   openModalSelectArea() {
     this._layoutService.setOpenModal(true);
 

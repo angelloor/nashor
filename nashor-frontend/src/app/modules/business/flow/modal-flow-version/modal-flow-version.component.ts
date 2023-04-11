@@ -41,6 +41,8 @@ export class ModalFlowVersionComponent implements OnInit {
   private data!: AppInitialData;
   id_company: string = '';
 
+  havedFlowVersionActived: boolean = false;
+
   flowVersions$!: Observable<FlowVersion[]>;
   /**
    * Alert
@@ -91,7 +93,7 @@ export class ModalFlowVersionComponent implements OnInit {
       this.data = state.global;
       this.id_company = this.data.user.company.id_company;
     });
-    /**
+    /**tvz
      * Subscribe to user changes of state
      */
     this._store.pipe(takeUntil(this._unsubscribeAll)).subscribe((state) => {
@@ -124,6 +126,15 @@ export class ModalFlowVersionComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((_flowVersion: FlowVersion[]) => {
         this.flowVersions = _flowVersion;
+
+        /**
+         * Verificar que no haya versiones activas
+         */
+        this.havedFlowVersionActived = this.flowVersions.find(
+          (item) => item.status_flow_version === true
+        )
+          ? true
+          : false;
         /**
          * Clear the flowVersion form arrays
          */
@@ -372,10 +383,19 @@ export class ModalFlowVersionComponent implements OnInit {
    */
   updateStatusFlowVersion(index: number): void {
     const id_user_ = this.data.user.id_user;
-    const versionElementFormArray = this.flowVersionForm.get(
+    const versionsElementFormArray = this.flowVersionForm.get(
       'lotFlowVersion'
     ) as FormArray;
-    let flowVersion = versionElementFormArray.getRawValue()[index];
+
+    let flowVersions = versionsElementFormArray.getRawValue();
+    let flowVersion = flowVersions[index];
+
+    /**
+     * Verificar que no haya versiones activas
+     */
+    this.havedFlowVersionActived = flowVersions.find(
+      (item) => item.status_flow_version === true
+    );
 
     flowVersion = {
       id_user_: parseInt(id_user_),

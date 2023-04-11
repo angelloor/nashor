@@ -65,11 +65,17 @@
                                         <div class="font-medium leading-5 truncate">{{task.number_task}}
                                         </div>
                                         <div class="flex">
+                                            <div *ngIf="task.type_status_task === 'created'"
+                                                class="mt-1 w-3 h-3 bg-green-600 rounded-full">
+                                            </div>
                                             <div *ngIf="task.type_status_task === 'progress'"
                                                 class="mt-1 w-3 h-3 bg-yellow-500 rounded-full">
                                             </div>
+                                            <div *ngIf="task.type_status_task === 'reassigned'"
+                                                class="mt-1 w-3 h-3 bg-purple-600 rounded-full">
+                                            </div>
                                             <div *ngIf="task.type_status_task === 'dispatched'"
-                                                class="mt-1 w-3 h-3 bg-green-600 rounded-full">
+                                                class="mt-1 w-3 h-3 bg-red-600 rounded-full">
                                             </div>
                                             <div class="leading-5 truncate text-secondary ml-2">
                                                 {{parseTime(task.date_task)}}</div>

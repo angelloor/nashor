@@ -90,11 +90,11 @@
                     </mat-form-field>
                 </div>
             </div>
-            <div class="flex flex-col w-2/4 pr-3">
-                <!-- date_Task -->
+            <div class="flex flex-col w-2/4 pl-3">
+                <!-- date_task -->
                 <div>
                     <mat-form-field class="angel-mat-no-subscript w-full">
-                        <mat-label>date_Task</mat-label>
+                        <mat-label>date_task</mat-label>
                         <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'mat_outline:account_tree'">
                         </mat-icon>
                         <input matInput [value]="parseTime(task.date_task)" readonly>
@@ -131,7 +131,7 @@
                     </mat-expansion-panel-header>
                     <!-- Items -->
                     <ng-container *ngIf="formArrayTasks.getRawValue()[indexInitial].template.plugin_item_process">
-                        <div class="space-y-4 mt-5 mb-5">
+                        <div class="space-y-4 mt-5 mb-5 pb-4 overflow-x-auto">
                             <ng-container
                                 *ngFor="let elementItem of formArrayProcessItems.controls; let indexOne = index; let first = first; let last = last; trackBy: trackByFn">
                                 <div class="relative flex">
@@ -180,7 +180,10 @@
                                     </ng-container>
                                     <!-- Render horizontal columns -->
 
-                                    <ng-container *ngIf="isOfficialModifier">
+                                    <ng-container *ngIf="isOfficialModifier && (
+                                        this.task.type_status_task === 'progress' ||
+                                        this.task.type_status_task === 'created'
+                                      )">
                                         <div class="flex items-center w-10 pl-2 self-start" [ngClass]="{'mt-6': first}">
                                             <button class="w-8 h-8 min-h-8" mat-icon-button
                                                 (click)="deleteProcessItem(indexOne, pluginItemColumns)"
@@ -193,18 +196,22 @@
                                 </div>
                             </ng-container>
                         </div>
-                        <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
-                            *ngIf="(formArrayTasks.getRawValue()[indexInitial].selectPluginItem && !isSelectedAllProcessItem) && isOfficialModifier">
+                        <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer" *ngIf="(formArrayTasks.getRawValue()[indexInitial].selectPluginItem && !isSelectedAllProcessItem) && (isOfficialModifier && (
+                                this.task.type_status_task === 'progress' ||
+                                this.task.type_status_task === 'created'
+                              ))">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
                             <span class="ml-2 font-medium text-secondary group-hover:underline"
-                                (click)="createProcessItem(formArrayTasks.getRawValue()[indexInitial].id_task)">Añadir
+                                (click)="createProcessItem(formArrayTasks.getRawValue()[indexInitial].id_task, formArrayTasks.getRawValue()[indexInitial].level)">Añadir
                                 elemento</span>
                         </div>
-                        <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer"
-                            *ngIf="(!formArrayTasks.getRawValue()[indexInitial].selectPluginItem && isOfficialModifier)">
+                        <div class="group inline-flex items-center mb-5 -ml-4 py-2 px-4 rounded cursor-pointer" *ngIf="(!formArrayTasks.getRawValue()[indexInitial].selectPluginItem) && (isOfficialModifier && (
+                                this.task.type_status_task === 'progress' ||
+                                this.task.type_status_task === 'created'
+                              ))">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
                             <span class="ml-2 font-medium text-secondary group-hover:underline"
-                                (click)="createProcessItem(formArrayTasks.getRawValue()[indexInitial].id_task)">Añadir
+                                (click)="createProcessItem(formArrayTasks.getRawValue()[indexInitial].id_task, formArrayTasks.getRawValue()[indexInitial].level)">Añadir
                                 elemento</span>
                         </div>
                     </ng-container>
@@ -446,17 +453,23 @@
                                             (change)="removableInput.setDisabledState(true);  createProcessAttached( $event.target,i); removableInput.clear($event);"
                                             [accept]="'.*'" placeholder="Removable Input" (value)="removableInput">
                                         </ngx-mat-file-input>
-                                        <mat-icon *ngIf="removableInput.empty && isOfficialModifier" matSuffix>upload
+                                        <mat-icon *ngIf="removableInput.empty && (isOfficialModifier && (
+                                            this.task.type_status_task === 'progress' ||
+                                            this.task.type_status_task === 'created'
+                                            ))" matSuffix>upload
                                         </mat-icon>
-                                        <button mat-icon-button matSuffix
-                                            *ngIf="!removableInput.empty && isOfficialModifier"
-                                            [matTooltip]="formArrayProcessAttacheds.getRawValue()[i].matTooltip"
+                                        <button mat-icon-button matSuffix *ngIf="!removableInput.empty && (isOfficialModifier && (
+                                            this.task.type_status_task === 'progress' ||
+                                            this.task.type_status_task === 'created'
+                                            ))" [matTooltip]="formArrayProcessAttacheds.getRawValue()[i].matTooltip"
                                             (click)="removableInput.setDisabledState(true); downloadProcessAttached(i)">
                                             <mat-icon class=" icon-size-5" [svgIcon]="'heroicons_solid:download'">
                                             </mat-icon>
                                         </button>
-                                        <button mat-icon-button matSuffix
-                                            *ngIf="!removableInput.empty && isOfficialModifier"
+                                        <button mat-icon-button matSuffix *ngIf="!removableInput.empty && (isOfficialModifier && (
+                                            this.task.type_status_task === 'progress' ||
+                                            this.task.type_status_task === 'created'
+                                            ))"
                                             (click)="removableInput.clear($event); removableInput.setDisabledState(false); deleteProcessAttached(i);">
                                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'">
                                             </mat-icon>
@@ -623,7 +636,8 @@
         </div>
         <!-- processComment -->
         <button class="group inline-flex items-center mt-4 mb-4 -ml-4 py-2 px-4 rounded cursor-pointer"
-            [disabled]="task.type_status_task != 'progress'" (click)="addProcessComment()">
+            [disabled]="!(task.type_status_task == 'created' || task.type_status_task == 'progress')"
+            (click)="addProcessComment()">
             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
             <span class="ml-2 font-medium text-secondary group-hover:underline">Añadir comentario</span>
         </button>
@@ -654,20 +668,20 @@
                         <div *ngIf="formArrayProcessComments.getRawValue()[i].isOwner"
                             class="flex items-center flex-col w-10 pl-2 self-center pb-6">
                             <button *ngIf="!formArrayProcessComments.getRawValue()[i].editMode" class="w-8 h-8 min-h-8"
-                                [disabled]="task.type_status_task != 'progress'" mat-icon-button
-                                (click)="editProcessComment(i, true)" matTooltip="Editar">
+                                [disabled]="!(task.type_status_task == 'created' || task.type_status_task == 'progress')"
+                                mat-icon-button (click)="editProcessComment(i, true)" matTooltip="Editar">
                                 <mat-icon class="icon-size-5" [svgIcon]="'mat_solid:edit'">
                                 </mat-icon>
                             </button>
                             <button *ngIf="formArrayProcessComments.getRawValue()[i].editMode" class="w-8 h-8 min-h-8"
-                                [disabled]="task.type_status_task != 'progress'" mat-icon-button
-                                (click)="saveProcessComment(i)" matTooltip="Guardar">
+                                [disabled]="!(task.type_status_task == 'created' || task.type_status_task == 'progress')"
+                                mat-icon-button (click)="saveProcessComment(i)" matTooltip="Guardar">
                                 <mat-icon class="icon-size-5" [svgIcon]="'mat_outline:save'">
                                 </mat-icon>
                             </button>
                             <button *ngIf="formArrayProcessComments.getRawValue()[i].editMode" class="w-8 h-8 min-h-8"
-                                [disabled]="task.type_status_task != 'progress'" mat-icon-button
-                                (click)="deleteProcessComment(i)" matTooltip="Eliminar">
+                                [disabled]="!(task.type_status_task == 'created' || task.type_status_task == 'progress')"
+                                mat-icon-button (click)="deleteProcessComment(i)" matTooltip="Eliminar">
                                 <mat-icon class="icon-size-5" [svgIcon]="'mat_solid:delete_outline'">
                                 </mat-icon>
                             </button>

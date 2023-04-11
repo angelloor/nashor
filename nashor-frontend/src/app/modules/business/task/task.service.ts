@@ -118,6 +118,23 @@ export class TaskService {
       );
   }
   /**
+   * byProcessExcludeReassignedRead
+   * @param id_process
+   */
+  byProcessExcludeReassignedRead(id_process: string): Observable<Task[]> {
+    return this._httpClient
+      .get<Task[]>(this._url + `/byProcessExcludeReassignedRead/${id_process}`)
+      .pipe(
+        tap((tasks: Task[]) => {
+          if (tasks) {
+            return tasks;
+          } else {
+            return [];
+          }
+        })
+      );
+  }
+  /**
    * byOfficialQueryRead
    * @param id_official
    * @param query
@@ -294,6 +311,10 @@ export class TaskService {
    * @param task
    */
   send(task: Task): Observable<any> {
+    console.log(
+      '🚀 ~ file: task.service.ts ~ line 314 ~ TaskService ~ send ~ task',
+      task
+    );
     return this.tasks$.pipe(
       take(1),
       switchMap((tasks) =>

@@ -31,6 +31,9 @@ import { ModalVersionService } from './modal-version.service';
   styleUrls: ['./modal-version.component.scss'],
 })
 export class ModalVersionComponent implements OnInit {
+  canvas: HTMLElement | any;
+  context: any;
+
   id_flow_version: string = '';
   id_company: string = '';
 
@@ -70,6 +73,14 @@ export class ModalVersionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    /**
+     * Get the canvas and context
+     */
+    this.canvas = document.getElementById('canvas');
+    this.context = this.canvas.getContext('2d');
+
+    this.drawLine(50, 50, 300, 300, 2);
+
     this.id_flow_version = this._data.id_flow_version;
     this.listControls = this._data.listControls;
     this.editMode = this._data.editMode;
@@ -124,6 +135,14 @@ export class ModalVersionComponent implements OnInit {
          * Iterate through them
          */
         this.flowVersionLevels.forEach((_flowVersionLevel, index: number) => {
+          console.log(_flowVersionLevel);
+          if (_flowVersionLevel.position_level_father) {
+            if (_flowVersionLevel.position_level_father > 0) {
+              console.log('dibujo linea');
+              // this.drawLine(200, 200, event.dropPoint.x, event.dropPoint.y, 2);
+            }
+          }
+
           /**
            * Create an flowVersion form group
            */
@@ -289,10 +308,37 @@ export class ModalVersionComponent implements OnInit {
     }
   }
   /**
+   * drawLine
+   */
+  drawLine(
+    startX: number,
+    startY: number,
+    endX: number,
+    endY: number,
+    lineWidth: number,
+    color: string = 'gray'
+  ): void {
+    this.context.moveTo(startX, startY);
+    this.context.lineTo(endX, endY);
+    this.context.lineWidth = lineWidth;
+    this.context.strokeStyle = color;
+    this.context.stroke();
+  }
+  /**
+   * resetCanvas
+   */
+  resetCanvas(): void {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.beginPath();
+    this.context.restore();
+  }
+  /**
    * dragEnded
    * @param event
    */
   dragEnded(event: any, index: number) {
+    this.drawLine(200, 200, event.dropPoint.x, event.dropPoint.y, 2);
+
     if (this.editMode) {
       const id_user_ = this.data.user.id_user;
 

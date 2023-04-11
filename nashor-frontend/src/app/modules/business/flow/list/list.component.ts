@@ -1,6 +1,6 @@
 import {
   ActionAngelConfirmation,
-  AngelConfirmationService,
+  AngelConfirmationService
 } from '@angel/services/confirmation';
 import { AngelMediaWatcherService } from '@angel/services/media-watcher';
 import { DOCUMENT } from '@angular/common';
@@ -9,7 +9,7 @@ import {
   Component,
   Inject,
   OnInit,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -26,7 +26,7 @@ import {
   switchMap,
   takeUntil,
   takeWhile,
-  tap,
+  tap
 } from 'rxjs/operators';
 import { FlowService } from '../flow.service';
 import { Flow } from '../flow.types';

@@ -3,3 +3,11 @@ export const environment = {
   urlBackend: 'http://nashor.puyo.gob.ec',
   passwordEncrypt: 'eNcR$NaShOr$2022',
 };
+
+
+
+frontend heroku  
+
+
+dgitalOcean 
+nODE BACKEND 

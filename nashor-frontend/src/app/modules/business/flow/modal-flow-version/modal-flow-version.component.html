@@ -21,7 +21,7 @@
                         <ng-container
                             *ngFor="let versionElement of formArrayVersion.controls; let i = index; trackBy: trackByFn">
                             <a
-                                class="flex flex-col items-center w-56 p-6 rounded-lg shadow bg-card rounded-lg hover:shadow-xl transition-shadow duration-150 ease-in-out">
+                                class="flex flex-col items-center w-56 p-6 rounded-lg shadow bg-card hover:shadow-xl transition-shadow duration-150 ease-in-out">
                                 <div
                                     class="flex items-center justify-center p-4 rounded-full bg-primary-50 text-primary-700 dark:bg-primary dark:text-on-primary">
                                     <mat-icon class="text-current" [svgIcon]="'heroicons_outline:template'"></mat-icon>
@@ -31,6 +31,7 @@
                                     Versión {{formArrayVersion.getRawValue()[i].number_flow_version}}</div>
                                 <div class="mt-6 flex items-center">
                                     <mat-slide-toggle class="mr-4"
+                                        [disabled]="havedFlowVersionActived && !formArrayVersion.getRawValue()[i].status_flow_version"
                                         [formControl]="getFromControl(formArrayVersion, i, 'status_flow_version')"
                                         (change)="updateStatusFlowVersion(i)" [color]="'primary'">
                                     </mat-slide-toggle>

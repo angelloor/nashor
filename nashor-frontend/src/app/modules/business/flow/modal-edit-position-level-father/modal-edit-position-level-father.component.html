@@ -36,7 +36,7 @@
             <!-- Cancel -->
             <button mat-flat-button *ngIf="flowVersionLevel.position_level_father != 0"
                 class="mat-focus-indicator mat-flat-button mat-button-base mat-warn ng-star-inserted"
-                (click)="updatePositionLevelFather(false)">
+                (click)="updatePositionLevelFather(false)" [mat-dialog-close]="0">
                 Elimina Relación
             </button>
             <!-- Send -->
