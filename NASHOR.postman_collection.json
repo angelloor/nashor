@@ -935,7 +935,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{URL_NASHOR}}/app/core/profile/queryRead/*",
+											"raw": "{{URL_NASHOR}}/app/core/profile/queryRead/ioa",
 											"host": [
 												"{{URL_NASHOR}}"
 											],
@@ -944,7 +944,7 @@
 												"core",
 												"profile",
 												"queryRead",
-												"*"
+												"ioa"
 											]
 										}
 									},
@@ -5227,7 +5227,7 @@
 													}
 												],
 												"url": {
-													"raw": "{{URL_NASHOR}}/app/business/level_profile_official/byLevelProfileRead/3",
+													"raw": "{{URL_NASHOR}}/app/business/level_profile_official/byLevelProfileRead/1",
 													"host": [
 														"{{URL_NASHOR}}"
 													],
@@ -5236,7 +5236,7 @@
 														"business",
 														"level_profile_official",
 														"byLevelProfileRead",
-														"3"
+														"1"
 													]
 												}
 											},
@@ -6502,6 +6502,33 @@
 												"byProcessQueryRead",
 												"1",
 												"*"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "byProcessExcludeReassignedRead",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "token",
+												"value": "{{TOKEN_NASHOR}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{URL_NASHOR}}/app/business/task/byProcessExcludeReassignedRead/1",
+											"host": [
+												"{{URL_NASHOR}}"
+											],
+											"path": [
+												"app",
+												"business",
+												"task",
+												"byProcessExcludeReassignedRead",
+												"1"
 											]
 										}
 									},
@@ -8132,7 +8159,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"scheme\": \"business\",\r\n    \"entity\": \"process_item\",\r\n    \"attributeToQuery\": \"value_column_process_item\",\r\n    \"exclude_column_in_external_table\": [\"id_official\",\"id_process\",\"id_level\",\"id_company\"]\r\n}",
+							"raw": "{\r\n    \"scheme\": \"core\",\r\n    \"entity\": \"profile\",\r\n    \"attributeToQuery\": \"name_profile\",\r\n    \"exclude_column_in_external_table\": [\"\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
